@@ -6,7 +6,12 @@
       "manifestPath": "registry/packages/core-docs-required.json",
       "required": true,
       "format": "json",
-      "currentRelease": null
+      "currentRelease": {
+        "artifactName": "core-docs-required-0.1.0.mdm-resource.json",
+        "sha256": "613fe56a573fbe1eee45c930941b0de48e091ecf9111e38ec17ddfd15ecc5477",
+        "sizeBytes": 1201,
+        "builtAt": "2026-04-29T01:05:10.846Z"
+      }
     }
   ]
 }
