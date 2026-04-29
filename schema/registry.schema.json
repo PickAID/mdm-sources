@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MDM Resource Registry",
+  "type": "object",
+  "required": ["schemaVersion", "packages"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "manifestPath", "required", "format"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "manifestPath": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "format": { "type": "string", "minLength": 1 },
+          "currentRelease": {
+            "anyOf": [
+              { "type": "null" },
+              {
+                "type": "object",
+                "required": ["artifactName", "sha256"],
+                "properties": {
+                  "artifactName": { "type": "string", "minLength": 1 },
+                  "sha256": { "type": "string", "minLength": 64 }
+                },
+                "additionalProperties": true
+              }
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
