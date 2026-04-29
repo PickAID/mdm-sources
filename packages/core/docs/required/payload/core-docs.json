@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "id": "offline-resource-status",
+      "title": "Offline Resource Status",
+      "summary": "The MCP must work without optional resource packages and report missing optional accelerators as degraded capability, not fatal failure."
+    },
+    {
+      "id": "private-derived-cache-policy",
+      "title": "Private Derived Cache Policy",
+      "summary": "Generated workspace caches, ProbeJS dumps, and user modpack indexes stay in MCP local cache and are not committed to mdm-sources."
+    }
+  ]
+}

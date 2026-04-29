@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "packages": [
+    {
+      "id": "core-docs-required",
+      "manifestPath": "registry/packages/core-docs-required.json",
+      "required": true,
+      "format": "json",
+      "currentRelease": null
+    }
+  ]
+}

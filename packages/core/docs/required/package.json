@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "core-docs-required",
+  "namespace": "core",
+  "version": "0.1.0",
+  "artifactType": "docs",
+  "variant": "required",
+  "required": true,
+  "format": "json",
+  "payloadRoot": "payload",
+  "description": "Required structured guidance used to explain resource-package state and offline behavior.",
+  "capabilities": ["resource-status", "offline-guidance"]
+}
