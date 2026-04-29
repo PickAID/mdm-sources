@@ -1,0 +1,7 @@
+{
+  "name": "docs-search",
+  "version": "0.1.0",
+  "format": "sqlite",
+  "required": false,
+  "description": "Optional structured docs search index"
+}

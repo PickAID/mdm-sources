@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "legacyModules": [
+    { "name": "core-docs", "path": "modules/core-docs/module.json" },
+    { "name": "docs-search", "path": "modules/docs-search/module.json" },
+    { "name": "jar-content-index", "path": "modules/jar-content-index/module.json" }
+  ],
+  "registry": {
+    "path": "registry/index.json",
+    "format": "mdm-resource-registry-v1"
+  }
+}

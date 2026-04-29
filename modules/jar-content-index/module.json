@@ -1,0 +1,7 @@
+{
+  "name": "jar-content-index",
+  "version": "0.1.0",
+  "format": "jsonl",
+  "required": false,
+  "description": "Optional jar data/assets lookup index"
+}

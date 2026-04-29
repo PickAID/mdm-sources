@@ -1,0 +1,7 @@
+{
+  "name": "core-docs",
+  "version": "0.1.0",
+  "format": "json",
+  "required": true,
+  "description": "Required structured core migration docs"
+}
