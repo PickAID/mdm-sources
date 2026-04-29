@@ -39,6 +39,28 @@ test("buildLocalRelease writes artifacts and updates registry release metadata",
     detail.currentRelease.artifactName,
     "core-docs-required-0.1.0.mdm-resource.json"
   );
+
+  const releaseManifest = JSON.parse(
+    await readFile(join(outDir, "mdm-release-manifest.json"), "utf-8")
+  );
+  assert.deepEqual(releaseManifest, {
+    schemaVersion: 1,
+    generatedAt: "2026-04-29T00:00:00.000Z",
+    packages: [
+      {
+        packageId: "core-docs-required",
+        version: "0.1.0",
+        namespace: "core",
+        artifactType: "docs",
+        variant: "required",
+        required: true,
+        format: "json",
+        artifactName: "core-docs-required-0.1.0.mdm-resource.json",
+        sha256: result.artifacts[0].sha256,
+        sizeBytes: detail.currentRelease.sizeBytes
+      }
+    ]
+  });
 });
 
 async function writeFixtureRepository(root) {

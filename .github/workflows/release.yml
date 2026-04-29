@@ -1,0 +1,49 @@
+name: Release MDM Resources
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag, for example mdm-resources-v0.1.0
+        required: true
+        type: string
+  push:
+    tags:
+      - "mdm-resources-v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Validate repository
+        run: node tools/validate.mjs
+
+      - name: Build release artifacts
+        run: node tools/build-local-release.mjs --out release-out
+
+      - name: Verify release manifest
+        run: test -f release-out/mdm-release-manifest.json
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" release-out/* --clobber
+          else
+            gh release create "$RELEASE_TAG" release-out/* \
+              --title "$RELEASE_TAG" \
+              --notes "MDM resource package release $RELEASE_TAG"
+          fi

@@ -14,6 +14,8 @@ export async function buildLocalRelease(input = {}) {
   const outDir = normalize(resolve(input.outDir ?? join(root, "release-out")));
   const packageFiles = await findPackageFiles(join(root, "packages"));
   const artifacts = [];
+  const releasePackages = [];
+  const generatedAt = input.builtAt ?? new Date().toISOString();
 
   await mkdir(outDir, { recursive: true });
 
@@ -33,24 +35,52 @@ export async function buildLocalRelease(input = {}) {
       payload
     });
     const sha256 = createHash("sha256").update(artifactBody).digest("hex");
+    const sizeBytes = Buffer.byteLength(artifactBody);
 
     await writeFile(artifactPath, artifactBody);
     await updateRegistryRelease(root, manifest, {
       artifactName,
       sha256,
-      sizeBytes: Buffer.byteLength(artifactBody),
-      builtAt: input.builtAt ?? new Date().toISOString()
+      sizeBytes,
+      builtAt: generatedAt
     });
 
     artifacts.push({
       packageId: manifest.id,
       artifactName,
       artifactPath,
-      sha256
+      sha256,
+      sizeBytes
+    });
+    releasePackages.push({
+      packageId: manifest.id,
+      version: manifest.version,
+      namespace: manifest.namespace,
+      artifactType: manifest.artifactType,
+      variant: manifest.variant,
+      required: manifest.required,
+      format: manifest.format,
+      artifactName,
+      sha256,
+      sizeBytes
     });
   }
 
-  return { artifacts };
+  const manifestPath = join(outDir, "mdm-release-manifest.json");
+  await writeFile(
+    manifestPath,
+    stableJson(buildReleaseManifest(releasePackages, generatedAt))
+  );
+
+  return { artifacts, manifestPath };
+}
+
+function buildReleaseManifest(packages, generatedAt) {
+  return {
+    schemaVersion: 1,
+    generatedAt,
+    packages
+  };
 }
 
 async function updateRegistryRelease(root, manifest, currentRelease) {
