@@ -1,0 +1,34 @@
+{
+  "minecraftVersion": "1.20.1",
+  "packMcmeta": {
+    "packFormat": 15,
+    "description": "Vanilla datapack pack_format for Minecraft 1.20.1."
+  },
+  "roots": [
+    "data/<namespace>/advancements",
+    "data/<namespace>/functions",
+    "data/<namespace>/loot_tables",
+    "data/<namespace>/predicates",
+    "data/<namespace>/recipes",
+    "data/<namespace>/structures",
+    "data/<namespace>/tags",
+    "data/<namespace>/worldgen"
+  ],
+  "traceRules": [
+    {
+      "kind": "recipe",
+      "pathPattern": "data/<namespace>/recipes/<path>.json",
+      "lookupKey": "<namespace>:<path>"
+    },
+    {
+      "kind": "tag",
+      "pathPattern": "data/<namespace>/tags/<registry>/<path>.json",
+      "lookupKey": "#<namespace>:<path>"
+    },
+    {
+      "kind": "function",
+      "pathPattern": "data/<namespace>/functions/<path>.mcfunction",
+      "lookupKey": "<namespace>:<path>"
+    }
+  ]
+}

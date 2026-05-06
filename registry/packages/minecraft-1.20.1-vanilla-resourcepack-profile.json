@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "minecraft-1.20.1-vanilla-resourcepack-profile",
+  "sourcePath": "packages/resourcepack/vanilla/1.20.1/package.json",
+  "currentRelease": {
+    "artifactName": "minecraft-1.20.1-vanilla-resourcepack-profile-0.1.0.mdm-resource.json",
+    "sha256": "9140544d84d1e6995604c4916ee8de99d4cc34252b4ffa9c45ee8f55eacb2afd",
+    "sizeBytes": 4186,
+    "builtAt": "2026-05-06T07:32:52.225Z"
+  }
+}

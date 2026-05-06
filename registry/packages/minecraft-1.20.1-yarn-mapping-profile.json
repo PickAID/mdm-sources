@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "minecraft-1.20.1-yarn-mapping-profile",
+  "sourcePath": "packages/mappings/vanilla/1.20.1-yarn-profile/package.json",
+  "currentRelease": {
+    "artifactName": "minecraft-1.20.1-yarn-mapping-profile-0.1.0.mdm-resource.json",
+    "sha256": "5cfbf175995d06a6eb504fdf8bd471d50f5218d80f6bc79088bd8c9bde2f0027",
+    "sizeBytes": 4285,
+    "builtAt": "2026-05-06T07:32:52.225Z"
+  }
+}

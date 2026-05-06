@@ -1,0 +1,26 @@
+{
+  "minecraftVersion": "1.20.1",
+  "mappingNamespaces": ["official", "intermediary", "named", "yarn"],
+  "purpose": "Explain mapping namespace relationships and guide MCP toward legal local mapping acquisition.",
+  "rules": [
+    {
+      "from": "official",
+      "to": "intermediary",
+      "use": "Bridge obfuscated runtime or official names into a stable Fabric-compatible namespace."
+    },
+    {
+      "from": "intermediary",
+      "to": "named",
+      "use": "Resolve human-readable names for source navigation and stacktrace explanation."
+    },
+    {
+      "from": "named",
+      "to": "yarn",
+      "use": "Treat Yarn as the public named mapping family. Full mapping tables should be downloaded or generated locally when the user needs them."
+    }
+  ],
+  "distributionPolicy": {
+    "bundlesGeneratedMappings": false,
+    "reason": "Generated mapping tables and remapped source packages should be acquired by MCP on demand and cached locally according to their upstream licenses."
+  }
+}

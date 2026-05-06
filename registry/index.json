@@ -19,6 +19,27 @@
       "required": true,
       "format": "json",
       "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.20.1-vanilla-datapack-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.1-vanilla-datapack-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.20.1-vanilla-resourcepack-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.1-vanilla-resourcepack-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.20.1-yarn-mapping-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.1-yarn-mapping-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
     }
   ]
 }
