@@ -42,6 +42,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-release-catalog",
+      "manifestPath": "registry/packages/minecraft-release-catalog.json",
+      "required": true,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.18.2-vanilla-datapack-profile",
       "manifestPath": "registry/packages/minecraft-1.18.2-vanilla-datapack-profile.json",
       "required": false,

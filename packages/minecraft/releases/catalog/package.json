@@ -1,0 +1,40 @@
+{
+  "identity": {
+    "schemaVersion": 2,
+    "packageId": "minecraft-release-catalog",
+    "packageVersion": "0.1.0",
+    "namespace": "minecraft",
+    "displayName": "Minecraft Release Catalog",
+    "description": "Public catalog of official Minecraft release metadata used to choose local vanilla source, datapack, and resourcepack generation targets."
+  },
+  "target": {
+    "loaders": ["vanilla"],
+    "mappings": ["official"]
+  },
+  "artifact": {
+    "kind": "docs_bundle",
+    "format": "json",
+    "schemaId": "mdm.minecraft.release_catalog.json",
+    "schemaVersion": 1,
+    "entrypoint": "payload/release-catalog.json"
+  },
+  "capabilities": ["docs_search", "docs_direct_read", "resource_location_lookup"],
+  "policy": {
+    "privacy": "public_release",
+    "lifecycle": ["downloadable", "refreshable"],
+    "canCommitToRepository": true,
+    "canUploadToPublicRelease": true,
+    "requiresUserConsent": false
+  },
+  "query": {
+    "adapter": "json_docs",
+    "capabilities": ["docs_search", "docs_direct_read", "resource_location_lookup"],
+    "defaultLimit": 8,
+    "maxLimit": 50,
+    "preferredFallbacks": []
+  },
+  "release": {
+    "channel": "required",
+    "family": "minecraft-release-catalog"
+  }
+}
