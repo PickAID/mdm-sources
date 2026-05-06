@@ -21,16 +21,17 @@ export async function buildLocalRelease(input = {}) {
 
   for (const packageFile of packageFiles) {
     const manifest = JSON.parse(await readFile(packageFile, "utf-8"));
-    const payloadRoot = resolveInside(root, dirname(packageFile), manifest.payloadRoot);
+    const packageInfo = normalizePackageManifest(manifest);
+    const payloadRoot = resolveInside(root, dirname(packageFile), packageInfo.payloadRoot);
     if (!payloadRoot) {
-      throw new Error(`Package ${manifest.id} payloadRoot escapes repository.`);
+      throw new Error(`Package ${packageInfo.id} payloadRoot escapes repository.`);
     }
 
     const payload = await readPayloadFiles(root, payloadRoot);
-    const artifactName = `${manifest.id}-${manifest.version}.mdm-resource.json`;
+    const artifactName = `${packageInfo.id}-${packageInfo.version}.mdm-resource.json`;
     const artifactPath = join(outDir, artifactName);
     const artifactBody = stableJson({
-      schemaVersion: 1,
+      schemaVersion: packageInfo.schemaVersion,
       package: manifest,
       payload
     });
@@ -38,7 +39,7 @@ export async function buildLocalRelease(input = {}) {
     const sizeBytes = Buffer.byteLength(artifactBody);
 
     await writeFile(artifactPath, artifactBody);
-    await updateRegistryRelease(root, manifest, {
+    await updateRegistryRelease(root, packageInfo, {
       artifactName,
       sha256,
       sizeBytes,
@@ -46,20 +47,23 @@ export async function buildLocalRelease(input = {}) {
     });
 
     artifacts.push({
-      packageId: manifest.id,
+      packageId: packageInfo.id,
       artifactName,
       artifactPath,
       sha256,
       sizeBytes
     });
     releasePackages.push({
-      packageId: manifest.id,
-      version: manifest.version,
-      namespace: manifest.namespace,
-      artifactType: manifest.artifactType,
-      variant: manifest.variant,
-      required: manifest.required,
-      format: manifest.format,
+      packageId: packageInfo.id,
+      version: packageInfo.version,
+      namespace: packageInfo.namespace,
+      artifactType: packageInfo.artifactType,
+      variant: packageInfo.variant,
+      required: packageInfo.required,
+      format: packageInfo.format,
+      releaseChannel: packageInfo.releaseChannel,
+      releaseFamily: packageInfo.releaseFamily,
+      capabilities: packageInfo.capabilities,
       artifactName,
       sha256,
       sizeBytes
@@ -73,6 +77,57 @@ export async function buildLocalRelease(input = {}) {
   );
 
   return { artifacts, manifestPath };
+}
+
+function normalizePackageManifest(manifest) {
+  if (manifest?.identity?.schemaVersion === 2) {
+    return {
+      schemaVersion: 2,
+      id: manifest.identity.packageId,
+      version: manifest.identity.packageVersion,
+      namespace: manifest.identity.namespace,
+      artifactType: mapV2ArtifactType(manifest.artifact.kind),
+      variant: manifest.release.channel,
+      required: manifest.release.channel === "required",
+      format: manifest.artifact.format,
+      payloadRoot: ".",
+      releaseChannel: manifest.release.channel,
+      releaseFamily: manifest.release.family,
+      capabilities: manifest.capabilities
+    };
+  }
+
+  return {
+    schemaVersion: 1,
+    id: manifest.id,
+    version: manifest.version,
+    namespace: manifest.namespace,
+    artifactType: manifest.artifactType,
+    variant: manifest.variant,
+    required: manifest.required,
+    format: manifest.format,
+    payloadRoot: manifest.payloadRoot,
+    releaseChannel: manifest.required ? "required" : "docs",
+    releaseFamily: manifest.namespace,
+    capabilities: manifest.capabilities ?? []
+  };
+}
+
+function mapV2ArtifactType(kind) {
+  if (kind === "datapack_bundle") {
+    return "datapack";
+  }
+  if (kind === "resourcepack_bundle") {
+    return "resourcepack";
+  }
+  if (kind === "mapping_bundle") {
+    return "mappings";
+  }
+  if (kind === "embedding_bundle") {
+    return "accelerator";
+  }
+
+  return "docs";
 }
 
 function buildReleaseManifest(packages, generatedAt) {

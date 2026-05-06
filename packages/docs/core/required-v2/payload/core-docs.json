@@ -1,0 +1,9 @@
+{
+  "documents": [
+    {
+      "id": "mdm-resource-v2-policy",
+      "title": "MDM Resource v2 Policy",
+      "body": "Public mdm-resource packages must be curated, legal to redistribute, and tagged with explicit capability, policy, query, and release channel metadata. Private generated caches belong to the local MCP runtime, not this repository."
+    }
+  ]
+}

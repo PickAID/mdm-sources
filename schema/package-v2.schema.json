@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MDM Resource Package Manifest v2",
+  "type": "object",
+  "required": ["identity", "target", "artifact", "capabilities", "policy", "query", "release"],
+  "properties": {
+    "identity": {
+      "type": "object",
+      "required": ["schemaVersion", "packageId", "packageVersion", "namespace", "displayName", "description"],
+      "properties": {
+        "schemaVersion": { "const": 2 },
+        "packageId": { "type": "string", "minLength": 1 },
+        "packageVersion": { "type": "string", "minLength": 1 },
+        "namespace": { "type": "string", "minLength": 1 },
+        "displayName": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "minecraftVersions": { "type": "array", "items": { "type": "string" } },
+        "loaders": { "type": "array", "items": { "enum": ["vanilla", "forge", "neoforge", "fabric", "quilt", "kubejs"] } },
+        "mappings": { "type": "array", "items": { "enum": ["official", "intermediary", "named", "parchment", "yarn", "mojmap"] } },
+        "modIds": { "type": "array", "items": { "type": "string" } },
+        "kubeJsScopes": { "type": "array", "items": { "enum": ["startup", "server", "client", "probejs"] } }
+      },
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["kind", "format", "schemaId", "schemaVersion", "entrypoint"],
+      "properties": {
+        "kind": { "enum": ["docs_bundle", "source_tree", "source_index", "mapping_bundle", "datapack_bundle", "resourcepack_bundle", "probejs_snapshot", "mod_archive_index", "embedding_bundle"] },
+        "format": { "enum": ["json", "jsonl", "sqlite", "zip", "directory", "tar.zst"] },
+        "schemaId": { "type": "string", "minLength": 1 },
+        "schemaVersion": { "type": "number" },
+        "entrypoint": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string" },
+        "sizeBytes": { "type": "number" }
+      },
+      "additionalProperties": true
+    },
+    "capabilities": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "policy": {
+      "type": "object",
+      "required": ["privacy", "lifecycle", "canCommitToRepository", "canUploadToPublicRelease", "requiresUserConsent"],
+      "properties": {
+        "privacy": { "const": "public_release" },
+        "lifecycle": { "type": "array", "items": { "type": "string" } },
+        "canCommitToRepository": { "const": true },
+        "canUploadToPublicRelease": { "const": true },
+        "requiresUserConsent": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "query": {
+      "type": "object",
+      "required": ["adapter", "capabilities", "defaultLimit", "maxLimit", "preferredFallbacks"],
+      "properties": {
+        "adapter": { "enum": ["json_docs", "sqlite_docs", "source_index_sqlite", "source_tree", "mapping_index", "archive_content", "embedding_index"] },
+        "capabilities": { "type": "array", "items": { "type": "string" } },
+        "defaultLimit": { "type": "number" },
+        "maxLimit": { "type": "number" },
+        "preferredFallbacks": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "release": {
+      "type": "object",
+      "required": ["channel", "family"],
+      "properties": {
+        "channel": { "enum": ["required", "docs", "sources", "mappings", "datapack", "resourcepack", "accelerators"] },
+        "family": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

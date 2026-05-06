@@ -12,6 +12,13 @@
         "sizeBytes": 1201,
         "builtAt": "2026-04-29T01:05:10.846Z"
       }
+    },
+    {
+      "id": "core-docs-required-v2",
+      "manifestPath": "registry/packages/core-docs-required-v2.json",
+      "required": true,
+      "format": "json",
+      "currentRelease": null
     }
   ]
 }

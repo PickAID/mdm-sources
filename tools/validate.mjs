@@ -38,6 +38,11 @@ async function validatePackageFile(repoRoot, packageFile, errors) {
     return;
   }
 
+  if (isV2PackageManifest(manifest)) {
+    await validatePackageFileV2(repoRoot, packageFile, manifest, errors);
+    return;
+  }
+
   for (const field of REQUIRED_PACKAGE_FIELDS) {
     if (!(field in manifest)) {
       errors.push(`${toRepoPath(repoRoot, packageFile)} missing ${field}`);
@@ -62,6 +67,108 @@ async function validatePackageFile(repoRoot, packageFile, errors) {
   if (!payloadRoot || !(await pathIsDirectory(payloadRoot))) {
     errors.push(`${toRepoPath(repoRoot, packageFile)} payloadRoot is missing`);
   }
+}
+
+async function validatePackageFileV2(repoRoot, packageFile, manifest, errors) {
+  const repoPath = toRepoPath(repoRoot, packageFile);
+  const identity = requireRecordField(manifest, "identity", repoPath, errors);
+  const target = requireRecordField(manifest, "target", repoPath, errors);
+  const artifact = requireRecordField(manifest, "artifact", repoPath, errors);
+  const policy = requireRecordField(manifest, "policy", repoPath, errors);
+  const query = requireRecordField(manifest, "query", repoPath, errors);
+  const release = requireRecordField(manifest, "release", repoPath, errors);
+
+  if (!identity || !target || !artifact || !policy || !query || !release) {
+    return;
+  }
+  if (identity.schemaVersion !== 2) {
+    errors.push(`${repoPath} identity.schemaVersion must be 2`);
+  }
+  requireNonEmptyString(identity.packageId, `${repoPath} identity.packageId`, errors);
+  requireNonEmptyString(identity.packageVersion, `${repoPath} identity.packageVersion`, errors);
+  requireNonEmptyString(identity.namespace, `${repoPath} identity.namespace`, errors);
+  requireNonEmptyString(identity.displayName, `${repoPath} identity.displayName`, errors);
+  requireNonEmptyString(identity.description, `${repoPath} identity.description`, errors);
+  validateOptionalStringArray(target.minecraftVersions, `${repoPath} target.minecraftVersions`, errors);
+  validateOptionalStringArray(target.loaders, `${repoPath} target.loaders`, errors);
+  validateOptionalStringArray(target.mappings, `${repoPath} target.mappings`, errors);
+  requireAllowed(
+    artifact.kind,
+    [
+      "docs_bundle",
+      "source_tree",
+      "source_index",
+      "mapping_bundle",
+      "datapack_bundle",
+      "resourcepack_bundle",
+      "probejs_snapshot",
+      "mod_archive_index",
+      "embedding_bundle"
+    ],
+    `${repoPath} artifact.kind`,
+    errors
+  );
+  requireAllowed(
+    artifact.format,
+    ["json", "jsonl", "sqlite", "zip", "directory", "tar.zst"],
+    `${repoPath} artifact.format`,
+    errors
+  );
+  requireNonEmptyString(artifact.schemaId, `${repoPath} artifact.schemaId`, errors);
+  if (typeof artifact.schemaVersion !== "number") {
+    errors.push(`${repoPath} artifact.schemaVersion must be number`);
+  }
+  requireNonEmptyString(artifact.entrypoint, `${repoPath} artifact.entrypoint`, errors);
+  if (typeof artifact.entrypoint === "string") {
+    const entrypoint = resolveInside(repoRoot, packageFile, artifact.entrypoint);
+    if (!entrypoint || !(await pathExists(entrypoint))) {
+      errors.push(`${repoPath} artifact entrypoint is missing`);
+    }
+  }
+  if (policy.privacy !== "public_release") {
+    errors.push(`${repoPath} v2 public package privacy must be public_release`);
+  }
+  if (policy.canCommitToRepository !== true) {
+    errors.push(`${repoPath} v2 public package canCommitToRepository must be true`);
+  }
+  if (policy.canUploadToPublicRelease !== true) {
+    errors.push(`${repoPath} v2 public package canUploadToPublicRelease must be true`);
+  }
+  validateStringArray(manifest.capabilities, `${repoPath} capabilities`, errors);
+  validateStringArray(query.capabilities, `${repoPath} query.capabilities`, errors);
+  if (Array.isArray(manifest.capabilities) && Array.isArray(query.capabilities)) {
+    for (const capability of query.capabilities) {
+      if (!manifest.capabilities.includes(capability)) {
+        errors.push(`${repoPath} query capability ${capability} is not declared`);
+      }
+    }
+  }
+  requireAllowed(
+    query.adapter,
+    [
+      "json_docs",
+      "sqlite_docs",
+      "source_index_sqlite",
+      "source_tree",
+      "mapping_index",
+      "archive_content",
+      "embedding_index"
+    ],
+    `${repoPath} query.adapter`,
+    errors
+  );
+  if (typeof query.defaultLimit !== "number" || typeof query.maxLimit !== "number") {
+    errors.push(`${repoPath} query limits must be numbers`);
+  } else if (query.defaultLimit > query.maxLimit) {
+    errors.push(`${repoPath} query.defaultLimit must be <= query.maxLimit`);
+  }
+  requireAllowed(
+    release.channel,
+    ["required", "docs", "sources", "mappings", "datapack", "resourcepack", "accelerators"],
+    `${repoPath} release.channel`,
+    errors
+  );
+  requireNonEmptyString(release.family, `${repoPath} release.family`, errors);
 }
 
 async function validateRegistry(repoRoot, errors) {
@@ -159,6 +266,12 @@ function isWithin(parentPath, childPath) {
   return rel.length === 0 || (!rel.startsWith("..") && !isAbsolute(rel));
 }
 
+async function pathExists(path) {
+  return stat(path)
+    .then(() => true)
+    .catch(() => false);
+}
+
 async function pathIsDirectory(path) {
   return stat(path)
     .then((details) => details.isDirectory())
@@ -177,6 +290,44 @@ function toRepoPath(repoRoot, path) {
 
 function isRecord(value) {
   return typeof value === "object" && value !== null;
+}
+
+function isV2PackageManifest(value) {
+  return isRecord(value) && isRecord(value.identity) && value.identity.schemaVersion === 2;
+}
+
+function requireRecordField(record, field, path, errors) {
+  const value = record[field];
+  if (!isRecord(value)) {
+    errors.push(`${path} ${field} must be object`);
+    return undefined;
+  }
+
+  return value;
+}
+
+function requireNonEmptyString(value, path, errors) {
+  if (typeof value !== "string" || value.length === 0) {
+    errors.push(`${path} must be a non-empty string`);
+  }
+}
+
+function requireAllowed(value, allowed, path, errors) {
+  if (typeof value !== "string" || !allowed.includes(value)) {
+    errors.push(`${path} must be one of ${allowed.join(", ")}`);
+  }
+}
+
+function validateStringArray(value, path, errors) {
+  if (!Array.isArray(value) || value.some((entry) => typeof entry !== "string")) {
+    errors.push(`${path} must be an array of strings`);
+  }
+}
+
+function validateOptionalStringArray(value, path, errors) {
+  if (value !== undefined) {
+    validateStringArray(value, path, errors);
+  }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

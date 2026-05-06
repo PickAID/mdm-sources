@@ -1,0 +1,40 @@
+{
+  "identity": {
+    "schemaVersion": 2,
+    "packageId": "core-docs-required-v2",
+    "packageVersion": "0.2.0",
+    "namespace": "core",
+    "displayName": "Core Docs Required v2",
+    "description": "Compact public guidance package for mdm resource state, package policy, and offline behavior."
+  },
+  "target": {
+    "minecraftVersions": ["1.20.1"],
+    "loaders": ["vanilla"]
+  },
+  "artifact": {
+    "kind": "docs_bundle",
+    "format": "json",
+    "schemaId": "mdm.docs.json",
+    "schemaVersion": 1,
+    "entrypoint": "payload/core-docs.json"
+  },
+  "capabilities": ["docs_search", "docs_direct_read"],
+  "policy": {
+    "privacy": "public_release",
+    "lifecycle": ["downloadable", "pinned"],
+    "canCommitToRepository": true,
+    "canUploadToPublicRelease": true,
+    "requiresUserConsent": false
+  },
+  "query": {
+    "adapter": "json_docs",
+    "capabilities": ["docs_search", "docs_direct_read"],
+    "defaultLimit": 8,
+    "maxLimit": 50,
+    "preferredFallbacks": []
+  },
+  "release": {
+    "channel": "required",
+    "family": "core-docs"
+  }
+}

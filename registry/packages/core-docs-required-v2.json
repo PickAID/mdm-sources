@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "core-docs-required-v2",
+  "sourcePath": "packages/docs/core/required-v2/package.json",
+  "currentRelease": {
+    "artifactName": "core-docs-required-v2-0.2.0.mdm-resource.json",
+    "sha256": "d1adedf4f57da437eb32914e3a85b16b87d09748299b04dc0a0aa54ed9009d7c",
+    "sizeBytes": 3141,
+    "builtAt": "2026-05-06T06:31:39.459Z"
+  }
+}
