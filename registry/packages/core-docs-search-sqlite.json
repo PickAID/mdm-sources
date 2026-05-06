@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "core-docs-search-sqlite",
+  "sourcePath": "packages/docs/search/core-sqlite/package.json",
+  "currentRelease": {
+    "artifactName": "core-docs-search-sqlite-0.1.0.sqlite",
+    "sha256": "8ad6f521f16be7fb0ac4aa0580744be70f0703b16f148223c017405f6b99d458",
+    "sizeBytes": 32768,
+    "builtAt": "2026-05-06T13:56:49.554Z"
+  }
+}

@@ -1,13 +1,17 @@
 import { createHash } from "node:crypto";
+import { createRequire } from "node:module";
 import {
   mkdir,
   readFile,
   readdir,
   stat,
+  rm,
   writeFile
 } from "node:fs/promises";
 import { dirname, isAbsolute, join, normalize, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+
+const require = createRequire(import.meta.url);
 
 export async function buildLocalRelease(input = {}) {
   const root = normalize(resolve(input.root ?? process.cwd()));
@@ -32,31 +36,27 @@ export async function buildLocalRelease(input = {}) {
       throw new Error(`Package ${packageInfo.id} payloadRoot escapes repository.`);
     }
 
-    const payload = await readPayloadFiles(root, payloadRoot);
-    const artifactName = `${packageInfo.id}-${packageInfo.version}.mdm-resource.json`;
-    const artifactPath = join(outDir, artifactName);
-    const artifactBody = stableJson({
-      schemaVersion: packageInfo.schemaVersion,
-      package: manifest,
-      payload
+    const artifact = await buildPackageArtifact({
+      root,
+      outDir,
+      packageFile,
+      packageInfo,
+      manifest,
+      payloadRoot
     });
-    const sha256 = createHash("sha256").update(artifactBody).digest("hex");
-    const sizeBytes = Buffer.byteLength(artifactBody);
-
-    await writeFile(artifactPath, artifactBody);
     await updateRegistryRelease(root, packageInfo, {
-      artifactName,
-      sha256,
-      sizeBytes,
+      artifactName: artifact.artifactName,
+      sha256: artifact.sha256,
+      sizeBytes: artifact.sizeBytes,
       builtAt: generatedAt
     });
 
     artifacts.push({
       packageId: packageInfo.id,
-      artifactName,
-      artifactPath,
-      sha256,
-      sizeBytes
+      artifactName: artifact.artifactName,
+      artifactPath: artifact.artifactPath,
+      sha256: artifact.sha256,
+      sizeBytes: artifact.sizeBytes
     });
     releasePackages.push({
       packageId: packageInfo.id,
@@ -69,9 +69,9 @@ export async function buildLocalRelease(input = {}) {
       releaseChannel: packageInfo.releaseChannel,
       releaseFamily: packageInfo.releaseFamily,
       capabilities: packageInfo.capabilities,
-      artifactName,
-      sha256,
-      sizeBytes
+      artifactName: artifact.artifactName,
+      sha256: artifact.sha256,
+      sizeBytes: artifact.sizeBytes
     });
   }
 
@@ -82,6 +82,178 @@ export async function buildLocalRelease(input = {}) {
   );
 
   return { artifacts, manifestPath };
+}
+
+async function buildPackageArtifact(input) {
+  if (
+    input.packageInfo.schemaVersion === 2 &&
+    input.packageInfo.format === "sqlite" &&
+    input.manifest.query?.adapter === "sqlite_docs"
+  ) {
+    return buildSqliteDocsArtifact(input);
+  }
+
+  const payload = await readPayloadFiles(input.root, input.payloadRoot);
+  const artifactName = `${input.packageInfo.id}-${input.packageInfo.version}.mdm-resource.json`;
+  const artifactPath = join(input.outDir, artifactName);
+  const artifactBody = stableJson({
+    schemaVersion: input.packageInfo.schemaVersion,
+    package: input.manifest,
+    payload
+  });
+
+  await writeFile(artifactPath, artifactBody);
+  return buildArtifactResult(artifactName, artifactPath, Buffer.from(artifactBody));
+}
+
+async function buildSqliteDocsArtifact(input) {
+  const artifactName = `${input.packageInfo.id}-${input.packageInfo.version}.sqlite`;
+  const artifactPath = join(input.outDir, artifactName);
+  const entrypointPath = resolveInside(
+    input.root,
+    dirname(input.packageFile),
+    input.manifest.artifact.entrypoint
+  );
+  if (!entrypointPath) {
+    throw new Error(`Package ${input.packageInfo.id} sqlite entrypoint escapes repository.`);
+  }
+
+  const content = JSON.parse(await readFile(entrypointPath, "utf-8"));
+  await rm(artifactPath, { force: true });
+  await writeSqliteDocsDatabase(artifactPath, input.packageInfo.id, content.entries ?? []);
+  return buildArtifactResult(
+    artifactName,
+    artifactPath,
+    await readFile(artifactPath)
+  );
+}
+
+function writeSqliteDocsDatabase(databasePath, packageId, entries) {
+  const { DatabaseSync } = require("node:sqlite");
+  const database = new DatabaseSync(databasePath);
+  try {
+    database.exec([
+      "CREATE TABLE docs_entries (",
+      "entry_id TEXT PRIMARY KEY,",
+      "package_id TEXT NOT NULL,",
+      "kind TEXT NOT NULL,",
+      "title TEXT NOT NULL,",
+      "path TEXT NOT NULL,",
+      "headings TEXT NOT NULL,",
+      "summary TEXT NOT NULL,",
+      "search_terms TEXT NOT NULL,",
+      "script_scopes TEXT NOT NULL,",
+      "addon_names TEXT NOT NULL,",
+      "event_names TEXT NOT NULL,",
+      "code_symbols TEXT NOT NULL",
+      ")",
+      ";",
+      "CREATE VIRTUAL TABLE docs_entries_fts USING fts5(",
+      "entry_id UNINDEXED, title, path, summary, search_terms,",
+      "script_scopes, addon_names, event_names, code_symbols",
+      ")"
+    ].join(" "));
+
+    const insertEntry = database.prepare([
+      "INSERT INTO docs_entries",
+      "(entry_id, package_id, kind, title, path, headings, summary, search_terms,",
+      "script_scopes, addon_names, event_names, code_symbols)",
+      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    ].join(" "));
+    const insertFts = database.prepare([
+      "INSERT INTO docs_entries_fts",
+      "(entry_id, title, path, summary, search_terms, script_scopes,",
+      "addon_names, event_names, code_symbols)",
+      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    ].join(" "));
+
+    database.exec("BEGIN");
+    for (const entry of entries.map(normalizeDocsEntry)) {
+      const path = entry.path ?? `${packageId}#${entry.id}`;
+      const searchTerms = entry.searchTerms.length > 0
+        ? entry.searchTerms
+        : [entry.id, entry.title, entry.summary];
+      insertEntry.run(
+        entry.id,
+        packageId,
+        entry.kind,
+        entry.title,
+        path,
+        JSON.stringify(entry.headings),
+        entry.summary,
+        JSON.stringify(searchTerms),
+        JSON.stringify(entry.scriptScopes),
+        JSON.stringify(entry.addonNames),
+        JSON.stringify(entry.eventNames),
+        JSON.stringify(entry.codeSymbols)
+      );
+      insertFts.run(
+        entry.id,
+        entry.title,
+        path,
+        entry.summary,
+        searchTerms.join(" "),
+        entry.scriptScopes.join(" "),
+        entry.addonNames.join(" "),
+        entry.eventNames.join(" "),
+        entry.codeSymbols.join(" ")
+      );
+    }
+    database.exec("COMMIT");
+  } catch (error) {
+    try {
+      database.exec("ROLLBACK");
+    } catch {
+      // Ignore rollback failures so the original build error is preserved.
+    }
+    throw error;
+  } finally {
+    database.close();
+  }
+}
+
+function normalizeDocsEntry(entry) {
+  return {
+    id: requireString(entry.id, "docs entry id"),
+    kind: typeof entry.kind === "string" ? entry.kind : "concept",
+    title: requireString(entry.title, "docs entry title"),
+    path: typeof entry.path === "string" ? entry.path : undefined,
+    headings: stringArray(entry.headings),
+    summary: requireString(entry.summary, "docs entry summary"),
+    searchTerms: stringArray(entry.searchTerms),
+    scriptScopes: stringArray(entry.scriptScopes),
+    addonNames: stringArray(entry.addonNames),
+    eventNames: stringArray(entry.eventNames),
+    codeSymbols: stringArray(entry.codeSymbols)
+  };
+}
+
+function stringArray(value) {
+  if (value === undefined) {
+    return [];
+  }
+  if (!Array.isArray(value) || value.some((entry) => typeof entry !== "string")) {
+    throw new Error("docs sqlite entry array fields must contain only strings.");
+  }
+
+  return value;
+}
+
+function requireString(value, label) {
+  if (typeof value !== "string" || value.length === 0) {
+    throw new Error(`${label} must be a non-empty string.`);
+  }
+
+  return value;
+}
+
+function buildArtifactResult(artifactName, artifactPath, body) {
+  return {
+    artifactName,
+    artifactPath,
+    sha256: createHash("sha256").update(body).digest("hex"),
+    sizeBytes: body.length
+  };
 }
 
 function normalizePackageManifest(manifest) {

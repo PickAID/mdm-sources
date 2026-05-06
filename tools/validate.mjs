@@ -157,6 +157,7 @@ async function validatePackageFileV2(repoRoot, packageFile, manifest, errors) {
     `${repoPath} query.adapter`,
     errors
   );
+  validateArtifactQueryPair(repoPath, artifact, query, errors);
   if (typeof query.defaultLimit !== "number" || typeof query.maxLimit !== "number") {
     errors.push(`${repoPath} query limits must be numbers`);
   } else if (query.defaultLimit > query.maxLimit) {
@@ -169,6 +170,23 @@ async function validatePackageFileV2(repoRoot, packageFile, manifest, errors) {
     errors
   );
   requireNonEmptyString(release.family, `${repoPath} release.family`, errors);
+}
+
+function validateArtifactQueryPair(repoPath, artifact, query, errors) {
+  if (
+    artifact.kind === "docs_bundle" &&
+    artifact.format === "sqlite" &&
+    query.adapter !== "sqlite_docs"
+  ) {
+    errors.push(`${repoPath} sqlite docs packages must use sqlite_docs adapter`);
+  }
+  if (
+    artifact.kind === "docs_bundle" &&
+    artifact.format !== "sqlite" &&
+    query.adapter === "sqlite_docs"
+  ) {
+    errors.push(`${repoPath} sqlite_docs adapter requires sqlite docs artifact`);
+  }
 }
 
 async function validateRegistry(repoRoot, errors) {

@@ -68,6 +68,49 @@ test("validateRepository rejects v2 manifests without target metadata", async ()
   assert.match(result.errors.join("\n"), /target must be object/);
 });
 
+test("validateRepository accepts sqlite docs packages with sqlite_docs adapter", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-sources-v2-sqlite-docs-"));
+  await writeV2Fixture(root, {
+    ...validV2Package(),
+    artifact: {
+      kind: "docs_bundle",
+      format: "sqlite",
+      schemaId: "mdm.docs.sqlite",
+      schemaVersion: 1,
+      entrypoint: "payload/core-docs.json"
+    },
+    query: {
+      ...validV2Package().query,
+      adapter: "sqlite_docs"
+    }
+  });
+
+  const result = await validateRepository(root);
+
+  assert.deepEqual(result.errors, []);
+});
+
+test("validateRepository rejects sqlite docs packages without sqlite_docs adapter", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-sources-v2-sqlite-mismatch-"));
+  await writeV2Fixture(root, {
+    ...validV2Package(),
+    artifact: {
+      kind: "docs_bundle",
+      format: "sqlite",
+      schemaId: "mdm.docs.sqlite",
+      schemaVersion: 1,
+      entrypoint: "payload/core-docs.json"
+    }
+  });
+
+  const result = await validateRepository(root);
+
+  assert.match(
+    result.errors.join("\n"),
+    /sqlite docs packages must use sqlite_docs adapter/
+  );
+});
+
 async function writeV2Fixture(root, manifest, options = {}) {
   const packageRoot = join(root, "packages/docs/core/required-v2");
   await mkdir(join(packageRoot, "payload"), { recursive: true });

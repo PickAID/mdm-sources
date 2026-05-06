@@ -1,0 +1,49 @@
+{
+  "entries": [
+    {
+      "id": "mdm.public-private-boundary",
+      "title": "Public and private package boundary",
+      "kind": "policy",
+      "summary": "Public mdm-sources packages contain curated redistributable profiles. Generated vanilla source, remapped source, ProbeJS dumps, modpack-derived indexes, and embeddings over private content belong to MCP local cache.",
+      "searchTerms": ["policy", "privacy", "cache", "public_release", "local_cache"],
+      "headings": ["Public release content", "Private generated caches"],
+      "codeSymbols": ["public_release", "user_private"]
+    },
+    {
+      "id": "mdm.release-channels",
+      "title": "Release channel selection",
+      "kind": "concept",
+      "summary": "Install required packages first. Add docs, datapack, resourcepack, mappings, sources, or accelerators only when the workspace task needs that evidence. Avoid monolithic all-channel installs by default.",
+      "searchTerms": ["release", "channels", "install", "required", "accelerators"],
+      "headings": ["Required first", "On-demand channels"],
+      "codeSymbols": ["release.channel", "mdmReleaseInstall"]
+    },
+    {
+      "id": "mdm.mapping-purpose",
+      "title": "Mapping bundle purpose",
+      "kind": "concept",
+      "summary": "Mapping bundles explain namespace relationships such as official, intermediary, named, Yarn, Parchment, and Mojmap. They help translate crash and source evidence without requiring every source tree to be downloaded first.",
+      "searchTerms": ["mapping", "source", "migration", "Yarn", "Parchment", "Mojmap"],
+      "headings": ["Namespace translation", "Migration evidence"],
+      "codeSymbols": ["mapping_lookup", "mapping_explain"]
+    },
+    {
+      "id": "mdm.datapack-resourcepack-split",
+      "title": "Datapack and resourcepack split",
+      "kind": "concept",
+      "summary": "Datapack profiles describe data-driven server content. Resourcepack profiles describe assets, models, textures, atlases, language, sounds, UI assets, and shader-related paths. Treat them as separate package families.",
+      "searchTerms": ["datapack", "resourcepack", "assets", "models", "textures", "shader"],
+      "headings": ["Datapack family", "Resourcepack family"],
+      "codeSymbols": ["datapack_trace", "resource_location_lookup"]
+    },
+    {
+      "id": "mdm.sqlite-index-role",
+      "title": "SQLite index package role",
+      "kind": "concept",
+      "summary": "SQLite packages are query accelerators and compact offline indexes. They should point to explicit schema, query adapter, and release channel metadata, while private generated indexes stay in the local MCP runtime cache.",
+      "searchTerms": ["sqlite", "index", "offline", "query", "accelerator"],
+      "headings": ["Queryable database artifacts", "Local generated indexes"],
+      "codeSymbols": ["sqlite_docs", "source_index_sqlite", "docs_entries"]
+    }
+  ]
+}

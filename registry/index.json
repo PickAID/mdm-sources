@@ -25,21 +25,48 @@
       "manifestPath": "registry/packages/core-docs-search-jsonl.json",
       "required": false,
       "format": "jsonl",
-      "currentRelease": null
+      "currentRelease": {
+        "artifactName": "core-docs-search-jsonl-0.1.0.mdm-resource.json",
+        "sha256": "4da8a34e680900078f3e952b0c43021dd964c75f0f3e02f8180abfc74be9154b",
+        "sizeBytes": 4209,
+        "builtAt": "2026-05-06T13:56:49.554Z"
+      }
+    },
+    {
+      "id": "core-docs-search-sqlite",
+      "manifestPath": "registry/packages/core-docs-search-sqlite.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": {
+        "artifactName": "core-docs-search-sqlite-0.1.0.sqlite",
+        "sha256": "8ad6f521f16be7fb0ac4aa0580744be70f0703b16f148223c017405f6b99d458",
+        "sizeBytes": 32768,
+        "builtAt": "2026-05-06T13:56:49.554Z"
+      }
     },
     {
       "id": "client-visual-1.20.1-guidance",
       "manifestPath": "registry/packages/client-visual-1.20.1-guidance.json",
       "required": false,
       "format": "json",
-      "currentRelease": null
+      "currentRelease": {
+        "artifactName": "client-visual-1.20.1-guidance-0.1.0.mdm-resource.json",
+        "sha256": "3df58c8f7df970c4f5eaf45566c3173fdbc05d059fc730f3582dfd5c66118be6",
+        "sizeBytes": 7896,
+        "builtAt": "2026-05-06T13:56:49.554Z"
+      }
     },
     {
       "id": "kubejs-1.20.1-guidance",
       "manifestPath": "registry/packages/kubejs-1.20.1-guidance.json",
       "required": false,
       "format": "json",
-      "currentRelease": null
+      "currentRelease": {
+        "artifactName": "kubejs-1.20.1-guidance-0.1.0.mdm-resource.json",
+        "sha256": "c0728ec56eba67ee8bff41e8c5e1e6e34d4b2f5deb6cd5aebc4d1c80fc45c245",
+        "sizeBytes": 5917,
+        "builtAt": "2026-05-06T13:56:49.554Z"
+      }
     },
     {
       "id": "minecraft-release-catalog",
