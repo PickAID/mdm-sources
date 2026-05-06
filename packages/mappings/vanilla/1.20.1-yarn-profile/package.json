@@ -28,7 +28,7 @@
     "requiresUserConsent": false
   },
   "query": {
-    "adapter": "json_docs",
+    "adapter": "mapping_index",
     "capabilities": ["mapping_lookup", "mapping_explain"],
     "defaultLimit": 8,
     "maxLimit": 50,

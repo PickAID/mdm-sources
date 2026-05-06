@@ -9,5 +9,5 @@
   "format": "json",
   "payloadRoot": "payload",
   "description": "Required structured guidance used to explain resource-package state and offline behavior.",
-  "capabilities": ["resource-status", "offline-guidance"]
+  "capabilities": ["docs_search", "docs_direct_read"]
 }

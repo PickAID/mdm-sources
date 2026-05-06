@@ -104,6 +104,37 @@ test("buildLocalRelease writes v2 package release summaries with channel metadat
   assert.ok(artifact.payload["payload/core-docs.json"]);
 });
 
+test("buildLocalRelease can select release channels without building everything", async () => {
+  const repoRoot = await mkdtemp(join(tmpdir(), "mdm-sources-release-channels-"));
+  const outDir = await mkdtemp(join(tmpdir(), "mdm-release-out-channels-"));
+
+  await writeMultiChannelFixtureRepository(repoRoot);
+
+  const result = await buildLocalRelease({
+    root: repoRoot,
+    outDir,
+    builtAt: "2026-05-06T00:00:00.000Z",
+    releaseChannels: ["required", "datapack"]
+  });
+
+  assert.deepEqual(
+    result.artifacts.map((artifact) => artifact.packageId).sort(),
+    ["core-docs-required-v2", "minecraft-1.20.1-vanilla-datapack-profile"]
+  );
+
+  const releaseManifest = JSON.parse(
+    await readFile(join(outDir, "mdm-release-manifest.json"), "utf-8")
+  );
+
+  assert.deepEqual(
+    releaseManifest.packages.map((entry) => entry.releaseChannel).sort(),
+    ["datapack", "required"]
+  );
+  await assert.rejects(
+    stat(join(outDir, "minecraft-1.20.1-yarn-mapping-profile-0.1.0.mdm-resource.json"))
+  );
+});
+
 async function writeFixtureRepository(root) {
   await mkdir(join(root, "packages/core/docs/required/payload"), {
     recursive: true
@@ -248,4 +279,135 @@ async function writeV2FixtureRepository(root) {
       2
     )
   );
+}
+
+async function writeMultiChannelFixtureRepository(root) {
+  await writeV2FixtureRepository(root);
+  await mkdir(join(root, "packages/datapack/vanilla/1.20.1/payload"), {
+    recursive: true
+  });
+  await mkdir(join(root, "packages/mappings/vanilla/1.20.1-yarn-profile/payload"), {
+    recursive: true
+  });
+
+  await writeFile(
+    join(root, "packages/datapack/vanilla/1.20.1/package.json"),
+    JSON.stringify(
+      v2Package({
+        packageId: "minecraft-1.20.1-vanilla-datapack-profile",
+        packageVersion: "0.1.0",
+        kind: "datapack_bundle",
+        entrypoint: "payload/datapack-profile.json",
+        capabilities: ["resource_location_lookup", "datapack_trace"],
+        channel: "datapack",
+        family: "vanilla-datapack"
+      }),
+      null,
+      2
+    )
+  );
+  await writeFile(
+    join(root, "packages/datapack/vanilla/1.20.1/payload/datapack-profile.json"),
+    "{}\n"
+  );
+  await writeFile(
+    join(root, "packages/mappings/vanilla/1.20.1-yarn-profile/package.json"),
+    JSON.stringify(
+      v2Package({
+        packageId: "minecraft-1.20.1-yarn-mapping-profile",
+        packageVersion: "0.1.0",
+        kind: "mapping_bundle",
+        entrypoint: "payload/mapping-profile.json",
+        capabilities: ["mapping_lookup", "mapping_explain"],
+        channel: "mappings",
+        family: "vanilla-mappings"
+      }),
+      null,
+      2
+    )
+  );
+  await writeFile(
+    join(root, "packages/mappings/vanilla/1.20.1-yarn-profile/payload/mapping-profile.json"),
+    "{}\n"
+  );
+
+  const registry = JSON.parse(await readFile(join(root, "registry/index.json"), "utf-8"));
+  registry.packages.push(
+    registryEntry("minecraft-1.20.1-vanilla-datapack-profile"),
+    registryEntry("minecraft-1.20.1-yarn-mapping-profile")
+  );
+  await writeFile(join(root, "registry/index.json"), JSON.stringify(registry, null, 2));
+  await writeFile(
+    join(root, "registry/packages/minecraft-1.20.1-vanilla-datapack-profile.json"),
+    JSON.stringify(
+      {
+        schemaVersion: 1,
+        id: "minecraft-1.20.1-vanilla-datapack-profile",
+        sourcePath: "packages/datapack/vanilla/1.20.1/package.json",
+        currentRelease: null
+      },
+      null,
+      2
+    )
+  );
+  await writeFile(
+    join(root, "registry/packages/minecraft-1.20.1-yarn-mapping-profile.json"),
+    JSON.stringify(
+      {
+        schemaVersion: 1,
+        id: "minecraft-1.20.1-yarn-mapping-profile",
+        sourcePath: "packages/mappings/vanilla/1.20.1-yarn-profile/package.json",
+        currentRelease: null
+      },
+      null,
+      2
+    )
+  );
+}
+
+function v2Package(input) {
+  return {
+    identity: {
+      schemaVersion: 2,
+      packageId: input.packageId,
+      packageVersion: input.packageVersion,
+      namespace: "minecraft",
+      displayName: input.packageId,
+      description: input.packageId
+    },
+    target: { minecraftVersions: ["1.20.1"], loaders: ["vanilla"] },
+    artifact: {
+      kind: input.kind,
+      format: "json",
+      schemaId: `mdm.${input.channel}.json`,
+      schemaVersion: 1,
+      entrypoint: input.entrypoint
+    },
+    capabilities: input.capabilities,
+    policy: {
+      privacy: "public_release",
+      lifecycle: ["downloadable"],
+      canCommitToRepository: true,
+      canUploadToPublicRelease: true,
+      requiresUserConsent: false
+    },
+    query: {
+      adapter: input.channel === "mappings" ? "mapping_index" : "archive_content",
+      capabilities: input.capabilities,
+      defaultLimit: 8,
+      maxLimit: 50,
+      preferredFallbacks: []
+    },
+    release: { channel: input.channel, family: input.family }
+  };
+}
+
+function registryEntry(id) {
+  return {
+    id,
+    manifestPath: `registry/packages/${id}.json`,
+    required: false,
+    format: "json",
+    currentRelease: null
+  };
 }

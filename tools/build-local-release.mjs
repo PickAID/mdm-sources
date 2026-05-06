@@ -13,6 +13,7 @@ export async function buildLocalRelease(input = {}) {
   const root = normalize(resolve(input.root ?? process.cwd()));
   const outDir = normalize(resolve(input.outDir ?? join(root, "release-out")));
   const packageFiles = await findPackageFiles(join(root, "packages"));
+  const releaseChannels = normalizeReleaseChannels(input.releaseChannels);
   const artifacts = [];
   const releasePackages = [];
   const generatedAt = input.builtAt ?? new Date().toISOString();
@@ -22,6 +23,10 @@ export async function buildLocalRelease(input = {}) {
   for (const packageFile of packageFiles) {
     const manifest = JSON.parse(await readFile(packageFile, "utf-8"));
     const packageInfo = normalizePackageManifest(manifest);
+    if (releaseChannels && !releaseChannels.has(packageInfo.releaseChannel)) {
+      continue;
+    }
+
     const payloadRoot = resolveInside(root, dirname(packageFile), packageInfo.payloadRoot);
     if (!payloadRoot) {
       throw new Error(`Package ${packageInfo.id} payloadRoot escapes repository.`);
@@ -138,6 +143,19 @@ function buildReleaseManifest(packages, generatedAt) {
   };
 }
 
+function normalizeReleaseChannels(channels) {
+  if (channels === undefined) {
+    return undefined;
+  }
+  const values = Array.isArray(channels) ? channels : [channels];
+  return new Set(values.flatMap((value) => {
+    return String(value)
+      .split(",")
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+  }));
+}
+
 async function updateRegistryRelease(root, manifest, currentRelease) {
   const registryPath = join(root, "registry", "index.json");
   const registry = JSON.parse(await readFile(registryPath, "utf-8"));
@@ -251,7 +269,11 @@ function sortJson(value) {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const outIndex = process.argv.indexOf("--out");
   const outDir = outIndex >= 0 ? process.argv[outIndex + 1] : undefined;
-  const result = await buildLocalRelease({ root: process.cwd(), outDir });
+  const result = await buildLocalRelease({
+    root: process.cwd(),
+    outDir,
+    releaseChannels: parseChannelArgs(process.argv)
+  });
   const stats = await Promise.all(
     result.artifacts.map(async (artifact) => ({
       ...artifact,
@@ -260,4 +282,21 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   );
 
   console.log(JSON.stringify({ artifacts: stats }, null, 2));
+}
+
+function parseChannelArgs(argv) {
+  const channels = [];
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if ((arg === "--channel" || arg === "--channels") && argv[index + 1]) {
+      channels.push(argv[index + 1]);
+      index += 1;
+    } else if (arg?.startsWith("--channel=")) {
+      channels.push(arg.slice("--channel=".length));
+    } else if (arg?.startsWith("--channels=")) {
+      channels.push(arg.slice("--channels=".length));
+    }
+  }
+
+  return channels.length > 0 ? channels : undefined;
 }

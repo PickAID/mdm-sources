@@ -28,7 +28,7 @@
     "requiresUserConsent": false
   },
   "query": {
-    "adapter": "json_docs",
+    "adapter": "archive_content",
     "capabilities": ["resource_location_lookup", "datapack_trace"],
     "defaultLimit": 8,
     "maxLimit": 50,
