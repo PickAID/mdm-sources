@@ -28,6 +28,13 @@
       "currentRelease": null
     },
     {
+      "id": "client-visual-1.20.1-guidance",
+      "manifestPath": "registry/packages/client-visual-1.20.1-guidance.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "kubejs-1.20.1-guidance",
       "manifestPath": "registry/packages/kubejs-1.20.1-guidance.json",
       "required": false,

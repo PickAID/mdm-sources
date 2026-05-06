@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "minecraftVersion": "1.20.1",
+  "purpose": "Translate low-knowledge visual requests into concrete Minecraft implementation evidence chains instead of generic renderer or JSON advice.",
+  "evidenceOrder": [
+    "workspace runtime facts: Minecraft version, loader, source roots, resource roots",
+    "local source or scripts: registry declarations, client init, renderer/screen bindings, sync paths",
+    "resource-pack assets: blockstates, models, textures, atlases, lang, font, particles, sounds, shaders, GUI textures",
+    "mod archive content: assets, data, nested JarJar content, owner classes",
+    "LSP, Gradle, source archive, or local jar evidence for loader/version APIs",
+    "versioned docs only after local evidence is insufficient"
+  ],
+  "implementationChains": [
+    {
+      "id": "static-block-model",
+      "chain": ["registry id", "blockstate", "model json", "texture or atlas", "optional render layer"]
+    },
+    {
+      "id": "block-entity-visual",
+      "chain": ["registry id", "block entity type", "client renderer binding", "renderer implementation", "asset references", "server state sync", "client interpolation"]
+    },
+    {
+      "id": "screen-menu-visual",
+      "chain": ["open path", "menu/container", "screen registration", "widgets and textures", "serverbound action packet", "server-authoritative state update"]
+    },
+    {
+      "id": "render-pipeline-visual",
+      "chain": ["renderer owner", "pose/buffer/render type", "blend/depth/cull/light state", "texture/material references", "state restoration", "performance budget"]
+    },
+    {
+      "id": "shader-or-post-processing",
+      "chain": ["effect owner", "shader or post-chain resource", "uniform/state source", "reload lifecycle", "fallback path", "renderer or screen consumer"]
+    },
+    {
+      "id": "dynamic-texture-preview",
+      "chain": ["client manager", "texture/render target allocation", "upload/update cadence", "resource reload cleanup", "bounded cache", "renderer or screen consumer"]
+    }
+  ],
+  "hardRules": [
+    "Do not treat blockstate variants as runtime animation when visual state is continuous or high-cardinality.",
+    "Do not create textures, buffers, models, parse JSON, or send network packets every render frame.",
+    "Do not put client-only classes on dedicated-server load paths.",
+    "Do not invent renderer or screen code without checking registry id, client binding, asset path, sync evidence, and loader/version API proof.",
+    "Do not mix UI layout ownership, render pipeline state, and shader/post-processing ownership in one unbounded class.",
+    "Do not hard-code old GUI or rendering class names from memory after major version changes; search by role-equivalent API evidence."
+  ],
+  "assetKinds": [
+    "blockstates",
+    "models",
+    "textures",
+    "items",
+    "atlases",
+    "lang",
+    "font",
+    "particles",
+    "sounds",
+    "shaders",
+    "connected_texture_metadata",
+    "custom_model_format",
+    "nine_slice_metadata",
+    "pack_metadata"
+  ],
+  "requiredTraces": [
+    "blockstate -> model",
+    "item definition or item model -> model",
+    "model -> parent model",
+    "model -> texture",
+    "particle -> texture",
+    "font -> bitmap provider asset",
+    "atlas -> sprite source directory or explicit file",
+    "registry id -> expected asset namespace and path"
+  ],
+  "apiProofFields": [
+    "loader family and Minecraft version",
+    "API surface: renderer binding, screen binding, model layer, reload listener, dynamic texture, packet/sync",
+    "client visual surface: UI layout, render pipeline, shader/post-chain, asset references",
+    "source proof: file, type declaration, dependency source, local jar/source archive, LSP result, or versioned docs",
+    "mismatch risk when evidence appears to belong to another loader or version"
+  ],
+  "shaderReferencePolicy": {
+    "externalReference": "Optional. Prefer a configured API key when activated. If unavailable, a local browser fallback may be used only to summarize formulas and concepts.",
+    "sourcePolicy": "Never depend on copied external shader source. Map compact formulas to local Minecraft uniforms, samplers, render targets, reload lifecycle, and fallback behavior."
+  },
+  "outputExpectation": "Return a compact evidence packet with proven links, missing links, next reads, and risk classification before proposing implementation code."
+}
