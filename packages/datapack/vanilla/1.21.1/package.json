@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "schemaVersion": 2,
+    "packageId": "minecraft-1.21.1-vanilla-datapack-profile",
+    "packageVersion": "0.1.0",
+    "namespace": "minecraft",
+    "displayName": "Minecraft 1.21.1 Vanilla Datapack Profile",
+    "description": "Curated public datapack profile for Minecraft 1.21.1 pack format and renamed function roots."
+  },
+  "target": {
+    "minecraftVersions": ["1.21.1"],
+    "loaders": ["vanilla"],
+    "mappings": ["official"]
+  },
+  "artifact": {
+    "kind": "datapack_bundle",
+    "format": "json",
+    "schemaId": "mdm.datapack.profile.json",
+    "schemaVersion": 1,
+    "entrypoint": "payload/datapack-profile.json"
+  },
+  "capabilities": ["resource_location_lookup", "datapack_trace"],
+  "policy": {
+    "privacy": "public_release",
+    "lifecycle": ["downloadable"],
+    "canCommitToRepository": true,
+    "canUploadToPublicRelease": true,
+    "requiresUserConsent": false
+  },
+  "query": {
+    "adapter": "archive_content",
+    "capabilities": ["resource_location_lookup", "datapack_trace"],
+    "defaultLimit": 8,
+    "maxLimit": 50,
+    "preferredFallbacks": []
+  },
+  "release": {
+    "channel": "datapack",
+    "family": "vanilla-datapack"
+  }
+}

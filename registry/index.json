@@ -42,6 +42,20 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.18.2-vanilla-datapack-profile",
+      "manifestPath": "registry/packages/minecraft-1.18.2-vanilla-datapack-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.18.2-vanilla-resourcepack-profile",
+      "manifestPath": "registry/packages/minecraft-1.18.2-vanilla-resourcepack-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.20.1-vanilla-datapack-profile",
       "manifestPath": "registry/packages/minecraft-1.20.1-vanilla-datapack-profile.json",
       "required": false,
@@ -51,6 +65,20 @@
     {
       "id": "minecraft-1.20.1-vanilla-resourcepack-profile",
       "manifestPath": "registry/packages/minecraft-1.20.1-vanilla-resourcepack-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.1-vanilla-datapack-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.1-vanilla-datapack-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.1-vanilla-resourcepack-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.1-vanilla-resourcepack-profile.json",
       "required": false,
       "format": "json",
       "currentRelease": null

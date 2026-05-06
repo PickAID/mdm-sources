@@ -1,0 +1,35 @@
+{
+  "minecraftVersion": "1.21.1",
+  "packMcmeta": {
+    "packFormat": 34,
+    "description": "Vanilla resourcepack pack_format for Minecraft 1.21.1."
+  },
+  "roots": [
+    "assets/<namespace>/atlases",
+    "assets/<namespace>/blockstates",
+    "assets/<namespace>/font",
+    "assets/<namespace>/lang",
+    "assets/<namespace>/models",
+    "assets/<namespace>/particles",
+    "assets/<namespace>/shaders",
+    "assets/<namespace>/sounds",
+    "assets/<namespace>/textures"
+  ],
+  "traceRules": [
+    {
+      "kind": "model",
+      "pathPattern": "assets/<namespace>/models/<path>.json",
+      "lookupKey": "<namespace>:<path>"
+    },
+    {
+      "kind": "texture",
+      "pathPattern": "assets/<namespace>/textures/<path>.png",
+      "lookupKey": "<namespace>:<path>"
+    },
+    {
+      "kind": "atlas",
+      "pathPattern": "assets/<namespace>/atlases/<name>.json",
+      "lookupKey": "<namespace>:<name>"
+    }
+  ]
+}
