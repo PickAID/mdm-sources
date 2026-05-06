@@ -104,6 +104,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.20.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.21.1-vanilla-datapack-profile",
       "manifestPath": "registry/packages/minecraft-1.21.1-vanilla-datapack-profile.json",
       "required": false,
