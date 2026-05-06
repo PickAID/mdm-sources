@@ -6,8 +6,13 @@ test("release workflow publishes local release artifacts to GitHub Releases", as
   const workflow = await readFile(".github/workflows/release.yml", "utf-8");
 
   assert.match(workflow, /node tools\/validate\.mjs/);
-  assert.match(workflow, /node tools\/build-local-release\.mjs --out release-out/);
+  assert.match(
+    workflow,
+    /node tools\/build-local-release\.mjs --out release-out --no-registry-update/
+  );
   assert.match(workflow, /release-out\/mdm-release-manifest\.json/);
+  assert.match(workflow, /node tools\/list-release-artifacts\.mjs/);
   assert.match(workflow, /gh release (create|upload)/);
-  assert.match(workflow, /release-out\/\*/);
+  assert.doesNotMatch(workflow, /release-out\/\*/);
+  assert.match(workflow, /release-artifacts\.txt/);
 });

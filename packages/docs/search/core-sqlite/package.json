@@ -15,7 +15,7 @@
     "kind": "docs_bundle",
     "format": "sqlite",
     "schemaId": "mdm.docs.sqlite",
-    "schemaVersion": 1,
+    "schemaVersion": 3,
     "entrypoint": "payload/docs-search.json"
   },
   "capabilities": ["docs_search", "docs_direct_read"],

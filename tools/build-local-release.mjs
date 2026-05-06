@@ -1,5 +1,4 @@
 import { createHash } from "node:crypto";
-import { createRequire } from "node:module";
 import {
   mkdir,
   readFile,
@@ -11,17 +10,19 @@ import {
 import { dirname, isAbsolute, join, normalize, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const require = createRequire(import.meta.url);
+import { writeSqliteDocsDatabase } from "./sqlite-docs-artifact.mjs";
 
 export async function buildLocalRelease(input = {}) {
   const root = normalize(resolve(input.root ?? process.cwd()));
   const outDir = normalize(resolve(input.outDir ?? join(root, "release-out")));
   const packageFiles = await findPackageFiles(join(root, "packages"));
   const releaseChannels = normalizeReleaseChannels(input.releaseChannels);
+  const writeRegistry = input.writeRegistry !== false;
   const artifacts = [];
   const releasePackages = [];
   const generatedAt = input.builtAt ?? new Date().toISOString();
 
+  await resetOutputDirectory(root, outDir);
   await mkdir(outDir, { recursive: true });
 
   for (const packageFile of packageFiles) {
@@ -44,12 +45,14 @@ export async function buildLocalRelease(input = {}) {
       manifest,
       payloadRoot
     });
-    await updateRegistryRelease(root, packageInfo, {
-      artifactName: artifact.artifactName,
-      sha256: artifact.sha256,
-      sizeBytes: artifact.sizeBytes,
-      builtAt: generatedAt
-    });
+    if (writeRegistry) {
+      await updateRegistryRelease(root, packageInfo, {
+        artifactName: artifact.artifactName,
+        sha256: artifact.sha256,
+        sizeBytes: artifact.sizeBytes,
+        builtAt: generatedAt
+      });
+    }
 
     artifacts.push({
       packageId: packageInfo.id,
@@ -69,6 +72,7 @@ export async function buildLocalRelease(input = {}) {
       releaseChannel: packageInfo.releaseChannel,
       releaseFamily: packageInfo.releaseFamily,
       capabilities: packageInfo.capabilities,
+      ...(packageInfo.metadata ? { metadata: packageInfo.metadata } : {}),
       artifactName: artifact.artifactName,
       sha256: artifact.sha256,
       sizeBytes: artifact.sizeBytes
@@ -82,6 +86,19 @@ export async function buildLocalRelease(input = {}) {
   );
 
   return { artifacts, manifestPath };
+}
+
+async function resetOutputDirectory(root, outDir) {
+  if (outDir === root) {
+    throw new Error("Release output directory must not be the repository root.");
+  }
+
+  const parent = dirname(outDir);
+  if (parent === outDir) {
+    throw new Error("Release output directory must not be a filesystem root.");
+  }
+
+  await rm(outDir, { recursive: true, force: true });
 }
 
 async function buildPackageArtifact(input) {
@@ -120,131 +137,17 @@ async function buildSqliteDocsArtifact(input) {
 
   const content = JSON.parse(await readFile(entrypointPath, "utf-8"));
   await rm(artifactPath, { force: true });
-  await writeSqliteDocsDatabase(artifactPath, input.packageInfo.id, content.entries ?? []);
+  await writeSqliteDocsDatabase({
+    databasePath: artifactPath,
+    packageId: input.packageInfo.id,
+    userVersion: input.packageInfo.artifactSchemaVersion,
+    entries: content.entries ?? []
+  });
   return buildArtifactResult(
     artifactName,
     artifactPath,
     await readFile(artifactPath)
   );
-}
-
-function writeSqliteDocsDatabase(databasePath, packageId, entries) {
-  const { DatabaseSync } = require("node:sqlite");
-  const database = new DatabaseSync(databasePath);
-  try {
-    database.exec([
-      "CREATE TABLE docs_entries (",
-      "entry_id TEXT PRIMARY KEY,",
-      "package_id TEXT NOT NULL,",
-      "kind TEXT NOT NULL,",
-      "title TEXT NOT NULL,",
-      "path TEXT NOT NULL,",
-      "headings TEXT NOT NULL,",
-      "summary TEXT NOT NULL,",
-      "search_terms TEXT NOT NULL,",
-      "script_scopes TEXT NOT NULL,",
-      "addon_names TEXT NOT NULL,",
-      "event_names TEXT NOT NULL,",
-      "code_symbols TEXT NOT NULL",
-      ")",
-      ";",
-      "CREATE VIRTUAL TABLE docs_entries_fts USING fts5(",
-      "entry_id UNINDEXED, title, path, summary, search_terms,",
-      "script_scopes, addon_names, event_names, code_symbols",
-      ")"
-    ].join(" "));
-
-    const insertEntry = database.prepare([
-      "INSERT INTO docs_entries",
-      "(entry_id, package_id, kind, title, path, headings, summary, search_terms,",
-      "script_scopes, addon_names, event_names, code_symbols)",
-      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    ].join(" "));
-    const insertFts = database.prepare([
-      "INSERT INTO docs_entries_fts",
-      "(entry_id, title, path, summary, search_terms, script_scopes,",
-      "addon_names, event_names, code_symbols)",
-      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    ].join(" "));
-
-    database.exec("BEGIN");
-    for (const entry of entries.map(normalizeDocsEntry)) {
-      const path = entry.path ?? `${packageId}#${entry.id}`;
-      const searchTerms = entry.searchTerms.length > 0
-        ? entry.searchTerms
-        : [entry.id, entry.title, entry.summary];
-      insertEntry.run(
-        entry.id,
-        packageId,
-        entry.kind,
-        entry.title,
-        path,
-        JSON.stringify(entry.headings),
-        entry.summary,
-        JSON.stringify(searchTerms),
-        JSON.stringify(entry.scriptScopes),
-        JSON.stringify(entry.addonNames),
-        JSON.stringify(entry.eventNames),
-        JSON.stringify(entry.codeSymbols)
-      );
-      insertFts.run(
-        entry.id,
-        entry.title,
-        path,
-        entry.summary,
-        searchTerms.join(" "),
-        entry.scriptScopes.join(" "),
-        entry.addonNames.join(" "),
-        entry.eventNames.join(" "),
-        entry.codeSymbols.join(" ")
-      );
-    }
-    database.exec("COMMIT");
-  } catch (error) {
-    try {
-      database.exec("ROLLBACK");
-    } catch {
-      // Ignore rollback failures so the original build error is preserved.
-    }
-    throw error;
-  } finally {
-    database.close();
-  }
-}
-
-function normalizeDocsEntry(entry) {
-  return {
-    id: requireString(entry.id, "docs entry id"),
-    kind: typeof entry.kind === "string" ? entry.kind : "concept",
-    title: requireString(entry.title, "docs entry title"),
-    path: typeof entry.path === "string" ? entry.path : undefined,
-    headings: stringArray(entry.headings),
-    summary: requireString(entry.summary, "docs entry summary"),
-    searchTerms: stringArray(entry.searchTerms),
-    scriptScopes: stringArray(entry.scriptScopes),
-    addonNames: stringArray(entry.addonNames),
-    eventNames: stringArray(entry.eventNames),
-    codeSymbols: stringArray(entry.codeSymbols)
-  };
-}
-
-function stringArray(value) {
-  if (value === undefined) {
-    return [];
-  }
-  if (!Array.isArray(value) || value.some((entry) => typeof entry !== "string")) {
-    throw new Error("docs sqlite entry array fields must contain only strings.");
-  }
-
-  return value;
-}
-
-function requireString(value, label) {
-  if (typeof value !== "string" || value.length === 0) {
-    throw new Error(`${label} must be a non-empty string.`);
-  }
-
-  return value;
 }
 
 function buildArtifactResult(artifactName, artifactPath, body) {
@@ -270,7 +173,9 @@ function normalizePackageManifest(manifest) {
       payloadRoot: ".",
       releaseChannel: manifest.release.channel,
       releaseFamily: manifest.release.family,
-      capabilities: manifest.capabilities
+      capabilities: manifest.capabilities,
+      artifactSchemaVersion: manifest.artifact.schemaVersion,
+      metadata: inferV2PackageMetadata(manifest)
     };
   }
 
@@ -286,7 +191,29 @@ function normalizePackageManifest(manifest) {
     payloadRoot: manifest.payloadRoot,
     releaseChannel: manifest.required ? "required" : "docs",
     releaseFamily: manifest.namespace,
-    capabilities: manifest.capabilities ?? []
+    capabilities: manifest.capabilities ?? [],
+    artifactSchemaVersion: 1
+  };
+}
+
+function inferV2PackageMetadata(manifest) {
+  if (
+    manifest.artifact.kind !== "docs_bundle" ||
+    manifest.artifact.format !== "sqlite" ||
+    manifest.query?.adapter !== "sqlite_docs"
+  ) {
+    return undefined;
+  }
+
+  return {
+    storageKind: "sqlite_bundle",
+    installTier: "optional_dataset",
+    commitPolicy: "repository_manifest",
+    sqlite: {
+      databaseName: `${manifest.identity.packageId}.sqlite`,
+      minUserVersion: manifest.artifact.schemaVersion,
+      requiredTables: ["docs_entries", "docs_entries_fts"]
+    }
   };
 }
 
@@ -344,6 +271,10 @@ async function updateRegistryRelease(root, manifest, currentRelease) {
 
   entry.currentRelease = currentRelease;
   detail.currentRelease = currentRelease;
+  if (manifest.metadata) {
+    entry.metadata = manifest.metadata;
+    detail.metadata = manifest.metadata;
+  }
 
   await writeJson(registryPath, registry);
   await writeJson(detailPath, detail);
@@ -444,7 +375,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const result = await buildLocalRelease({
     root: process.cwd(),
     outDir,
-    releaseChannels: parseChannelArgs(process.argv)
+    releaseChannels: parseChannelArgs(process.argv),
+    writeRegistry: !process.argv.includes("--no-registry-update")
   });
   const stats = await Promise.all(
     result.artifacts.map(async (artifact) => ({

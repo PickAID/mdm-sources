@@ -37,11 +37,22 @@ test("buildLocalRelease materializes v2 sqlite docs packages as real databases",
   assert.equal(releaseManifest.packages[0].format, "sqlite");
   assert.equal(releaseManifest.packages[0].artifactType, "docs");
   assert.equal(releaseManifest.packages[0].artifactName, result.artifacts[0].artifactName);
+  assert.deepEqual(releaseManifest.packages[0].metadata, sqliteMetadata());
+
+  const registryDetail = JSON.parse(
+    await readFile(
+      join(repoRoot, "registry/packages/core-docs-search-sqlite.json"),
+      "utf-8"
+    )
+  );
+  assert.deepEqual(registryDetail.metadata, sqliteMetadata());
 });
 
 function assertSqliteArtifact(artifactPath) {
   const database = new DatabaseSync(artifactPath);
   try {
+    assert.equal(database.prepare("PRAGMA user_version").get().user_version, 3);
+
     const tables = database
       .prepare("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")
       .all()
@@ -131,7 +142,7 @@ function sqlitePackageManifest() {
       kind: "docs_bundle",
       format: "sqlite",
       schemaId: "mdm.docs.sqlite",
-      schemaVersion: 1,
+      schemaVersion: 3,
       entrypoint: "payload/docs-search.json"
     },
     capabilities: ["docs_search", "docs_direct_read"],
@@ -150,6 +161,19 @@ function sqlitePackageManifest() {
       preferredFallbacks: []
     },
     release: { channel: "docs", family: "core-docs" }
+  };
+}
+
+function sqliteMetadata() {
+  return {
+    storageKind: "sqlite_bundle",
+    installTier: "optional_dataset",
+    commitPolicy: "repository_manifest",
+    sqlite: {
+      databaseName: "core-docs-search-sqlite.sqlite",
+      minUserVersion: 3,
+      requiredTables: ["docs_entries", "docs_entries_fts"]
+    }
   };
 }
 

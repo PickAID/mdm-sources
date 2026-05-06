@@ -135,6 +135,49 @@ test("buildLocalRelease can select release channels without building everything"
   );
 });
 
+test("buildLocalRelease cleans stale output artifacts before writing manifest", async () => {
+  const repoRoot = await mkdtemp(join(tmpdir(), "mdm-sources-release-clean-"));
+  const outDir = await mkdtemp(join(tmpdir(), "mdm-release-out-clean-"));
+
+  await writeFixtureRepository(repoRoot);
+  await writeFile(join(outDir, "stale.sqlite"), "stale\n");
+
+  await buildLocalRelease({
+    root: repoRoot,
+    outDir,
+    builtAt: "2026-05-06T00:00:00.000Z"
+  });
+
+  await assert.rejects(stat(join(outDir, "stale.sqlite")));
+});
+
+test("buildLocalRelease can build release artifacts without mutating registry metadata", async () => {
+  const repoRoot = await mkdtemp(join(tmpdir(), "mdm-sources-release-no-registry-"));
+  const outDir = await mkdtemp(join(tmpdir(), "mdm-release-out-no-registry-"));
+
+  await writeFixtureRepository(repoRoot);
+
+  await buildLocalRelease({
+    root: repoRoot,
+    outDir,
+    builtAt: "2026-05-06T00:00:00.000Z",
+    writeRegistry: false
+  });
+
+  const registry = JSON.parse(
+    await readFile(join(repoRoot, "registry/index.json"), "utf-8")
+  );
+  const detail = JSON.parse(
+    await readFile(
+      join(repoRoot, "registry/packages/core-docs-required.json"),
+      "utf-8"
+    )
+  );
+
+  assert.equal(registry.packages[0].currentRelease, null);
+  assert.equal(detail.currentRelease, null);
+});
+
 async function writeFixtureRepository(root) {
   await mkdir(join(root, "packages/core/docs/required/payload"), {
     recursive: true

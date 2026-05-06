@@ -21,9 +21,14 @@ The repository is the source of truth for manifests, schemas, small legal payloa
 GitHub Releases are the distribution channel for built artifacts:
 
 - `*.mdm-resource.json`: package payload artifacts
+- `*.sqlite`: queryable SQLite package artifacts, for example docs search indexes
 - `mdm-release-manifest.json`: release-level artifact index used by MCP clients
 
 Private user caches, generated ProbeJS dumps from private modpacks, large vanilla source bundles, and derived local package indexes must stay outside this repository and outside public releases.
+
+`release-out/` is ignored build output. It is safe to delete and regenerate. The release workflow uploads only artifacts listed in `mdm-release-manifest.json`, not every file in `release-out/`, so stale local files cannot leak into a release.
+
+The tracked `registry/` files describe package sources and optional pinned release metadata. Normal CI release builds use `--no-registry-update` so publishing does not rewrite repository metadata. Maintainers can run a local build without that flag when they intentionally want to refresh `currentRelease` hashes in the registry.
 
 ## Local Commands
 
@@ -37,6 +42,12 @@ Build local release artifacts:
 
 ```bash
 node tools/build-local-release.mjs --out release-out
+```
+
+Build release artifacts without mutating tracked registry metadata:
+
+```bash
+node tools/build-local-release.mjs --out release-out --no-registry-update
 ```
 
 Run tests:
