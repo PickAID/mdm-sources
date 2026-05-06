@@ -1,0 +1,40 @@
+{
+  "identity": {
+    "schemaVersion": 2,
+    "packageId": "core-docs-search-jsonl",
+    "packageVersion": "0.1.0",
+    "namespace": "core",
+    "displayName": "Core Docs Search JSONL",
+    "description": "Small public JSONL search seed for MDM package policy, release channels, and Minecraft resource evidence."
+  },
+  "target": {
+    "minecraftVersions": ["1.20.1"],
+    "loaders": ["vanilla"]
+  },
+  "artifact": {
+    "kind": "docs_bundle",
+    "format": "jsonl",
+    "schemaId": "mdm.docs.search.jsonl",
+    "schemaVersion": 1,
+    "entrypoint": "payload/docs-search.jsonl"
+  },
+  "capabilities": ["docs_search", "docs_direct_read"],
+  "policy": {
+    "privacy": "public_release",
+    "lifecycle": ["downloadable"],
+    "canCommitToRepository": true,
+    "canUploadToPublicRelease": true,
+    "requiresUserConsent": false
+  },
+  "query": {
+    "adapter": "json_docs",
+    "capabilities": ["docs_search", "docs_direct_read"],
+    "defaultLimit": 8,
+    "maxLimit": 50,
+    "preferredFallbacks": []
+  },
+  "release": {
+    "channel": "docs",
+    "family": "core-docs"
+  }
+}
