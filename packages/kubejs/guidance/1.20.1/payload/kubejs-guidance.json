@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "minecraftVersion": "1.20.1",
+  "principles": [
+    {
+      "id": "kubejs-not-generic-js",
+      "title": "Do not treat KubeJS as a generic JavaScript project",
+      "guidance": "Resolve the script scope first. Startup, server, client, and ProbeJS-generated type contexts expose different events and globals. Do not invent browser or Node APIs unless the modpack environment actually provides them."
+    },
+    {
+      "id": "scope-aware-events",
+      "title": "Choose events by script scope and loader bridge",
+      "guidance": "Use KubeJS events when available, ForgeEvents or NativeEvents when the target behavior is exposed through the loader event bus, and verify event names against local ProbeJS d.ts or generated documentation before writing code."
+    },
+    {
+      "id": "global-state-discipline",
+      "title": "Use global deliberately",
+      "guidance": "Use global only for cross-script state that must survive KubeJS reload boundaries. Prefer explicit helper functions or small namespaced objects, and avoid placing temporary debug state in global."
+    },
+    {
+      "id": "debug-output-discipline",
+      "title": "Keep debug output removable",
+      "guidance": "Debug logging should be intentional and scoped. Avoid leaving noisy console output in production scripts. Prefer a small local debug helper or gated logging flag when investigation output is needed."
+    },
+    {
+      "id": "probejs-as-evidence",
+      "title": "Treat ProbeJS as local evidence",
+      "guidance": "ProbeJS d.ts files describe the current modpack and may differ between instances. They are private local evidence, not public package content. MCP should read them from the user's workspace or cache and should not commit them to mdm-sources."
+    }
+  ],
+  "lookupHints": [
+    {
+      "query": "ForgeEvents",
+      "use": "Check whether the target event is exposed by KubeJS in the current loader and version before using a native loader event."
+    },
+    {
+      "query": "NativeEvents",
+      "use": "Use when KubeJS wraps a lower-level Minecraft or loader event and ProbeJS confirms the event shape."
+    },
+    {
+      "query": "global",
+      "use": "Use for stable shared script state only, with a namespaced object and clear ownership."
+    }
+  ],
+  "nonGoals": [
+    "Do not distribute modpack-specific ProbeJS dumps.",
+    "Do not assume every JavaScript pattern works in Rhino or KubeJS.",
+    "Do not use npm package conventions as the default mental model for KubeJS scripts."
+  ]
+}

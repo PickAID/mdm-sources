@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "schemaVersion": 2,
+    "packageId": "kubejs-1.20.1-guidance",
+    "packageVersion": "0.1.0",
+    "namespace": "kubejs",
+    "displayName": "KubeJS 1.20.1 Guidance",
+    "description": "Public KubeJS guidance seed for scope-aware scripts, events, globals, ProbeJS interpretation, and non-generic JavaScript rules."
+  },
+  "target": {
+    "minecraftVersions": ["1.20.1"],
+    "loaders": ["kubejs", "forge", "neoforge", "fabric"],
+    "kubeJsScopes": ["startup", "server", "client", "probejs"]
+  },
+  "artifact": {
+    "kind": "docs_bundle",
+    "format": "json",
+    "schemaId": "mdm.kubejs.guidance.json",
+    "schemaVersion": 1,
+    "entrypoint": "payload/kubejs-guidance.json"
+  },
+  "capabilities": ["docs_search", "docs_direct_read", "kubejs_symbol_lookup"],
+  "policy": {
+    "privacy": "public_release",
+    "lifecycle": ["downloadable"],
+    "canCommitToRepository": true,
+    "canUploadToPublicRelease": true,
+    "requiresUserConsent": false
+  },
+  "query": {
+    "adapter": "json_docs",
+    "capabilities": ["docs_search", "docs_direct_read", "kubejs_symbol_lookup"],
+    "defaultLimit": 8,
+    "maxLimit": 50,
+    "preferredFallbacks": []
+  },
+  "release": {
+    "channel": "docs",
+    "family": "kubejs-guidance"
+  }
+}
