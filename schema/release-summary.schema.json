@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MDM Release Summary",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "source", "manifest", "totals", "distributions", "artifacts"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "generatedAt": { "type": "string", "minLength": 1 },
+    "source": {
+      "type": "object",
+      "required": ["repository", "ref", "revision"],
+      "properties": {
+        "repository": { "type": ["string", "null"] },
+        "ref": { "type": ["string", "null"] },
+        "revision": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "manifest": {
+      "type": "object",
+      "required": ["name", "sha256", "packageCount"],
+      "properties": {
+        "name": { "const": "mdm-release-manifest.json" },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "packageCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "totals": {
+      "type": "object",
+      "required": ["artifactCount", "sizeBytes"],
+      "properties": {
+        "artifactCount": { "type": "integer", "minimum": 0 },
+        "sizeBytes": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "distributions": {
+      "type": "object",
+      "required": ["releaseChannels", "releaseFamilies", "artifactTypes", "formats"],
+      "properties": {
+        "releaseChannels": { "$ref": "#/$defs/counts" },
+        "releaseFamilies": { "$ref": "#/$defs/counts" },
+        "artifactTypes": { "$ref": "#/$defs/counts" },
+        "formats": { "$ref": "#/$defs/counts" }
+      },
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["packageId", "artifactName", "sha256", "sizeBytes"],
+        "properties": {
+          "packageId": { "type": "string", "minLength": 1 },
+          "artifactName": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[^/\\\\]+$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "sizeBytes": { "type": "integer", "minimum": 0 }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "counts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    }
+  }
+}

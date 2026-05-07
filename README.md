@@ -29,6 +29,11 @@ MCP clients resolve each package artifact as a sibling of the release manifest:
 `new URL(entry.artifactName, manifestUrl)`. Local tooling uses the same rule with
 the manifest file's directory.
 
+The release-level contracts are described by:
+
+- `schema/release-manifest.schema.json`
+- `schema/release-summary.schema.json`
+
 Private user caches, generated ProbeJS dumps from private modpacks, large vanilla source bundles, and derived local package indexes must stay outside this repository and outside public releases.
 
 `release-out/` is ignored build output. It is safe to delete and regenerate. The release workflow uploads only artifacts listed in `mdm-release-manifest.json`, not every file in `release-out/`, so stale local files cannot leak into a release.
@@ -59,6 +64,12 @@ Verify that a local or remote release manifest is installable:
 
 ```bash
 node tools/verify-release-install.mjs release-out/mdm-release-manifest.json
+```
+
+Verify the release manifest and summary schema contract:
+
+```bash
+node tools/verify-release-schema.mjs release-out/mdm-release-manifest.json
 ```
 
 Run tests:

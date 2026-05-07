@@ -37,6 +37,9 @@ jobs:
           test -f release-out/mdm-release-manifest.json
           test -f release-out/mdm-release-summary.json
 
+      - name: Verify release schema
+        run: node tools/verify-release-schema.mjs release-out/mdm-release-manifest.json
+
       - name: Verify release installability
         run: node tools/verify-release-install.mjs release-out/mdm-release-manifest.json
 
