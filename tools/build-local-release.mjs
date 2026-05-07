@@ -10,6 +10,7 @@ import {
 import { dirname, isAbsolute, join, normalize, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { writeReleaseSummary } from "./release-summary.mjs";
 import { writeSqliteDocsDatabase } from "./sqlite-docs-artifact.mjs";
 
 export async function buildLocalRelease(input = {}) {
@@ -84,8 +85,14 @@ export async function buildLocalRelease(input = {}) {
     manifestPath,
     stableJson(buildReleaseManifest(releasePackages, generatedAt))
   );
+  const summary = await writeReleaseSummary({
+    outDir,
+    manifestPath,
+    artifacts,
+    source: input.source
+  });
 
-  return { artifacts, manifestPath };
+  return { artifacts, manifestPath, summaryPath: summary.summaryPath };
 }
 
 async function resetOutputDirectory(root, outDir) {
@@ -376,7 +383,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     root: process.cwd(),
     outDir,
     releaseChannels: parseChannelArgs(process.argv),
-    writeRegistry: !process.argv.includes("--no-registry-update")
+    writeRegistry: !process.argv.includes("--no-registry-update"),
+    source: {
+      repository: process.env.GITHUB_REPOSITORY,
+      ref: process.env.GITHUB_REF_NAME,
+      revision: process.env.GITHUB_SHA
+    }
   });
   const stats = await Promise.all(
     result.artifacts.map(async (artifact) => ({

@@ -11,6 +11,8 @@ test("release workflow publishes local release artifacts to GitHub Releases", as
     /node tools\/build-local-release\.mjs --out release-out --no-registry-update/
   );
   assert.match(workflow, /release-out\/mdm-release-manifest\.json/);
+  assert.match(workflow, /release-out\/mdm-release-summary\.json/);
+  assert.match(workflow, /node tools\/verify-release-install\.mjs release-out\/mdm-release-manifest\.json/);
   assert.match(workflow, /node tools\/list-release-artifacts\.mjs/);
   assert.match(workflow, /gh release (create|upload)/);
   assert.doesNotMatch(workflow, /release-out\/\*/);

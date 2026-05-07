@@ -23,6 +23,11 @@ GitHub Releases are the distribution channel for built artifacts:
 - `*.mdm-resource.json`: package payload artifacts
 - `*.sqlite`: queryable SQLite package artifacts, for example docs search indexes
 - `mdm-release-manifest.json`: release-level artifact index used by MCP clients
+- `mdm-release-summary.json`: release provenance, package counts, distribution totals, and artifact hashes
+
+MCP clients resolve each package artifact as a sibling of the release manifest:
+`new URL(entry.artifactName, manifestUrl)`. Local tooling uses the same rule with
+the manifest file's directory.
 
 Private user caches, generated ProbeJS dumps from private modpacks, large vanilla source bundles, and derived local package indexes must stay outside this repository and outside public releases.
 
@@ -48,6 +53,12 @@ Build release artifacts without mutating tracked registry metadata:
 
 ```bash
 node tools/build-local-release.mjs --out release-out --no-registry-update
+```
+
+Verify that a local or remote release manifest is installable:
+
+```bash
+node tools/verify-release-install.mjs release-out/mdm-release-manifest.json
 ```
 
 Run tests:

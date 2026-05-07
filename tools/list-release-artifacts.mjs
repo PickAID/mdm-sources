@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -9,8 +9,10 @@ export async function listReleaseArtifacts(manifestPath) {
   }
 
   const root = dirname(manifestPath);
+  const summaryPath = join(root, "mdm-release-summary.json");
   return [
     manifestPath,
+    ...(await fileExists(summaryPath) ? [summaryPath] : []),
     ...manifest.packages.map((entry) => {
       if (typeof entry.artifactName !== "string" || entry.artifactName === "") {
         throw new Error("Release manifest package artifactName must be a string.");
@@ -19,6 +21,13 @@ export async function listReleaseArtifacts(manifestPath) {
       return join(root, entry.artifactName);
     })
   ];
+}
+
+async function fileExists(path) {
+  return access(path).then(
+    () => true,
+    () => false
+  );
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

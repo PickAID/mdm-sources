@@ -33,7 +33,12 @@ jobs:
         run: node tools/build-local-release.mjs --out release-out --no-registry-update
 
       - name: Verify release manifest
-        run: test -f release-out/mdm-release-manifest.json
+        run: |
+          test -f release-out/mdm-release-manifest.json
+          test -f release-out/mdm-release-summary.json
+
+      - name: Verify release installability
+        run: node tools/verify-release-install.mjs release-out/mdm-release-manifest.json
 
       - name: List release artifacts
         run: node tools/list-release-artifacts.mjs release-out/mdm-release-manifest.json > release-artifacts.txt
