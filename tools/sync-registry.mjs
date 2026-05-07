@@ -11,13 +11,17 @@ export async function syncRegistry(input = {}) {
   await mkdir(join(root, "registry/packages"), { recursive: true });
 
   for (const item of packages) {
-    const currentRelease = existingDetails.get(item.id)?.currentRelease ?? null;
+    const existingDetail = existingDetails.get(item.id);
+    const currentRelease = existingDetail?.currentRelease ?? null;
     const detail = {
       schemaVersion: 1,
       id: item.id,
       sourcePath: item.sourcePath,
       currentRelease
     };
+    if (existingDetail?.metadata !== undefined) {
+      detail.metadata = existingDetail.metadata;
+    }
     const detailPath = join(root, "registry/packages", `${item.id}.json`);
     await writeJson(detailPath, detail);
     entries.push({

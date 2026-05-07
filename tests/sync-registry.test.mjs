@@ -30,6 +30,12 @@ test("syncRegistry scans packages and preserves existing release metadata", asyn
         sha256: "abc123",
         sizeBytes: 32,
         builtAt: "2026-05-07T00:00:00.000Z"
+      },
+      metadata: {
+        storageKind: "sqlite_bundle",
+        sqlite: {
+          requiredTables: ["docs_entries"]
+        }
       }
     }, null, 2)}\n`
   );
@@ -61,6 +67,14 @@ test("syncRegistry scans packages and preserves existing release metadata", asyn
     sourceDetail.sourcePath,
     "packages/sources/vanilla/1.7.10/package.json"
   );
+
+  const sqliteDetail = JSON.parse(
+    await readFile(
+      join(root, "registry/packages/core-docs-search-sqlite.json"),
+      "utf-8"
+    )
+  );
+  assert.deepEqual(sqliteDetail.metadata.sqlite.requiredTables, ["docs_entries"]);
 });
 
 async function writePackage(root, path, input) {

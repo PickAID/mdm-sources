@@ -1,0 +1,84 @@
+{
+  "minecraftVersion": "26.1.2",
+  "targetMappings": [
+    "official",
+    "mojmap",
+    "parchment"
+  ],
+  "purpose": "Describe how MCP can acquire and generate local neoforge source evidence for Minecraft 26.1.2 without distributing source code in mdm-sources.",
+  "distributionPolicy": {
+    "bundlesMinecraftSource": false,
+    "bundlesRemappedSource": false,
+    "localGenerationOnly": true,
+    "publicRepositoryContains": [
+      "acquisition guidance",
+      "version-scoped source profile",
+      "loader-scoped acquisition guidance",
+      "cache ownership policy",
+      "query fallback hints"
+    ],
+    "publicRepositoryMustNotContain": [
+      "vanilla Java source files",
+      "loader API Java source files",
+      "remapped source trees",
+      "generated source indexes",
+      "private workspace caches",
+      "modpack-derived source data"
+    ],
+    "bundlesLoaderSource": false
+  },
+  "localGeneration": {
+    "confirmationRequired": true,
+    "confirmationScope": "package-version",
+    "targets": [
+      {
+        "packageId": "minecraft-26.1.2-source-pack-named",
+        "namespace": "minecraft",
+        "artifactType": "source-pack",
+        "variant": "named",
+        "cacheScope": "runtime-private"
+      },
+      {
+        "packageId": "minecraft-26.1.2-neoforge-api-source-pack",
+        "namespace": "neoforge",
+        "artifactType": "source-pack",
+        "variant": "named",
+        "cacheScope": "runtime-private"
+      }
+    ],
+    "expectedSteps": [
+      "resolve official Minecraft release metadata",
+      "resolve loader Maven or Gradle metadata from the local workspace or user-approved remote metadata",
+      "ask for explicit user confirmation before acquiring or generating source artifacts",
+      "download or generate the local source package in the MCP runtime cache",
+      "derive optional source indexes or snippets only in runtime-private cache",
+      "avoid committing generated source or indexes to mdm-sources"
+    ]
+  },
+  "provenance": {
+    "metadataSource": "Mojang version metadata and MCP runtime acquisition providers",
+    "repositoryStoresSourceBytes": false,
+    "repositoryStoresRemappedSourceBytes": false
+  },
+  "cacheOwnership": {
+    "generatedSourceOwner": "mcp-runtime-cache",
+    "generatedIndexesOwner": "mcp-runtime-cache",
+    "evictionAllowed": true,
+    "workspaceIndependence": "Generated source artifacts must not be stored inside user workspaces unless explicitly exported by the user."
+  },
+  "queryHints": {
+    "capabilities": [
+      "source_lookup",
+      "source_chunk_search"
+    ],
+    "preferredFallbacks": [
+      "source_index_sqlite"
+    ],
+    "agentGuidance": "Use this profile to request local neoforge source generation or to explain why no neoforge source package is currently cached. Do not treat this profile as source content."
+  },
+  "legalNotes": [
+    "This profile is not a redistributable Minecraft source artifact.",
+    "Full source packages, remapped source trees, source indexes, and snippets must be acquired or generated locally with user confirmation."
+  ],
+  "loader": "neoforge"
+}

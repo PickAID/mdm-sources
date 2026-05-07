@@ -54,19 +54,6 @@
         "sha256": "36bd3032e594a3c0c3bec67c4af696853809348dfe4ddb9928f69fae26bd2efa",
         "sizeBytes": 32768,
         "builtAt": "2026-05-07T12:05:34.145Z"
-      },
-      "metadata": {
-        "storageKind": "sqlite_bundle",
-        "installTier": "optional_dataset",
-        "commitPolicy": "repository_manifest",
-        "sqlite": {
-          "databaseName": "core-docs-search-sqlite.sqlite",
-          "minUserVersion": 3,
-          "requiredTables": [
-            "docs_entries",
-            "docs_entries_fts"
-          ]
-        }
       }
     },
     {
@@ -362,6 +349,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.12.2-forge-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.12.2-forge-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.12.2-vanilla-datapack-profile",
       "manifestPath": "registry/packages/minecraft-1.12.2-vanilla-datapack-profile.json",
       "required": false,
@@ -581,6 +575,13 @@
     {
       "id": "minecraft-1.14.3-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.14.3-yarn-mapping-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.14.4-fabric-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.14.4-fabric-source-profile.json",
       "required": false,
       "format": "json",
       "currentRelease": null
@@ -838,6 +839,20 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.16.5-fabric-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.16.5-fabric-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.16.5-forge-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.16.5-forge-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.16.5-vanilla-datapack-profile",
       "manifestPath": "registry/packages/minecraft-1.16.5-vanilla-datapack-profile.json",
       "required": false,
@@ -973,6 +988,27 @@
     {
       "id": "minecraft-1.18.1-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.18.1-yarn-mapping-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.18.2-fabric-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.18.2-fabric-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.18.2-forge-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.18.2-forge-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.18.2-quilt-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.18.2-quilt-source-profile.json",
       "required": false,
       "format": "json",
       "currentRelease": null
@@ -1314,6 +1350,27 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.20.1-fabric-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.1-fabric-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.20.1-forge-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.1-forge-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.20.1-quilt-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.1-quilt-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.20.1-vanilla-datapack-profile",
       "manifestPath": "registry/packages/minecraft-1.20.1-vanilla-datapack-profile.json",
       "required": false,
@@ -1520,6 +1577,27 @@
     {
       "id": "minecraft-1.21-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.21-yarn-mapping-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.1-fabric-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.1-fabric-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.1-neoforge-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.1-neoforge-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.1-quilt-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.1-quilt-source-profile.json",
       "required": false,
       "format": "json",
       "currentRelease": null
@@ -2164,6 +2242,13 @@
     {
       "id": "minecraft-1.6.4-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.6.4-yarn-mapping-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.7.10-forge-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.7.10-forge-source-profile.json",
       "required": false,
       "format": "json",
       "currentRelease": null
@@ -2841,6 +2926,20 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-26.1-fabric-source-profile",
+      "manifestPath": "registry/packages/minecraft-26.1-fabric-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-26.1-neoforge-source-profile",
+      "manifestPath": "registry/packages/minecraft-26.1-neoforge-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-26.1-vanilla-datapack-profile",
       "manifestPath": "registry/packages/minecraft-26.1-vanilla-datapack-profile.json",
       "required": false,
@@ -2892,6 +2991,20 @@
     {
       "id": "minecraft-26.1.1-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-26.1.1-yarn-mapping-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-26.1.2-fabric-source-profile",
+      "manifestPath": "registry/packages/minecraft-26.1.2-fabric-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-26.1.2-neoforge-source-profile",
+      "manifestPath": "registry/packages/minecraft-26.1.2-neoforge-source-profile.json",
       "required": false,
       "format": "json",
       "currentRelease": null

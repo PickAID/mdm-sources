@@ -1,0 +1,59 @@
+{
+  "identity": {
+    "schemaVersion": 2,
+    "packageId": "minecraft-1.7.10-forge-source-profile",
+    "packageVersion": "0.1.0",
+    "namespace": "minecraft",
+    "displayName": "Minecraft 1.7.10 Forge Source Profile",
+    "description": "Public Forge source acquisition profile for Minecraft 1.7.10. It describes legal local generation and cache policy without bundling source."
+  },
+  "target": {
+    "minecraftVersions": [
+      "1.7.10"
+    ],
+    "loaders": [
+      "forge"
+    ],
+    "mappings": [
+      "official",
+      "mojmap",
+      "parchment"
+    ]
+  },
+  "artifact": {
+    "kind": "docs_bundle",
+    "format": "json",
+    "schemaId": "mdm.sources.profile.json",
+    "schemaVersion": 1,
+    "entrypoint": "payload/source-profile.json"
+  },
+  "capabilities": [
+    "source_lookup",
+    "source_chunk_search"
+  ],
+  "policy": {
+    "privacy": "public_release",
+    "lifecycle": [
+      "downloadable"
+    ],
+    "canCommitToRepository": true,
+    "canUploadToPublicRelease": true,
+    "requiresUserConsent": false
+  },
+  "query": {
+    "adapter": "json_docs",
+    "capabilities": [
+      "source_lookup",
+      "source_chunk_search"
+    ],
+    "defaultLimit": 8,
+    "maxLimit": 50,
+    "preferredFallbacks": [
+      "source_index_sqlite"
+    ]
+  },
+  "release": {
+    "channel": "sources",
+    "family": "loader-sources"
+  }
+}

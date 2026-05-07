@@ -4,15 +4,48 @@ import { fileURLToPath } from "node:url";
 
 import { readCatalogVersions } from "./release-catalog-versions.mjs";
 
+const LOADER_SOURCE_PROFILE_TARGETS = [
+  { version: "1.7.10", loader: "forge" },
+  { version: "1.12.2", loader: "forge" },
+  { version: "1.14.4", loader: "fabric" },
+  { version: "1.16.5", loader: "forge" },
+  { version: "1.16.5", loader: "fabric" },
+  { version: "1.18.2", loader: "forge" },
+  { version: "1.18.2", loader: "fabric" },
+  { version: "1.18.2", loader: "quilt" },
+  { version: "1.20.1", loader: "forge" },
+  { version: "1.20.1", loader: "fabric" },
+  { version: "1.20.1", loader: "quilt" },
+  { version: "1.21.1", loader: "neoforge" },
+  { version: "1.21.1", loader: "fabric" },
+  { version: "1.21.1", loader: "quilt" },
+  { version: "26.1", loader: "neoforge" },
+  { version: "26.1", loader: "fabric" },
+  { version: "26.1.2", loader: "neoforge" },
+  { version: "26.1.2", loader: "fabric" }
+];
+
 export async function syncSourceProfiles(input = {}) {
   const root = resolve(input.root ?? process.cwd());
   const versions = input.versions ?? await readSourceVersions(root);
+  const loaderProfiles = [];
 
   for (const version of versions) {
     await writeSourceProfilePackage(root, version);
   }
 
-  return { generatedVersions: versions };
+  for (const target of LOADER_SOURCE_PROFILE_TARGETS.filter((entry) =>
+    versions.includes(entry.version)
+  )) {
+    loaderProfiles.push(await writeLoaderSourceProfilePackage(root, target));
+  }
+
+  return {
+    generatedVersions: versions,
+    loaderProfiles: {
+      generatedPackageIds: loaderProfiles.map((profile) => profile.packageId)
+    }
+  };
 }
 
 async function readSourceVersions(root) {
@@ -29,22 +62,40 @@ async function writeSourceProfilePackage(root, version) {
   );
 }
 
-function buildPackageManifest(version, packageId) {
+async function writeLoaderSourceProfilePackage(root, target) {
+  const packageId = `minecraft-${target.version}-${target.loader}-source-profile`;
+  const packageRoot = join(root, "packages/sources/loaders", target.loader, target.version);
+  await writeJson(
+    join(packageRoot, "package.json"),
+    buildPackageManifest(target.version, packageId, target.loader)
+  );
+  await writeJson(
+    join(packageRoot, "payload/source-profile.json"),
+    buildSourceProfile(target.version, target.loader)
+  );
+  return { packageId };
+}
+
+function buildPackageManifest(version, packageId, loader = "vanilla") {
+  const displayLoader = displayNameForLoader(loader);
+  const isVanilla = loader === "vanilla";
   return {
     identity: {
       schemaVersion: 2,
       packageId,
       packageVersion: "0.1.0",
       namespace: "minecraft",
-      displayName: `Minecraft ${version} Vanilla Source Profile`,
-      description:
-        `Public source acquisition profile for Minecraft ${version}. ` +
-        "It describes legal local generation and cache policy without bundling Minecraft source."
+      displayName: `Minecraft ${version} ${displayLoader} Source Profile`,
+      description: isVanilla
+        ? `Public source acquisition profile for Minecraft ${version}. ` +
+          "It describes legal local generation and cache policy without bundling Minecraft source."
+        : `Public ${displayLoader} source acquisition profile for Minecraft ${version}. ` +
+          "It describes legal local generation and cache policy without bundling source."
     },
     target: {
       minecraftVersions: [version],
-      loaders: ["vanilla"],
-      mappings: ["official", "mojmap"]
+      loaders: [loader],
+      mappings: mappingsForLoader(loader)
     },
     artifact: {
       kind: "docs_bundle",
@@ -70,17 +121,18 @@ function buildPackageManifest(version, packageId) {
     },
     release: {
       channel: "sources",
-      family: "vanilla-sources"
+      family: loader === "vanilla" ? "vanilla-sources" : "loader-sources"
     }
   };
 }
 
-function buildSourceProfile(version) {
-  return {
+function buildSourceProfile(version, loader = "vanilla") {
+  const isVanilla = loader === "vanilla";
+  const profile = {
     minecraftVersion: version,
-    targetMappings: ["official", "mojmap"],
+    targetMappings: mappingsForLoader(loader),
     purpose:
-      `Describe how MCP can acquire and generate local vanilla source evidence for Minecraft ${version} ` +
+      `Describe how MCP can acquire and generate local ${loader} source evidence for Minecraft ${version} ` +
       "without distributing source code in mdm-sources.",
     distributionPolicy: {
       bundlesMinecraftSource: false,
@@ -103,15 +155,7 @@ function buildSourceProfile(version) {
     localGeneration: {
       confirmationRequired: true,
       confirmationScope: "package-version",
-      targets: [
-        {
-          packageId: `minecraft-${version}-source-pack-named`,
-          namespace: "minecraft",
-          artifactType: "source-pack",
-          variant: "named",
-          cacheScope: "runtime-private"
-        }
-      ],
+      targets: localGenerationTargets(version, loader),
       expectedSteps: [
         "resolve official Minecraft release metadata",
         "ask for explicit user confirmation before acquiring or generating source artifacts",
@@ -135,14 +179,81 @@ function buildSourceProfile(version) {
     queryHints: {
       capabilities: ["source_lookup", "source_chunk_search"],
       preferredFallbacks: ["source_index_sqlite"],
-      agentGuidance:
-        "Use this profile to request local source generation or to explain why no vanilla source package is currently cached. Do not treat this profile as source content."
+      agentGuidance: isVanilla
+        ? "Use this profile to request local source generation or to explain why no vanilla source package is currently cached. Do not treat this profile as source content."
+        : `Use this profile to request local ${loader} source generation or to explain why no ${loader} source package is currently cached. Do not treat this profile as source content.`
     },
     legalNotes: [
       "This profile is not a redistributable Minecraft source artifact.",
       "Full source packages, remapped source trees, source indexes, and snippets must be acquired or generated locally with user confirmation."
     ]
   };
+
+  if (!isVanilla) {
+    profile.loader = loader;
+    profile.distributionPolicy.bundlesLoaderSource = false;
+    profile.distributionPolicy.publicRepositoryContains.splice(
+      2,
+      0,
+      "loader-scoped acquisition guidance"
+    );
+    profile.distributionPolicy.publicRepositoryMustNotContain.splice(
+      1,
+      0,
+      "loader API Java source files"
+    );
+    profile.localGeneration.expectedSteps.splice(
+      1,
+      0,
+      "resolve loader Maven or Gradle metadata from the local workspace or user-approved remote metadata"
+    );
+  }
+
+  return profile;
+}
+
+function mappingsForLoader(loader) {
+  if (loader === "fabric" || loader === "quilt") {
+    return ["official", "intermediary", "named", "yarn"];
+  }
+  if (loader === "forge" || loader === "neoforge") {
+    return ["official", "mojmap", "parchment"];
+  }
+  return ["official", "mojmap"];
+}
+
+function displayNameForLoader(loader) {
+  return {
+    fabric: "Fabric",
+    forge: "Forge",
+    neoforge: "NeoForge",
+    quilt: "Quilt",
+    vanilla: "Vanilla"
+  }[loader] ?? loader;
+}
+
+function localGenerationTargets(version, loader) {
+  const targets = [
+    {
+      packageId: `minecraft-${version}-source-pack-named`,
+      namespace: "minecraft",
+      artifactType: "source-pack",
+      variant: "named",
+      cacheScope: "runtime-private"
+    }
+  ];
+
+  if (loader !== "vanilla") {
+    targets.push({
+      packageId: `minecraft-${version}-${loader}-api-source-pack`,
+      namespace: loader,
+      artifactType: "source-pack",
+      variant: "named",
+      cacheScope: "runtime-private"
+    });
+  }
+
+  return targets;
 }
 
 async function writeJson(path, value) {

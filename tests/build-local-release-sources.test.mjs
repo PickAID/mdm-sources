@@ -50,7 +50,7 @@ test("buildLocalRelease publishes public source profile packages through sources
   assert.equal(profile.localGeneration.confirmationRequired, true);
 });
 
-test("repository sources channel contains the vanilla source acquisition profile", async () => {
+test("repository sources channel contains source acquisition profiles", async () => {
   const outDir = await mkdtemp(join(tmpdir(), "mdm-release-out-real-sources-"));
 
   const result = await buildLocalRelease({
@@ -63,11 +63,16 @@ test("repository sources channel contains the vanilla source acquisition profile
 
   const expectedPackageIds = [
     "minecraft-1.7.10-vanilla-source-profile",
+    "minecraft-1.7.10-forge-source-profile",
     "minecraft-1.12.2-vanilla-source-profile",
     "minecraft-1.14.4-vanilla-source-profile",
     "minecraft-1.18.2-vanilla-source-profile",
+    "minecraft-1.20.1-fabric-source-profile",
+    "minecraft-1.20.1-forge-source-profile",
     "minecraft-1.20.1-vanilla-source-profile",
+    "minecraft-1.21.1-neoforge-source-profile",
     "minecraft-1.21.1-vanilla-source-profile",
+    "minecraft-26.1-neoforge-source-profile",
     "minecraft-26.1-vanilla-source-profile",
     "minecraft-26.1.2-vanilla-source-profile"
   ].sort();
@@ -87,9 +92,11 @@ test("repository sources channel contains the vanilla source acquisition profile
     releaseManifest.packages.map((entry) => entry.releaseChannel),
     releaseManifest.packages.map(() => "sources")
   );
-  assert.deepEqual(
-    releaseManifest.packages.map((entry) => entry.releaseFamily),
-    releaseManifest.packages.map(() => "vanilla-sources")
+  assert.ok(
+    releaseManifest.packages.some((entry) => entry.releaseFamily === "vanilla-sources")
+  );
+  assert.ok(
+    releaseManifest.packages.some((entry) => entry.releaseFamily === "loader-sources")
   );
 
   for (const entry of releaseManifest.packages) {
@@ -108,6 +115,16 @@ test("repository sources channel contains the vanilla source acquisition profile
     assert.equal(profile.distributionPolicy.bundlesRemappedSource, false);
     assert.equal(profile.distributionPolicy.localGenerationOnly, true);
     assert.equal(profile.localGeneration.confirmationRequired, true);
+    if (entry.releaseFamily === "loader-sources") {
+      assert.equal(profile.distributionPolicy.bundlesLoaderSource, false);
+      assert.ok(["fabric", "forge", "neoforge", "quilt"].includes(profile.loader));
+    } else {
+      assert.equal(Object.hasOwn(profile, "loader"), false);
+      assert.equal(
+        Object.hasOwn(profile.distributionPolicy, "bundlesLoaderSource"),
+        false
+      );
+    }
   }
 });
 
