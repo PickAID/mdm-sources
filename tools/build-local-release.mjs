@@ -185,7 +185,10 @@ async function buildSqliteSourceIndexArtifact(input) {
     databasePath: artifactPath,
     packageId: input.packageInfo.id,
     userVersion: input.packageInfo.artifactSchemaVersion,
-    files: content.files ?? []
+    files: content.files ?? [],
+    javaSymbols: content.javaSymbols ?? [],
+    javaMembers: content.javaMembers ?? [],
+    sourceChunks: content.sourceChunks ?? []
   });
   return buildArtifactResult(
     artifactName,

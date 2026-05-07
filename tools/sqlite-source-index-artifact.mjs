@@ -42,8 +42,22 @@ export function writeSqliteSourceIndexDatabase(input) {
       "VALUES (?, ?, ?)"
     ].join(" "));
 
+    const files = input.files.map(normalizeSourceFile);
+    const symbols = [
+      ...files.map(fileSymbol),
+      ...(input.javaSymbols ?? []).map(normalizeJavaSymbol)
+    ];
+    const members = [
+      ...files.flatMap((file) => file.members),
+      ...(input.javaMembers ?? []).map((member) => normalizeJavaMember(member))
+    ];
+    const chunks = [
+      ...files.map(fileSummaryChunk),
+      ...(input.sourceChunks ?? []).map(normalizeSourceChunk)
+    ];
+
     database.exec("BEGIN");
-    for (const entry of input.files.map(normalizeSourceFile)) {
+    for (const entry of files) {
       insertFile.run(
         entry.sourcePath,
         "java",
@@ -52,40 +66,44 @@ export function writeSqliteSourceIndexDatabase(input) {
         input.packageId
       );
       insertFileText.run(entry.sourcePath, entry.searchText);
+    }
+    for (const symbol of symbols) {
       insertSymbol.run(
-        entry.sourcePath,
-        entry.packageName,
-        entry.simpleName,
-        entry.className
+        symbol.path,
+        symbol.packageName,
+        symbol.simpleName,
+        symbol.qualifiedName
       );
+    }
+    for (const chunk of chunks) {
       insertChunk.run(
-        entry.sourcePath,
-        "metadata-summary",
-        "file_head",
-        1,
-        Math.max(1, entry.summary.split(/\r?\n/u).length),
-        countTokens(entry.summary),
-        entry.summary
+        chunk.path,
+        chunk.chunkId,
+        chunk.chunkType,
+        chunk.startLine,
+        chunk.endLine,
+        chunk.tokenCount,
+        chunk.content
       );
       insertChunkText.run(
-        entry.sourcePath,
-        "metadata-summary",
-        entry.searchText
+        chunk.path,
+        chunk.chunkId,
+        chunk.content
       );
-      for (const member of entry.members) {
-        insertMember.run(
-          entry.sourcePath,
-          member.packageName,
-          member.ownerSimpleName,
-          member.ownerQualifiedName,
-          member.memberName,
-          member.memberKind,
-          member.signature,
-          member.returnType,
-          member.startLine,
-          member.endLine
-        );
-      }
+    }
+    for (const member of members) {
+      insertMember.run(
+        member.path,
+        member.packageName,
+        member.ownerSimpleName,
+        member.ownerQualifiedName,
+        member.memberName,
+        member.memberKind,
+        member.signature,
+        member.returnType,
+        member.startLine,
+        member.endLine
+      );
     }
     database.exec("COMMIT");
   } catch (error) {
@@ -167,7 +185,7 @@ function normalizeSourceFile(entry) {
   const className = requireString(entry.className, "source file className");
   const packageName = requireString(entry.packageName, "source file packageName");
   const summary = typeof entry.summary === "string" ? entry.summary : "";
-  const sourcePath = requireString(entry.sourcePath, "source file sourcePath");
+  const sourcePath = requireString(entry.sourcePath ?? entry.path, "source file sourcePath");
   const simpleName = className.split(".").at(-1) ?? className;
   return {
     id: entry.id ?? className,
@@ -189,6 +207,7 @@ function normalizeSourceFile(entry) {
     sizeBytes: Buffer.byteLength(summary, "utf8"),
     members: Array.isArray(entry.javaMembers)
       ? entry.javaMembers.map((member) => normalizeJavaMember(member, {
+        path: sourcePath,
         packageName,
         ownerSimpleName: simpleName,
         ownerQualifiedName: className
@@ -197,19 +216,70 @@ function normalizeSourceFile(entry) {
   };
 }
 
-function normalizeJavaMember(member, defaults) {
+function fileSymbol(file) {
+  return {
+    path: file.sourcePath,
+    packageName: file.packageName,
+    simpleName: file.simpleName,
+    qualifiedName: file.className
+  };
+}
+
+function fileSummaryChunk(file) {
+  return {
+    path: file.sourcePath,
+    chunkId: "metadata-summary",
+    chunkType: "file_head",
+    startLine: 1,
+    endLine: Math.max(1, file.summary.split(/\r?\n/u).length),
+    tokenCount: countTokens(file.summary),
+    content: file.summary
+  };
+}
+
+function normalizeJavaSymbol(symbol) {
+  const qualifiedName = requireString(symbol.qualifiedName, "source java symbol qualifiedName");
+  return {
+    path: requireString(symbol.path ?? symbol.sourcePath, "source java symbol path"),
+    packageName: optionalString(symbol.packageName) ?? packageNameFromQualifiedName(qualifiedName) ?? null,
+    simpleName: optionalString(symbol.simpleName) ?? simpleNameFromQualifiedName(qualifiedName),
+    qualifiedName
+  };
+}
+
+function normalizeJavaMember(member, defaults = {}) {
   const memberName = requireString(member.memberName, "source java member memberName");
   const memberKind = requireMemberKind(member.memberKind);
   return {
-    packageName: optionalString(member.packageName) ?? defaults.packageName,
-    ownerSimpleName: optionalString(member.ownerSimpleName) ?? defaults.ownerSimpleName,
-    ownerQualifiedName: optionalString(member.ownerQualifiedName) ?? defaults.ownerQualifiedName,
+    path: requireString(member.path ?? member.sourcePath ?? defaults.path, "source java member path"),
+    packageName: optionalString(member.packageName) ?? defaults.packageName ?? null,
+    ownerSimpleName: requireString(
+      member.ownerSimpleName ?? defaults.ownerSimpleName,
+      "source java member ownerSimpleName"
+    ),
+    ownerQualifiedName: requireString(
+      member.ownerQualifiedName ?? defaults.ownerQualifiedName,
+      "source java member ownerQualifiedName"
+    ),
     memberName,
     memberKind,
     signature: optionalString(member.signature) ?? memberName,
     returnType: optionalString(member.returnType) ?? null,
     startLine: optionalPositiveInteger(member.startLine) ?? 1,
     endLine: optionalPositiveInteger(member.endLine) ?? optionalPositiveInteger(member.startLine) ?? 1
+  };
+}
+
+function normalizeSourceChunk(chunk) {
+  const content = requireString(chunk.content, "source chunk content");
+  return {
+    path: requireString(chunk.path ?? chunk.sourcePath, "source chunk path"),
+    chunkId: requireString(chunk.chunkId, "source chunk chunkId"),
+    chunkType: optionalString(chunk.chunkType) ?? "code_window",
+    startLine: optionalPositiveInteger(chunk.startLine) ?? 1,
+    endLine: optionalPositiveInteger(chunk.endLine) ?? optionalPositiveInteger(chunk.startLine) ?? 1,
+    tokenCount: optionalPositiveInteger(chunk.tokenCount) ?? countTokens(content),
+    content
   };
 }
 
@@ -233,6 +303,15 @@ function requireMemberKind(value) {
 
 function optionalPositiveInteger(value) {
   return Number.isInteger(value) && value > 0 ? value : undefined;
+}
+
+function simpleNameFromQualifiedName(qualifiedName) {
+  return qualifiedName.split(".").at(-1) ?? qualifiedName;
+}
+
+function packageNameFromQualifiedName(qualifiedName) {
+  const parts = qualifiedName.split(".");
+  return parts.length > 1 ? parts.slice(0, -1).join(".") : undefined;
 }
 
 function countTokens(text) {

@@ -57,23 +57,29 @@ function assertSourceIndexSqlite(artifactPath) {
     assert.equal(row.package_id, "minecraft-1.20.1-source-index");
 
     const symbol = database
-      .prepare("SELECT simple_name, qualified_name FROM java_symbols")
-      .get();
-    assert.equal(symbol.simple_name, "ItemStack");
-    assert.equal(symbol.qualified_name, "net.minecraft.world.item.ItemStack");
+      .prepare("SELECT simple_name, qualified_name FROM java_symbols ORDER BY simple_name")
+      .all();
+    assert.deepEqual(symbol.map((entry) => entry.simple_name), [
+      "ItemStack",
+      "ItemStackComponent"
+    ]);
+    assert.equal(symbol[0].qualified_name, "net.minecraft.world.item.ItemStack");
 
     const member = database
-      .prepare("SELECT owner_qualified_name, member_name, member_kind FROM java_members")
-      .get();
-    assert.equal(member.owner_qualified_name, "net.minecraft.world.item.ItemStack");
-    assert.equal(member.member_name, "copy");
-    assert.equal(member.member_kind, "method");
+      .prepare("SELECT owner_qualified_name, member_name, member_kind FROM java_members ORDER BY member_name")
+      .all();
+    assert.deepEqual(member.map((entry) => entry.member_name), ["copy", "isEmpty"]);
+    assert.equal(member[0].owner_qualified_name, "net.minecraft.world.item.ItemStack");
+    assert.equal(member[0].member_kind, "method");
 
     const ftsRows = database
       .prepare("SELECT path, chunk_id FROM fts_chunks WHERE fts_chunks MATCH ?")
-      .all('"ItemStack"');
-    assert.deepEqual(ftsRows.map((entry) => entry.path), [
-      "net/minecraft/world/item/ItemStack.java"
+      .all('"durability"');
+    assert.deepEqual(ftsRows.map((entry) => ({ ...entry })), [
+      {
+        path: "net/minecraft/world/item/ItemStack.java",
+        chunk_id: "durability-rules"
+      }
     ]);
   } finally {
     database.close();
@@ -180,6 +186,35 @@ function sourceIndexPayload() {
             endLine: 12
           }
         ]
+      }
+    ],
+    javaSymbols: [
+      {
+        path: "net/minecraft/world/item/ItemStack.java",
+        qualifiedName: "net.minecraft.world.item.ItemStackComponent"
+      }
+    ],
+    javaMembers: [
+      {
+        path: "net/minecraft/world/item/ItemStack.java",
+        ownerSimpleName: "ItemStack",
+        ownerQualifiedName: "net.minecraft.world.item.ItemStack",
+        memberName: "isEmpty",
+        memberKind: "method",
+        signature: "isEmpty()",
+        returnType: "boolean",
+        startLine: 20,
+        endLine: 22
+      }
+    ],
+    sourceChunks: [
+      {
+        path: "net/minecraft/world/item/ItemStack.java",
+        chunkId: "durability-rules",
+        chunkType: "code_window",
+        startLine: 30,
+        endLine: 34,
+        content: "Durability and component merge rules for ItemStack metadata."
       }
     ]
   };
