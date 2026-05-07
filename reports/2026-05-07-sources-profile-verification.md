@@ -5,17 +5,19 @@ Author: m1hono
 
 ## Scope
 
-This verifies the first public `sources` channel package in `mdm-sources`.
-The package is a profile and acquisition guide only. It does not distribute
-Minecraft source, remapped source, source indexes, snippets, or private cache
-data.
+This verifies the initial multi-version public `sources` channel seed coverage
+in `mdm-sources`. These packages are profiles and acquisition guides only. They
+do not distribute Minecraft source, remapped source, source indexes, snippets,
+or private cache data.
 
 ## Package
 
-Package id:
+Package ids:
 
 ```text
+minecraft-1.18.2-vanilla-source-profile
 minecraft-1.20.1-vanilla-source-profile
+minecraft-1.21.1-vanilla-source-profile
 ```
 
 Release channel and family:
@@ -27,13 +29,15 @@ Release channel and family:
 }
 ```
 
-Artifact:
+Artifacts:
 
 ```text
+minecraft-1.18.2-vanilla-source-profile-0.1.0.mdm-resource.json
 minecraft-1.20.1-vanilla-source-profile-0.1.0.mdm-resource.json
+minecraft-1.21.1-vanilla-source-profile-0.1.0.mdm-resource.json
 ```
 
-The payload states:
+Each payload states:
 
 - `distributionPolicy.bundlesMinecraftSource: false`
 - `distributionPolicy.bundlesRemappedSource: false`
@@ -58,22 +62,43 @@ Results:
 ```text
 sources test: 2 passed
 full mdm-sources tests: 21 passed
-validate: packageCount 15, errorCount 0
-sources release artifacts: 1
+validate: packageCount 17, errorCount 0
+sources release artifacts: 3
+release catalog currentSeedProfiles.sources: 1.18.2, 1.20.1, 1.21.1
 ```
 
 Generated manifest excerpt:
 
 ```json
-{
-  "packageId": "minecraft-1.20.1-vanilla-source-profile",
-  "artifactType": "docs",
-  "releaseChannel": "sources",
-  "releaseFamily": "vanilla-sources",
-  "capabilities": ["source_lookup", "source_chunk_search"],
-  "format": "json",
-  "sizeBytes": 5917
-}
+[
+  {
+    "packageId": "minecraft-1.18.2-vanilla-source-profile",
+    "artifactType": "docs",
+    "releaseChannel": "sources",
+    "releaseFamily": "vanilla-sources",
+    "capabilities": ["source_lookup", "source_chunk_search"],
+    "format": "json",
+    "sizeBytes": 5917
+  },
+  {
+    "packageId": "minecraft-1.20.1-vanilla-source-profile",
+    "artifactType": "docs",
+    "releaseChannel": "sources",
+    "releaseFamily": "vanilla-sources",
+    "capabilities": ["source_lookup", "source_chunk_search"],
+    "format": "json",
+    "sizeBytes": 5917
+  },
+  {
+    "packageId": "minecraft-1.21.1-vanilla-source-profile",
+    "artifactType": "docs",
+    "releaseChannel": "sources",
+    "releaseFamily": "vanilla-sources",
+    "capabilities": ["source_lookup", "source_chunk_search"],
+    "format": "json",
+    "sizeBytes": 5917
+  }
+]
 ```
 
 ## Boundary

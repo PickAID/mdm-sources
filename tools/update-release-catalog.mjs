@@ -64,7 +64,8 @@ export function buildReleaseCatalog(manifest, input = {}) {
     },
     currentSeedProfiles: {
       datapack: ["1.18.2", "1.20.1", "1.21.1"],
-      resourcepack: ["1.18.2", "1.20.1", "1.21.1"]
+      resourcepack: ["1.18.2", "1.20.1", "1.21.1"],
+      sources: ["1.18.2", "1.20.1", "1.21.1"]
     },
     releases
   };

@@ -21,6 +21,11 @@ test("minecraft release catalog covers all currently synced official releases", 
   assert.ok(catalog.releases.some((release) => release.id === "1.0"));
   assert.ok(catalog.releases.every((release) => release.metadataUrl.startsWith("https://piston-meta.mojang.com/")));
   assert.match(catalog.localGenerationPolicy.vanillaSource, /Do not commit Minecraft source/);
+  assert.deepEqual(catalog.currentSeedProfiles.sources, [
+    "1.18.2",
+    "1.20.1",
+    "1.21.1"
+  ]);
 });
 
 test("updateReleaseCatalog writes compact release catalog JSON from a manifest fixture", async () => {

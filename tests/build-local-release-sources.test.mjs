@@ -62,18 +62,40 @@ test("repository sources channel contains the vanilla source acquisition profile
   });
 
   assert.deepEqual(result.artifacts.map((artifact) => artifact.packageId), [
-    "minecraft-1.20.1-vanilla-source-profile"
+    "minecraft-1.18.2-vanilla-source-profile",
+    "minecraft-1.20.1-vanilla-source-profile",
+    "minecraft-1.21.1-vanilla-source-profile"
   ]);
 
   const releaseManifest = JSON.parse(
     await readFile(join(outDir, "mdm-release-manifest.json"), "utf-8")
   );
-  assert.equal(releaseManifest.packages[0].releaseChannel, "sources");
-  assert.equal(releaseManifest.packages[0].releaseFamily, "vanilla-sources");
-  assert.deepEqual(releaseManifest.packages[0].capabilities, [
-    "source_lookup",
-    "source_chunk_search"
-  ]);
+  assert.deepEqual(
+    releaseManifest.packages.map((entry) => entry.releaseChannel),
+    ["sources", "sources", "sources"]
+  );
+  assert.deepEqual(
+    releaseManifest.packages.map((entry) => entry.releaseFamily),
+    ["vanilla-sources", "vanilla-sources", "vanilla-sources"]
+  );
+
+  for (const entry of releaseManifest.packages) {
+    assert.deepEqual(entry.capabilities, [
+      "source_lookup",
+      "source_chunk_search"
+    ]);
+    const artifact = JSON.parse(
+      await readFile(join(outDir, entry.artifactName), "utf-8")
+    );
+    const profile = JSON.parse(
+      artifact.payload["payload/source-profile.json"].content
+    );
+
+    assert.equal(profile.distributionPolicy.bundlesMinecraftSource, false);
+    assert.equal(profile.distributionPolicy.bundlesRemappedSource, false);
+    assert.equal(profile.distributionPolicy.localGenerationOnly, true);
+    assert.equal(profile.localGeneration.confirmationRequired, true);
+  }
 });
 
 async function writeSourceProfileFixture(root) {
