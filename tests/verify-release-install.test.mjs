@@ -124,6 +124,41 @@ test("verifyReleaseInstall rejects empty source index sqlite artifacts", async (
   );
 });
 
+test("verifyReleaseInstall rejects sqlite artifacts below minUserVersion", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-verify-min-user-version-"));
+  const artifactName = "core-docs-search-sqlite-0.1.0.sqlite";
+  const artifactPath = join(root, artifactName);
+  writeDocsSqliteWithUserVersion(artifactPath, 1);
+  const bytes = await readFile(artifactPath);
+  await writeFile(
+    join(root, "mdm-release-manifest.json"),
+    JSON.stringify({
+      schemaVersion: 1,
+      packages: [
+        {
+          packageId: "core-docs-search-sqlite",
+          artifactName,
+          format: "sqlite",
+          queryAdapter: "sqlite_docs",
+          sha256: sha256(bytes),
+          sizeBytes: bytes.length,
+          metadata: {
+            sqlite: {
+              minUserVersion: 3,
+              requiredTables: ["docs_entries", "docs_entries_fts"]
+            }
+          }
+        }
+      ]
+    })
+  );
+
+  await assert.rejects(
+    verifyReleaseInstall({ manifest: join(root, "mdm-release-manifest.json") }),
+    /sqlite user_version 1 is below required 3/
+  );
+});
+
 async function writeSqliteDocsFixtureRepository(root) {
   await mkdir(join(root, "packages/docs/core/search-sqlite/payload"), {
     recursive: true
@@ -207,6 +242,21 @@ function writeEmptySourceIndexSqlite(path) {
       "CREATE VIRTUAL TABLE fts_files USING fts5(path UNINDEXED, content);",
       "CREATE TABLE source_chunks(path TEXT, chunk_id TEXT, chunk_type TEXT, start_line INTEGER, end_line INTEGER, token_count INTEGER, content TEXT, PRIMARY KEY(path, chunk_id));",
       "CREATE VIRTUAL TABLE fts_chunks USING fts5(path UNINDEXED, chunk_id UNINDEXED, content);"
+    ].join(" "));
+  } finally {
+    database.close();
+  }
+}
+
+function writeDocsSqliteWithUserVersion(path, userVersion) {
+  const database = new DatabaseSync(path);
+  try {
+    database.exec([
+      `PRAGMA user_version = ${userVersion};`,
+      "CREATE TABLE docs_entries(id TEXT PRIMARY KEY, title TEXT, summary TEXT, content TEXT, tags TEXT, source_path TEXT, priority INTEGER);",
+      "CREATE VIRTUAL TABLE docs_entries_fts USING fts5(id UNINDEXED, title, summary, content, tags);",
+      "INSERT INTO docs_entries(id, title, summary, content, tags, source_path, priority) VALUES ('entry', 'Entry', 'Summary', 'Content', 'tag', 'payload.json', 1);",
+      "INSERT INTO docs_entries_fts(id, title, summary, content, tags) VALUES ('entry', 'Entry', 'Summary', 'Content', 'tag');"
     ].join(" "));
   } finally {
     database.close();

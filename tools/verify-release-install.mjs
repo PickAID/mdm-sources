@@ -123,11 +123,25 @@ async function verifySqliteArtifact(tempDir, entry, bytes, requiredTables) {
         throw new Error(`${entry.packageId} sqlite artifact missing ${tableName}`);
       }
     }
+    verifySqliteUserVersion(database, entry);
     if (entry.queryAdapter === "source_index_sqlite") {
       verifySourceIndexSqliteContent(database, entry);
     }
   } finally {
     database.close();
+  }
+}
+
+function verifySqliteUserVersion(database, entry) {
+  const minUserVersion = entry.metadata?.sqlite?.minUserVersion;
+  if (typeof minUserVersion !== "number") {
+    return;
+  }
+  const userVersion = database.prepare("PRAGMA user_version").get().user_version;
+  if (userVersion < minUserVersion) {
+    throw new Error(
+      `${entry.packageId} sqlite user_version ${userVersion} is below required ${minUserVersion}`
+    );
   }
 }
 
