@@ -64,6 +64,7 @@ test("repository sources channel contains the vanilla source acquisition profile
   const expectedPackageIds = [
     "minecraft-1.7.10-vanilla-source-profile",
     "minecraft-1.12.2-vanilla-source-profile",
+    "minecraft-1.14.4-vanilla-source-profile",
     "minecraft-1.18.2-vanilla-source-profile",
     "minecraft-1.20.1-vanilla-source-profile",
     "minecraft-1.21.1-vanilla-source-profile",
@@ -71,8 +72,11 @@ test("repository sources channel contains the vanilla source acquisition profile
     "minecraft-26.1.2-vanilla-source-profile"
   ].sort();
 
+  assert.ok(result.artifacts.length >= 100);
   assert.deepEqual(
-    result.artifacts.map((artifact) => artifact.packageId).sort(),
+    expectedPackageIds.filter((packageId) =>
+      result.artifacts.some((artifact) => artifact.packageId === packageId)
+    ),
     expectedPackageIds
   );
 

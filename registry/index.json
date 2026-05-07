@@ -69,8 +69,225 @@
       }
     },
     {
+      "id": "minecraft-1.0-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.0-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.10-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.10-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.10.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.10.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.10.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.10.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.11-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.11-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.11.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.11.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.11.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.11.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.12-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.12-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.12.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.12.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.12.2-vanilla-source-profile",
       "manifestPath": "registry/packages/minecraft-1.12.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.13-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.13-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.13.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.13.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.13.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.13.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.14-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.14-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.14.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.14.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.14.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.14.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.14.3-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.14.3-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.14.4-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.14.4-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.15-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.15-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.15.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.15.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.15.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.15.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.16-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.16-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.16.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.16.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.16.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.16.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.16.3-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.16.3-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.16.4-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.16.4-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.16.5-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.16.5-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.17-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.17-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.17.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.17.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.18-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.18-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.18.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.18.1-vanilla-source-profile.json",
       "required": false,
       "format": "json",
       "currentRelease": null
@@ -92,6 +309,83 @@
     {
       "id": "minecraft-1.18.2-vanilla-source-profile",
       "manifestPath": "registry/packages/minecraft-1.18.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.19-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.19-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.19.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.19.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.19.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.19.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.19.3-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.19.3-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.19.4-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.19.4-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.2.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.2.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.2.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.2.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.2.3-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.2.3-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.2.4-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.2.4-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.2.5-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.2.5-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.20-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.20-vanilla-source-profile.json",
       "required": false,
       "format": "json",
       "currentRelease": null
@@ -140,6 +434,48 @@
       }
     },
     {
+      "id": "minecraft-1.20.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.20.3-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.3-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.20.4-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.4-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.20.5-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.5-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.20.6-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.6-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.21.1-vanilla-datapack-profile",
       "manifestPath": "registry/packages/minecraft-1.21.1-vanilla-datapack-profile.json",
       "required": false,
@@ -161,6 +497,160 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.21.10-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.10-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.11-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.11-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.3-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.3-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.4-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.4-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.5-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.5-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.6-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.6-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.7-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.7-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.8-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.8-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.9-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.21.9-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.3.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.3.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.3.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.3.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.4.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.4.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.4.4-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.4.4-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.4.5-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.4.5-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.4.6-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.4.6-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.4.7-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.4.7-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.5.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.5.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.5.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.5.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.6.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.6.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.6.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.6.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.6.4-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.6.4-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.7.10-vanilla-source-profile",
       "manifestPath": "registry/packages/minecraft-1.7.10-vanilla-source-profile.json",
       "required": false,
@@ -168,8 +658,176 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.7.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.7.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.7.3-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.7.3-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.7.4-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.7.4-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.7.5-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.7.5-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.7.6-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.7.6-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.7.7-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.7.7-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.7.8-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.7.8-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.7.9-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.7.9-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.8-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.8-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.8.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.8.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.8.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.8.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.8.3-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.8.3-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.8.4-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.8.4-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.8.5-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.8.5-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.8.6-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.8.6-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.8.7-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.8.7-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.8.8-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.8.8-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.8.9-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.8.9-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.9-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.9-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.9.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.9.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.9.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.9.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.9.3-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.9.3-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.9.4-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.9.4-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-26.1-vanilla-source-profile",
       "manifestPath": "registry/packages/minecraft-26.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-26.1.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-26.1.1-vanilla-source-profile.json",
       "required": false,
       "format": "json",
       "currentRelease": null

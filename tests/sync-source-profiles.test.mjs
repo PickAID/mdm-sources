@@ -6,13 +6,17 @@ import test from "node:test";
 
 import { syncSourceProfiles } from "../tools/sync-source-profiles.mjs";
 
-test("syncSourceProfiles generates source packages from catalog seed versions", async () => {
+test("syncSourceProfiles generates source packages from every catalog release", async () => {
   const root = await mkdtemp(join(tmpdir(), "mdm-sync-source-profiles-"));
-  await writeCatalog(root, ["1.7.10", "1.12.2", "26.1"]);
+  await writeCatalog(root);
 
   const result = await syncSourceProfiles({ root });
 
-  assert.deepEqual(result.generatedVersions, ["1.7.10", "1.12.2", "26.1"]);
+  assert.deepEqual(result.generatedVersions, [
+    "26.1",
+    "1.14.4",
+    "1.7.10"
+  ]);
   for (const version of result.generatedVersions) {
     const packageJson = JSON.parse(
       await readFile(
@@ -37,7 +41,7 @@ test("syncSourceProfiles generates source packages from catalog seed versions", 
   }
 });
 
-async function writeCatalog(root, versions) {
+async function writeCatalog(root) {
   await mkdir(join(root, "packages/minecraft/releases/catalog/payload"), {
     recursive: true
   });
@@ -45,9 +49,11 @@ async function writeCatalog(root, versions) {
     join(root, "packages/minecraft/releases/catalog/payload/release-catalog.json"),
     `${JSON.stringify({
       schemaVersion: 1,
-      currentSeedProfiles: {
-        sources: versions
-      }
+      releases: [
+        { id: "26.1" },
+        { id: "1.14.4" },
+        { id: "1.7.10" }
+      ]
     }, null, 2)}\n`
   );
 }

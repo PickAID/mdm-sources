@@ -7,7 +7,7 @@ const CATALOG_PATH =
 
 export async function syncSourceProfiles(input = {}) {
   const root = resolve(input.root ?? process.cwd());
-  const versions = input.versions ?? await readSourceSeedVersions(root);
+  const versions = input.versions ?? await readSourceVersions(root);
 
   for (const version of versions) {
     await writeSourceProfilePackage(root, version);
@@ -16,13 +16,21 @@ export async function syncSourceProfiles(input = {}) {
   return { generatedVersions: versions };
 }
 
-async function readSourceSeedVersions(root) {
+async function readSourceVersions(root) {
   const catalog = JSON.parse(await readFile(join(root, CATALOG_PATH), "utf-8"));
-  const versions = catalog.currentSeedProfiles?.sources;
-  if (!Array.isArray(versions) || versions.length === 0) {
-    throw new Error("release catalog currentSeedProfiles.sources must list versions.");
+  const releaseVersions = catalog.releases
+    ?.map((release) => release?.id)
+    .filter((version) => typeof version === "string" && version.length > 0);
+  if (releaseVersions?.length > 0) {
+    return releaseVersions;
   }
-  return versions;
+
+  const seedVersions = catalog.currentSeedProfiles?.sources;
+  if (Array.isArray(seedVersions) && seedVersions.length > 0) {
+    return seedVersions;
+  }
+
+  throw new Error("release catalog must list releases or currentSeedProfiles.sources.");
 }
 
 async function writeSourceProfilePackage(root, version) {
