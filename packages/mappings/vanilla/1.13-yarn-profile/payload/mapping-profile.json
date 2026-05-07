@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "profileKind": "mapping",
+  "minecraftVersion": "1.13",
+  "generatedFrom": {
+    "kind": "mojang_release_catalog",
+    "metadataUrl": "https://piston-meta.mojang.com/v1/packages/c24c2fd37c8ca2e1c18721e2c77caf4d24c87f92/1.13.json",
+    "sha1": "c24c2fd37c8ca2e1c18721e2c77caf4d24c87f92",
+    "releaseTime": "2018-07-18T15:11:46+00:00"
+  },
+  "mappingNamespaces": [
+    "official",
+    "intermediary",
+    "named",
+    "yarn"
+  ],
+  "purpose": "Explain mapping namespace relationships and guide MCP toward legal local mapping acquisition.",
+  "namespaceGraph": [
+    {
+      "from": "official",
+      "to": "intermediary",
+      "role": "runtime_to_stable_bridge"
+    },
+    {
+      "from": "intermediary",
+      "to": "named",
+      "role": "stable_to_human_readable"
+    },
+    {
+      "from": "named",
+      "to": "yarn",
+      "role": "public_named_mapping_family"
+    }
+  ],
+  "lookupPolicy": {
+    "bundlesGeneratedMappings": false,
+    "bundlesRemappedSource": false,
+    "localGenerationOnly": true,
+    "preferredLocalAdapters": [
+      "mapping_index",
+      "source_index_sqlite"
+    ]
+  },
+  "upstreamLicensing": [
+    {
+      "namespace": "yarn",
+      "redistributionPolicy": "do_not_bundle_tables_until_verified",
+      "acquisition": "download_or_generate_locally_after_user_request"
+    }
+  ],
+  "cacheOwnership": {
+    "generatedMappingOwner": "mcp-runtime-cache",
+    "evictionAllowed": true
+  }
+}

@@ -1,6 +1,7 @@
 import { fileURLToPath } from "node:url";
 
 import { syncRegistry } from "./sync-registry.mjs";
+import { syncMappingProfiles } from "./sync-mapping-profiles.mjs";
 import { syncSourceProfiles } from "./sync-source-profiles.mjs";
 import { syncVanillaDataProfiles } from "./sync-vanilla-data-profiles.mjs";
 
@@ -8,9 +9,16 @@ export async function syncRepository(input = {}) {
   const sourceProfiles = await syncSourceProfiles(input);
   const { datapackProfiles, resourcepackProfiles } =
     await syncVanillaDataProfiles(input);
+  const mappingProfiles = await syncMappingProfiles(input);
   const registry = await syncRegistry(input);
 
-  return { sourceProfiles, datapackProfiles, resourcepackProfiles, registry };
+  return {
+    sourceProfiles,
+    datapackProfiles,
+    resourcepackProfiles,
+    mappingProfiles,
+    registry
+  };
 }
 
 function parseArgs(argv) {

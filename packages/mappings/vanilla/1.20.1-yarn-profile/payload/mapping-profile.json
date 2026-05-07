@@ -1,26 +1,55 @@
 {
+  "schemaVersion": 1,
+  "profileKind": "mapping",
   "minecraftVersion": "1.20.1",
-  "mappingNamespaces": ["official", "intermediary", "named", "yarn"],
+  "generatedFrom": {
+    "kind": "mojang_release_catalog",
+    "metadataUrl": "https://piston-meta.mojang.com/v1/packages/87eb16d697d907ef89c710766ee61bba7646d2af/1.20.1.json",
+    "sha1": "87eb16d697d907ef89c710766ee61bba7646d2af",
+    "releaseTime": "2023-06-12T13:25:51+00:00"
+  },
+  "mappingNamespaces": [
+    "official",
+    "intermediary",
+    "named",
+    "yarn"
+  ],
   "purpose": "Explain mapping namespace relationships and guide MCP toward legal local mapping acquisition.",
-  "rules": [
+  "namespaceGraph": [
     {
       "from": "official",
       "to": "intermediary",
-      "use": "Bridge obfuscated runtime or official names into a stable Fabric-compatible namespace."
+      "role": "runtime_to_stable_bridge"
     },
     {
       "from": "intermediary",
       "to": "named",
-      "use": "Resolve human-readable names for source navigation and stacktrace explanation."
+      "role": "stable_to_human_readable"
     },
     {
       "from": "named",
       "to": "yarn",
-      "use": "Treat Yarn as the public named mapping family. Full mapping tables should be downloaded or generated locally when the user needs them."
+      "role": "public_named_mapping_family"
     }
   ],
-  "distributionPolicy": {
+  "lookupPolicy": {
     "bundlesGeneratedMappings": false,
-    "reason": "Generated mapping tables and remapped source packages should be acquired by MCP on demand and cached locally according to their upstream licenses."
+    "bundlesRemappedSource": false,
+    "localGenerationOnly": true,
+    "preferredLocalAdapters": [
+      "mapping_index",
+      "source_index_sqlite"
+    ]
+  },
+  "upstreamLicensing": [
+    {
+      "namespace": "yarn",
+      "redistributionPolicy": "do_not_bundle_tables_until_verified",
+      "acquisition": "download_or_generate_locally_after_user_request"
+    }
+  ],
+  "cacheOwnership": {
+    "generatedMappingOwner": "mcp-runtime-cache",
+    "evictionAllowed": true
   }
 }

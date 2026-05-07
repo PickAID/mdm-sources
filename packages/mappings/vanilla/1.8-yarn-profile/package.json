@@ -1,0 +1,60 @@
+{
+  "identity": {
+    "schemaVersion": 2,
+    "packageId": "minecraft-1.8-yarn-mapping-profile",
+    "packageVersion": "0.1.0",
+    "namespace": "minecraft",
+    "displayName": "Minecraft 1.8 Yarn Mapping Profile",
+    "description": "Generated public mapping profile for Minecraft 1.8. It explains namespaces and local acquisition without bundling mapping tables."
+  },
+  "target": {
+    "minecraftVersions": [
+      "1.8"
+    ],
+    "loaders": [
+      "fabric"
+    ],
+    "mappings": [
+      "official",
+      "intermediary",
+      "named",
+      "yarn"
+    ]
+  },
+  "artifact": {
+    "kind": "mapping_bundle",
+    "format": "json",
+    "schemaId": "mdm.mappings.profile.json",
+    "schemaVersion": 1,
+    "entrypoint": "payload/mapping-profile.json"
+  },
+  "capabilities": [
+    "mapping_lookup",
+    "mapping_explain"
+  ],
+  "policy": {
+    "privacy": "public_release",
+    "lifecycle": [
+      "downloadable"
+    ],
+    "canCommitToRepository": true,
+    "canUploadToPublicRelease": true,
+    "requiresUserConsent": false
+  },
+  "query": {
+    "adapter": "mapping_index",
+    "capabilities": [
+      "mapping_lookup",
+      "mapping_explain"
+    ],
+    "defaultLimit": 8,
+    "maxLimit": 50,
+    "preferredFallbacks": [
+      "source_index_sqlite"
+    ]
+  },
+  "release": {
+    "channel": "mappings",
+    "family": "vanilla-mappings"
+  }
+}

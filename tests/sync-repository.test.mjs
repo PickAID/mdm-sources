@@ -17,15 +17,18 @@ test("syncRepository generates source profiles and registry before validation", 
   assert.deepEqual(result.sourceProfiles.generatedVersions, ["1.7.10", "26.1"]);
   assert.deepEqual(result.datapackProfiles.generatedVersions, ["1.7.10", "26.1"]);
   assert.deepEqual(result.resourcepackProfiles.generatedVersions, ["1.7.10", "26.1"]);
+  assert.deepEqual(result.mappingProfiles.generatedVersions, ["1.7.10", "26.1"]);
   assert.deepEqual(result.registry.packageIds, [
     "minecraft-1.7.10-vanilla-datapack-profile",
     "minecraft-1.7.10-vanilla-resourcepack-profile",
     "minecraft-1.7.10-vanilla-source-profile",
+    "minecraft-1.7.10-yarn-mapping-profile",
     "minecraft-26.1-vanilla-datapack-profile",
     "minecraft-26.1-vanilla-resourcepack-profile",
-    "minecraft-26.1-vanilla-source-profile"
+    "minecraft-26.1-vanilla-source-profile",
+    "minecraft-26.1-yarn-mapping-profile"
   ]);
-  assert.equal(validation.packageCount, 6);
+  assert.equal(validation.packageCount, 8);
   assert.deepEqual(validation.errors, []);
 
   const datapackProfile = JSON.parse(
@@ -44,6 +47,15 @@ test("syncRepository generates source profiles and registry before validation", 
   assert.equal(datapackProfile.packMcmeta.packFormatSource, "runtime_resolved");
   assert.equal(resourcepackProfile.minecraftVersion, "26.1");
   assert.equal(resourcepackProfile.packMcmeta.packFormatSource, "runtime_resolved");
+  const mappingProfile = JSON.parse(
+    await readFile(
+      join(root, "packages/mappings/vanilla/26.1-yarn-profile/payload/mapping-profile.json"),
+      "utf-8"
+    )
+  );
+  assert.equal(mappingProfile.minecraftVersion, "26.1");
+  assert.equal(mappingProfile.profileKind, "mapping");
+  assert.equal(mappingProfile.lookupPolicy.bundlesGeneratedMappings, false);
 
   const registry = JSON.parse(
     await readFile(join(root, "registry/index.json"), "utf-8")
@@ -54,9 +66,11 @@ test("syncRepository generates source profiles and registry before validation", 
       "registry/packages/minecraft-1.7.10-vanilla-datapack-profile.json",
       "registry/packages/minecraft-1.7.10-vanilla-resourcepack-profile.json",
       "registry/packages/minecraft-1.7.10-vanilla-source-profile.json",
+      "registry/packages/minecraft-1.7.10-yarn-mapping-profile.json",
       "registry/packages/minecraft-26.1-vanilla-datapack-profile.json",
       "registry/packages/minecraft-26.1-vanilla-resourcepack-profile.json",
-      "registry/packages/minecraft-26.1-vanilla-source-profile.json"
+      "registry/packages/minecraft-26.1-vanilla-source-profile.json",
+      "registry/packages/minecraft-26.1-yarn-mapping-profile.json"
     ]
   );
 });

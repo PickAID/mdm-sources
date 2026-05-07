@@ -5,12 +5,21 @@
     "packageVersion": "0.1.0",
     "namespace": "minecraft",
     "displayName": "Minecraft 1.20.1 Yarn Mapping Profile",
-    "description": "Curated public mapping profile that explains mapping namespaces and points MCP to legal acquisition paths without bundling generated mapping datasets."
+    "description": "Generated public mapping profile for Minecraft 1.20.1. It explains namespaces and local acquisition without bundling mapping tables."
   },
   "target": {
-    "minecraftVersions": ["1.20.1"],
-    "loaders": ["fabric"],
-    "mappings": ["official", "intermediary", "named", "yarn"]
+    "minecraftVersions": [
+      "1.20.1"
+    ],
+    "loaders": [
+      "fabric"
+    ],
+    "mappings": [
+      "official",
+      "intermediary",
+      "named",
+      "yarn"
+    ]
   },
   "artifact": {
     "kind": "mapping_bundle",
@@ -19,20 +28,30 @@
     "schemaVersion": 1,
     "entrypoint": "payload/mapping-profile.json"
   },
-  "capabilities": ["mapping_lookup", "mapping_explain"],
+  "capabilities": [
+    "mapping_lookup",
+    "mapping_explain"
+  ],
   "policy": {
     "privacy": "public_release",
-    "lifecycle": ["downloadable"],
+    "lifecycle": [
+      "downloadable"
+    ],
     "canCommitToRepository": true,
     "canUploadToPublicRelease": true,
     "requiresUserConsent": false
   },
   "query": {
     "adapter": "mapping_index",
-    "capabilities": ["mapping_lookup", "mapping_explain"],
+    "capabilities": [
+      "mapping_lookup",
+      "mapping_explain"
+    ],
     "defaultLimit": 8,
     "maxLimit": 50,
-    "preferredFallbacks": []
+    "preferredFallbacks": [
+      "source_index_sqlite"
+    ]
   },
   "release": {
     "channel": "mappings",
