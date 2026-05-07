@@ -64,7 +64,27 @@
           },
           "releaseFamily": { "type": "string", "minLength": 1 },
           "capabilities": { "type": "array", "items": { "type": "string" } },
-          "metadata": { "type": "object" },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "storageKind": { "type": "string", "minLength": 1 },
+              "installTier": { "type": "string", "minLength": 1 },
+              "commitPolicy": { "type": "string", "minLength": 1 },
+              "sqlite": {
+                "type": "object",
+                "properties": {
+                  "databaseName": { "type": "string", "minLength": 1 },
+                  "minUserVersion": { "type": "number" },
+                  "requiredTables": {
+                    "type": "array",
+                    "items": { "type": "string", "minLength": 1 }
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": true
+          },
           "artifactName": {
             "type": "string",
             "minLength": 1,
