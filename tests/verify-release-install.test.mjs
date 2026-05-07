@@ -1,11 +1,16 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { createRequire } from "node:module";
+import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
 import { buildLocalRelease } from "../tools/build-local-release.mjs";
 import { verifyReleaseInstall } from "../tools/verify-release-install.mjs";
+
+const require = createRequire(import.meta.url);
+const { DatabaseSync } = require("node:sqlite");
 
 test("verifyReleaseInstall validates local manifest artifacts and sqlite tables", async () => {
   const repoRoot = await mkdtemp(join(tmpdir(), "mdm-verify-repo-"));
@@ -90,6 +95,35 @@ test("verifyReleaseInstall rejects artifact checksum mismatches", async () => {
   );
 });
 
+test("verifyReleaseInstall rejects empty source index sqlite artifacts", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-verify-empty-source-index-"));
+  const artifactName = "minecraft-1.20.1-source-index-0.1.0.sqlite";
+  const artifactPath = join(root, artifactName);
+  writeEmptySourceIndexSqlite(artifactPath);
+  const bytes = await readFile(artifactPath);
+  await writeFile(
+    join(root, "mdm-release-manifest.json"),
+    JSON.stringify({
+      schemaVersion: 1,
+      packages: [
+        {
+          packageId: "minecraft-1.20.1-source-index",
+          artifactName,
+          format: "sqlite",
+          queryAdapter: "source_index_sqlite",
+          sha256: sha256(bytes),
+          sizeBytes: bytes.length
+        }
+      ]
+    })
+  );
+
+  await assert.rejects(
+    verifyReleaseInstall({ manifest: join(root, "mdm-release-manifest.json") }),
+    /source index sqlite must contain indexed files and chunks/
+  );
+});
+
 async function writeSqliteDocsFixtureRepository(root) {
   await mkdir(join(root, "packages/docs/core/search-sqlite/payload"), {
     recursive: true
@@ -161,4 +195,24 @@ function sqliteDocsPayload() {
       }
     ]
   };
+}
+
+function writeEmptySourceIndexSqlite(path) {
+  const database = new DatabaseSync(path);
+  try {
+    database.exec([
+      "CREATE TABLE files(path TEXT PRIMARY KEY, kind TEXT, size_bytes INTEGER, sha256 TEXT, package_id TEXT);",
+      "CREATE TABLE java_symbols(path TEXT, package_name TEXT, simple_name TEXT, qualified_name TEXT);",
+      "CREATE TABLE java_members(path TEXT, package_name TEXT, owner_simple_name TEXT, owner_qualified_name TEXT, member_name TEXT, member_kind TEXT, signature TEXT, return_type TEXT, start_line INTEGER, end_line INTEGER);",
+      "CREATE VIRTUAL TABLE fts_files USING fts5(path UNINDEXED, content);",
+      "CREATE TABLE source_chunks(path TEXT, chunk_id TEXT, chunk_type TEXT, start_line INTEGER, end_line INTEGER, token_count INTEGER, content TEXT, PRIMARY KEY(path, chunk_id));",
+      "CREATE VIRTUAL TABLE fts_chunks USING fts5(path UNINDEXED, chunk_id UNINDEXED, content);"
+    ].join(" "));
+  } finally {
+    database.close();
+  }
+}
+
+function sha256(body) {
+  return createHash("sha256").update(body).digest("hex");
 }

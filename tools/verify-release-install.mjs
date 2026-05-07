@@ -123,9 +123,25 @@ async function verifySqliteArtifact(tempDir, entry, bytes, requiredTables) {
         throw new Error(`${entry.packageId} sqlite artifact missing ${tableName}`);
       }
     }
+    if (entry.queryAdapter === "source_index_sqlite") {
+      verifySourceIndexSqliteContent(database, entry);
+    }
   } finally {
     database.close();
   }
+}
+
+function verifySourceIndexSqliteContent(database, entry) {
+  const fileCount = countRows(database, "files");
+  const chunkCount = countRows(database, "source_chunks");
+  const ftsChunkCount = countRows(database, "fts_chunks");
+  if (fileCount === 0 || chunkCount === 0 || ftsChunkCount === 0) {
+    throw new Error(`${entry.packageId} source index sqlite must contain indexed files and chunks`);
+  }
+}
+
+function countRows(database, tableName) {
+  return database.prepare(`SELECT COUNT(*) AS count FROM ${tableName}`).get().count;
 }
 
 function filePathFromRef(ref) {
