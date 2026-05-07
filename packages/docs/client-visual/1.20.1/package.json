@@ -2,7 +2,7 @@
   "identity": {
     "schemaVersion": 2,
     "packageId": "client-visual-1.20.1-guidance",
-    "packageVersion": "0.1.0",
+    "packageVersion": "0.2.0",
     "namespace": "client-visual",
     "displayName": "Client Visual 1.20.1 Guidance",
     "description": "Public client visual guidance seed for UI, renderers, shaders, models, atlases, resource-pack assets, and evidence chains."

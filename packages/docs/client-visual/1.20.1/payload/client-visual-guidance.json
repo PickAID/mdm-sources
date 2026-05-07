@@ -77,9 +77,240 @@
     "source proof: file, type declaration, dependency source, local jar/source archive, LSP result, or versioned docs",
     "mismatch risk when evidence appears to belong to another loader or version"
   ],
+  "visualTargets": [
+    {
+      "id": "ui-surface",
+      "entryEvidence": [
+        "screen class or script entrypoint",
+        "menu/container or open path",
+        "screen registration",
+        "widget tree or layout owner",
+        "GUI texture resource location"
+      ],
+      "assetRelations": [
+        "screen -> texture",
+        "widget -> texture region",
+        "texture -> metadata when present",
+        "texture -> atlas or sprite source when indirect"
+      ],
+      "mustNotAssume": [
+        "nine-slice support",
+        "legacy GUI class names",
+        "fixed texture dimensions",
+        "client display can mutate server-authoritative state"
+      ]
+    },
+    {
+      "id": "resourcepack-surface",
+      "entryEvidence": [
+        "registry id",
+        "resource location",
+        "assets/<namespace> root",
+        "pack metadata or runtime pack source"
+      ],
+      "assetRelations": [
+        "blockstate -> model",
+        "item definition or item model -> model",
+        "model -> parent",
+        "model -> texture",
+        "atlas -> sprite source"
+      ],
+      "mustNotAssume": [
+        "namespace normalization is correct without path proof",
+        "model parent exists",
+        "texture is on an atlas without atlas evidence"
+      ]
+    },
+    {
+      "id": "shader-surface",
+      "entryEvidence": [
+        "shader or post-chain resource",
+        "renderer or screen consumer",
+        "reload listener or resource reload owner",
+        "uniform source",
+        "sampler or render target owner"
+      ],
+      "assetRelations": [
+        "consumer -> shader json",
+        "shader json -> vertex or fragment program",
+        "program -> uniforms and samplers",
+        "sampler -> texture or render target",
+        "reload owner -> fallback path"
+      ],
+      "mustNotAssume": [
+        "external shader source is compatible Minecraft code",
+        "old shader class names still exist",
+        "uniforms are available without consumer proof"
+      ]
+    },
+    {
+      "id": "render-surface",
+      "entryEvidence": [
+        "renderer binding",
+        "renderer owner",
+        "render type or material owner",
+        "buffer source",
+        "pose stack or draw context usage",
+        "state sync source"
+      ],
+      "assetRelations": [
+        "renderer -> material or texture",
+        "renderer -> model layer or baked model",
+        "renderer -> shader or render type",
+        "server state -> client sync -> renderer state"
+      ],
+      "mustNotAssume": [
+        "render state can be read from server-only objects",
+        "per-frame allocation is acceptable",
+        "render pipeline state restores itself"
+      ]
+    }
+  ],
+  "evidenceChainContract": {
+    "requiredBeforeAdvice": [
+      "Minecraft version",
+      "loader family",
+      "entrypoint or owner",
+      "source proof",
+      "asset proof",
+      "API proof",
+      "missing evidence list"
+    ],
+    "proofRecordShape": {
+      "kind": "source|asset|archive|docs|lsp|generated_index",
+      "path": "string",
+      "symbol": "string",
+      "relationship": "string",
+      "confidence": "proven|likely|missing|conflict",
+      "privacy": "public|local_private|generated_cache"
+    },
+    "missingEvidenceBehavior": "Return missing links and next reads before implementation code. If source, asset, or API proof is missing, downgrade from implementation to verification plan."
+  },
+  "relationshipDiscoveryRules": [
+    {
+      "id": "ui-texture-metadata-discovery",
+      "start": ["screen class", "widget class", "ResourceLocation literal"],
+      "follow": [
+        "source references to texture identifiers",
+        "assets/<namespace>/textures/gui/**/*.png",
+        "adjacent .mcmeta or UI metadata files",
+        "atlas and font providers when texture use is indirect"
+      ],
+      "classifyCandidatesAs": [
+        "plain_texture",
+        "nine_slice_candidate",
+        "sprite_sheet",
+        "font_bitmap",
+        "unknown"
+      ],
+      "requireEvidenceForNineSlice": [
+        "metadata file",
+        "consumer API call",
+        "documented loader format",
+        "local parser or source proof"
+      ]
+    },
+    {
+      "id": "model-texture-discovery",
+      "start": ["registry id", "blockstate", "item definition", "model json"],
+      "follow": [
+        "variant or multipart model reference",
+        "parent model",
+        "textures map",
+        "atlas sources",
+        "namespace/path normalization"
+      ],
+      "reportAsConflict": [
+        "missing parent model",
+        "missing texture",
+        "registry namespace and asset namespace mismatch",
+        "asset path belongs to another loader or version"
+      ]
+    },
+    {
+      "id": "shader-consumer-discovery",
+      "start": ["shader json", "post-chain json", "render type", "effect owner"],
+      "follow": [
+        "program files",
+        "uniform declarations",
+        "sampler bindings",
+        "render target ownership",
+        "reload lifecycle",
+        "fallback branch"
+      ],
+      "externalReferenceRule": "Use external shader references only for compact formulas or concepts, then map them to local uniforms, samplers, render targets, reload, and fallback evidence."
+    },
+    {
+      "id": "dynamic-texture-discovery",
+      "start": ["dynamic texture owner", "preview renderer", "render target"],
+      "follow": [
+        "allocation owner",
+        "upload cadence",
+        "cache key",
+        "resource reload invalidation",
+        "dispose or close path",
+        "renderer or screen consumer"
+      ],
+      "reportAsConflict": [
+        "texture allocation every frame",
+        "unbounded cache",
+        "no reload invalidation",
+        "no disposal path"
+      ]
+    }
+  ],
+  "roleEquivalentSearch": [
+    "draw context owner",
+    "screen or widget owner",
+    "pose or buffer owner",
+    "render type or material owner",
+    "shader or post-chain owner",
+    "render target owner",
+    "resource reload owner",
+    "packet or state sync owner"
+  ],
+  "distributionBoundaries": {
+    "publicPayloadMayContain": [
+      "generic path patterns",
+      "relationship rules",
+      "field schemas",
+      "version-scoped public metadata",
+      "short paraphrased guidance"
+    ],
+    "publicPayloadMustNotContain": [
+      "vanilla asset files",
+      "modpack asset files",
+      "copied shader source",
+      "generated private archive indexes",
+      "private workspace paths",
+      "screenshots or texture previews from private packs"
+    ],
+    "localOnlyMayContainWithConsent": [
+      "resolved local file paths",
+      "asset existence indexes",
+      "hashes for cache invalidation",
+      "symbol search results"
+    ],
+    "redactionRules": [
+      "strip user home paths",
+      "strip private modpack names unless user approves",
+      "quote only minimal snippets from source or docs",
+      "summarize external shader formulas instead of copying code"
+    ]
+  },
   "shaderReferencePolicy": {
     "externalReference": "Optional. Prefer a configured API key when activated. If unavailable, a local browser fallback may be used only to summarize formulas and concepts.",
     "sourcePolicy": "Never depend on copied external shader source. Map compact formulas to local Minecraft uniforms, samplers, render targets, reload lifecycle, and fallback behavior."
+  },
+  "outputSchema": {
+    "evidencePacket": {
+      "provenLinks": [],
+      "candidateLinks": [],
+      "missingLinks": [],
+      "conflicts": [],
+      "nextReads": [],
+      "risk": "low|medium|high"
+    }
   },
   "outputExpectation": "Return a compact evidence packet with proven links, missing links, next reads, and risk classification before proposing implementation code."
 }

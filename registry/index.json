@@ -7,10 +7,10 @@
       "required": false,
       "format": "json",
       "currentRelease": {
-        "artifactName": "client-visual-1.20.1-guidance-0.1.0.mdm-resource.json",
-        "sha256": "3df58c8f7df970c4f5eaf45566c3173fdbc05d059fc730f3582dfd5c66118be6",
-        "sizeBytes": 7896,
-        "builtAt": "2026-05-07T11:31:36.111Z"
+        "artifactName": "client-visual-1.20.1-guidance-0.2.0.mdm-resource.json",
+        "sha256": "4f92c04637bc7b3a7a6251bdda0f72704b77d3df8a1aad5aa5044e377ad77795",
+        "sizeBytes": 15728,
+        "builtAt": "2026-05-07T12:05:34.145Z"
       }
     },
     {
@@ -41,7 +41,7 @@
         "artifactName": "core-docs-search-jsonl-0.1.0.mdm-resource.json",
         "sha256": "4da8a34e680900078f3e952b0c43021dd964c75f0f3e02f8180abfc74be9154b",
         "sizeBytes": 4209,
-        "builtAt": "2026-05-07T11:31:36.111Z"
+        "builtAt": "2026-05-07T12:05:34.145Z"
       }
     },
     {
@@ -53,7 +53,7 @@
         "artifactName": "core-docs-search-sqlite-0.1.0.sqlite",
         "sha256": "36bd3032e594a3c0c3bec67c4af696853809348dfe4ddb9928f69fae26bd2efa",
         "sizeBytes": 32768,
-        "builtAt": "2026-05-07T11:31:36.111Z"
+        "builtAt": "2026-05-07T12:05:34.145Z"
       },
       "metadata": {
         "storageKind": "sqlite_bundle",
@@ -78,7 +78,7 @@
         "artifactName": "kubejs-1.20.1-guidance-0.2.0.mdm-resource.json",
         "sha256": "38c698ea30bf3c437c96514f18c351278cdcf4062de1f56f4da8075241fde0f3",
         "sizeBytes": 16454,
-        "builtAt": "2026-05-07T11:31:36.111Z"
+        "builtAt": "2026-05-07T12:05:34.145Z"
       }
     },
     {

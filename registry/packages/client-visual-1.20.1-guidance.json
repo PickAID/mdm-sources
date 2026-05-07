@@ -3,9 +3,9 @@
   "id": "client-visual-1.20.1-guidance",
   "sourcePath": "packages/docs/client-visual/1.20.1/package.json",
   "currentRelease": {
-    "artifactName": "client-visual-1.20.1-guidance-0.1.0.mdm-resource.json",
-    "sha256": "3df58c8f7df970c4f5eaf45566c3173fdbc05d059fc730f3582dfd5c66118be6",
-    "sizeBytes": 7896,
-    "builtAt": "2026-05-07T11:31:36.111Z"
+    "artifactName": "client-visual-1.20.1-guidance-0.2.0.mdm-resource.json",
+    "sha256": "4f92c04637bc7b3a7a6251bdda0f72704b77d3df8a1aad5aa5044e377ad77795",
+    "sizeBytes": 15728,
+    "builtAt": "2026-05-07T12:05:34.145Z"
   }
 }
