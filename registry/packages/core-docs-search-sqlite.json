@@ -4,8 +4,21 @@
   "sourcePath": "packages/docs/search/core-sqlite/package.json",
   "currentRelease": {
     "artifactName": "core-docs-search-sqlite-0.1.0.sqlite",
-    "sha256": "8ad6f521f16be7fb0ac4aa0580744be70f0703b16f148223c017405f6b99d458",
+    "sha256": "36bd3032e594a3c0c3bec67c4af696853809348dfe4ddb9928f69fae26bd2efa",
     "sizeBytes": 32768,
-    "builtAt": "2026-05-06T13:56:49.554Z"
+    "builtAt": "2026-05-07T11:31:36.111Z"
+  },
+  "metadata": {
+    "storageKind": "sqlite_bundle",
+    "installTier": "optional_dataset",
+    "commitPolicy": "repository_manifest",
+    "sqlite": {
+      "databaseName": "core-docs-search-sqlite.sqlite",
+      "minUserVersion": 3,
+      "requiredTables": [
+        "docs_entries",
+        "docs_entries_fts"
+      ]
+    }
   }
 }

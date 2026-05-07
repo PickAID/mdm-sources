@@ -28,6 +28,156 @@
       "guidance": "ProbeJS d.ts files describe the current modpack and may differ between instances. They are private local evidence, not public package content. MCP should read them from the user's workspace or cache and should not commit them to mdm-sources."
     }
   ],
+  "scopeRules": [
+    {
+      "scope": "startup_scripts",
+      "purpose": "Define registries, custom items, blocks, fluids, startup-only tags, and one-time mod integration wiring.",
+      "rules": [
+        "Use StartupEvents.registry for new registry entries and keep server-only recipe or world state logic out of startup scripts.",
+        "Treat startup scripts as load-order sensitive. Keep helper names stable and avoid hidden dependencies on server script reload state.",
+        "Do not use player, level, server tick, recipe mutation, or runtime world access unless ProbeJS confirms the event exposes it in startup scope."
+      ]
+    },
+    {
+      "scope": "server_scripts",
+      "purpose": "Handle recipes, tags, loot, commands, gameplay events, and datapack-like runtime content.",
+      "rules": [
+        "Prefer ServerEvents.recipes, ServerEvents.tags, ServerEvents.loaded, and other KubeJS server events before dropping to loader-native events.",
+        "Use event.server, event.level, event.player, and event.item only when the selected event type exposes them.",
+        "Keep recipe and tag edits deterministic. Avoid reading client state, browser APIs, Node APIs, or temporary debug globals."
+      ]
+    },
+    {
+      "scope": "client_scripts",
+      "purpose": "Handle client-only visual behavior, item/block color, tooltips, key bindings, and UI-adjacent integrations.",
+      "rules": [
+        "Never put server authority, recipe mutation, or persistent gameplay state in client scripts.",
+        "Verify client event names and payloads through ProbeJS because client wrappers differ between KubeJS versions and loaders.",
+        "Guard visual-only logic so a dedicated server can load the pack without requiring client-only classes."
+      ]
+    },
+    {
+      "scope": "probejs",
+      "purpose": "Use generated d.ts and snippets as local evidence for the current modpack.",
+      "rules": [
+        "Search ProbeJS output before assuming an event exists, especially for addon-provided events and loader bridge wrappers.",
+        "Treat generated names as evidence for this instance only. Do not turn private ProbeJS dumps into public mdm-sources package content.",
+        "When ProbeJS and public docs disagree, prefer ProbeJS for the local instance and record the version/loader context in the answer."
+      ]
+    }
+  ],
+  "eventBridgeRules": [
+    {
+      "bridge": "KubeJS events",
+      "useWhen": "The behavior is available through documented KubeJS wrappers for the active scope.",
+      "examples": ["ServerEvents.recipes", "ServerEvents.tags", "ItemEvents.tooltip", "BlockEvents.rightClicked"],
+      "selectionRule": "Use this first because wrappers usually provide simpler objects, safer reload behavior, and better ProbeJS type hints."
+    },
+    {
+      "bridge": "ForgeEvents",
+      "useWhen": "Forge or NeoForge exposes a loader event that KubeJS can subscribe to and no higher-level KubeJS wrapper fits.",
+      "examples": ["ForgeEvents.onEvent", "ForgeEvents.onGenericEvent"],
+      "selectionRule": "Resolve the real Java event class from local sources, mappings, or ProbeJS before writing the handler. Do not guess field names from another Minecraft version."
+    },
+    {
+      "bridge": "NativeEvents",
+      "useWhen": "A KubeJS build exposes a native event bridge for lower-level Minecraft or loader events.",
+      "examples": ["NativeEvents"],
+      "selectionRule": "Only use when ProbeJS confirms the symbol and event payload. Native bridge availability is version and loader dependent."
+    },
+    {
+      "bridge": "Java.loadClass",
+      "useWhen": "A script needs a Java class constant or static helper that is not exposed through wrapper APIs.",
+      "examples": ["Java.loadClass('net.minecraft.resources.ResourceLocation')"],
+      "selectionRule": "Prefer mapped, version-correct class names from local sources. Keep Java interop isolated in small helpers instead of scattering class lookups through scripts."
+    }
+  ],
+  "stateRules": [
+    {
+      "topic": "global",
+      "guidance": "Use global as a small namespaced coordination surface, not as a dumping ground.",
+      "rules": [
+        "Prefer global.<packNamespace> = global.<packNamespace> || {} over loose global variables.",
+        "Store stable helpers, registries, constants, or cross-file caches only when multiple scripts genuinely need them.",
+        "Do not keep player-specific state, temporary debug flags, or per-tick mutable data in global unless lifecycle and cleanup are explicit."
+      ]
+    },
+    {
+      "topic": "reload lifecycle",
+      "guidance": "KubeJS scripts reload differently from normal JavaScript modules.",
+      "rules": [
+        "Assume server scripts may reload while Minecraft and mods remain alive.",
+        "Avoid one-time side effects that become duplicated after reload unless the API is designed for reloadable data.",
+        "If a helper must be reused, make initialization idempotent."
+      ]
+    }
+  ],
+  "styleRules": [
+    {
+      "id": "constants-with-purpose",
+      "rule": "Do not mechanically turn every literal into const. Use named constants for repeated IDs, namespaces, magic numbers, or values that encode domain meaning."
+    },
+    {
+      "id": "debug-hygiene",
+      "rule": "Use debug output only while investigating. Gate it behind a clearly removable helper or flag and remove noisy console/log calls before final scripts."
+    },
+    {
+      "id": "minecraft-identifiers",
+      "rule": "Keep resource locations explicit and namespaced. Prefer stable helper functions for repeated mod ids, item ids, tags, and recipe ids."
+    },
+    {
+      "id": "small-scripts",
+      "rule": "Split large KubeJS files by lifecycle or domain. A script should be easy to scan for event registration boundaries and side effects."
+    },
+    {
+      "id": "version-aware-code",
+      "rule": "Do not copy code across Minecraft versions without checking mapped names, event wrappers, and ProbeJS types for the active instance."
+    }
+  ],
+  "toolWorkflow": [
+    {
+      "step": "detect-context",
+      "action": "Identify Minecraft version, loader, KubeJS version, script scope, and whether ProbeJS output exists."
+    },
+    {
+      "step": "prefer-local-evidence",
+      "action": "Search local kubejs/probejs/generated d.ts, snippets, and Gradle/modpack metadata before using generic memory."
+    },
+    {
+      "step": "choose-api-layer",
+      "action": "Prefer KubeJS wrapper events, then loader bridge events, then direct Java interop only when needed."
+    },
+    {
+      "step": "verify-symbols",
+      "action": "Resolve event names, Java classes, fields, methods, and registry ids from local evidence or versioned sources before writing final code."
+    },
+    {
+      "step": "explain-lifecycle",
+      "action": "When providing code, state which folder/scope it belongs in and what reload/server/client assumptions it depends on."
+    }
+  ],
+  "integrationBoundaries": [
+    {
+      "boundary": "compatibility modules",
+      "guidance": "Do not assume a mod exposes KubeJS hooks just because it supports scripting somewhere else. Check whether the active pack includes the compatibility module, addon, or generated ProbeJS symbols that provide the bridge."
+    },
+    {
+      "boundary": "narrow extension APIs",
+      "guidance": "Prefer script-facing events or helpers that submit intent while the owning mod keeps cache refresh, validation, and side effects internal. Avoid scripts mutating another mod's internal caches directly."
+    },
+    {
+      "boundary": "namespaced custom hooks",
+      "guidance": "Use explicit namespaced IDs for custom filters, GUI hooks, recipes, tags, and integration points. Bare strings invite collisions in large modpacks."
+    },
+    {
+      "boundary": "datapack versus resourcepack",
+      "guidance": "Recipes, loot, tags, predicates, advancements, and worldgen are datapack-shaped work. Models, textures, language, atlases, sounds, particles, and UI assets are resourcepack-shaped work. KubeJS may generate or reference either, but the lifecycle and validation rules stay different."
+    },
+    {
+      "boundary": "client-server split",
+      "guidance": "Client scripts may describe display, UI, tooltip, keybind, and rendering behavior. Server scripts own authority, commands, recipes, loot, persistent gameplay state, and tick-side effects."
+    }
+  ],
   "lookupHints": [
     {
       "query": "ForgeEvents",
@@ -40,11 +190,42 @@
     {
       "query": "global",
       "use": "Use for stable shared script state only, with a namespaced object and clear ownership."
+    },
+    {
+      "query": "StartupEvents.registry",
+      "use": "Use in startup scripts for new registry entries. Do not mix runtime recipe logic into this scope."
+    },
+    {
+      "query": "ServerEvents.recipes",
+      "use": "Use in server scripts for recipe add/remove/replace work. Keep recipe ids deterministic and namespaced."
+    },
+    {
+      "query": "ProbeJS d.ts",
+      "use": "Search generated type declarations to confirm symbols, overloads, event payloads, and addon-provided APIs for the active modpack."
+    },
+    {
+      "query": "console log debug",
+      "use": "Allow scoped investigation logs, but require cleanup or a gated debug helper before final code."
+    },
+    {
+      "query": "Java.loadClass",
+      "use": "Use for version-correct Java interop only after wrapper APIs are insufficient, and isolate class lookups in helpers."
+    },
+    {
+      "query": "custom resource location hook",
+      "use": "Use namespaced custom IDs for cross-system hooks and verify which mod owns the extension point."
+    },
+    {
+      "query": "datapack resourcepack KubeJS boundary",
+      "use": "Classify whether the requested change belongs to data generation, resource assets, startup registration, server runtime, or client visuals before choosing script APIs."
     }
   ],
   "nonGoals": [
     "Do not distribute modpack-specific ProbeJS dumps.",
     "Do not assume every JavaScript pattern works in Rhino or KubeJS.",
-    "Do not use npm package conventions as the default mental model for KubeJS scripts."
+    "Do not use npm package conventions as the default mental model for KubeJS scripts.",
+    "Do not invent Forge, NeoForge, Fabric, or Minecraft class members without version-specific evidence.",
+    "Do not encourage permanent noisy logging or debug-only console output in production scripts.",
+    "Do not treat client scripts as a safe place for server authority or datapack mutations."
   ]
 }

@@ -10,7 +10,7 @@
         "artifactName": "client-visual-1.20.1-guidance-0.1.0.mdm-resource.json",
         "sha256": "3df58c8f7df970c4f5eaf45566c3173fdbc05d059fc730f3582dfd5c66118be6",
         "sizeBytes": 7896,
-        "builtAt": "2026-05-06T13:56:49.554Z"
+        "builtAt": "2026-05-07T11:31:36.111Z"
       }
     },
     {
@@ -41,7 +41,7 @@
         "artifactName": "core-docs-search-jsonl-0.1.0.mdm-resource.json",
         "sha256": "4da8a34e680900078f3e952b0c43021dd964c75f0f3e02f8180abfc74be9154b",
         "sizeBytes": 4209,
-        "builtAt": "2026-05-06T13:56:49.554Z"
+        "builtAt": "2026-05-07T11:31:36.111Z"
       }
     },
     {
@@ -51,9 +51,22 @@
       "format": "sqlite",
       "currentRelease": {
         "artifactName": "core-docs-search-sqlite-0.1.0.sqlite",
-        "sha256": "8ad6f521f16be7fb0ac4aa0580744be70f0703b16f148223c017405f6b99d458",
+        "sha256": "36bd3032e594a3c0c3bec67c4af696853809348dfe4ddb9928f69fae26bd2efa",
         "sizeBytes": 32768,
-        "builtAt": "2026-05-06T13:56:49.554Z"
+        "builtAt": "2026-05-07T11:31:36.111Z"
+      },
+      "metadata": {
+        "storageKind": "sqlite_bundle",
+        "installTier": "optional_dataset",
+        "commitPolicy": "repository_manifest",
+        "sqlite": {
+          "databaseName": "core-docs-search-sqlite.sqlite",
+          "minUserVersion": 3,
+          "requiredTables": [
+            "docs_entries",
+            "docs_entries_fts"
+          ]
+        }
       }
     },
     {
@@ -62,10 +75,10 @@
       "required": false,
       "format": "json",
       "currentRelease": {
-        "artifactName": "kubejs-1.20.1-guidance-0.1.0.mdm-resource.json",
-        "sha256": "c0728ec56eba67ee8bff41e8c5e1e6e34d4b2f5deb6cd5aebc4d1c80fc45c245",
-        "sizeBytes": 5917,
-        "builtAt": "2026-05-06T13:56:49.554Z"
+        "artifactName": "kubejs-1.20.1-guidance-0.2.0.mdm-resource.json",
+        "sha256": "38c698ea30bf3c437c96514f18c351278cdcf4062de1f56f4da8075241fde0f3",
+        "sizeBytes": 16454,
+        "builtAt": "2026-05-07T11:31:36.111Z"
       }
     },
     {

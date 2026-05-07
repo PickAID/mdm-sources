@@ -3,9 +3,9 @@
   "id": "kubejs-1.20.1-guidance",
   "sourcePath": "packages/kubejs/guidance/1.20.1/package.json",
   "currentRelease": {
-    "artifactName": "kubejs-1.20.1-guidance-0.1.0.mdm-resource.json",
-    "sha256": "c0728ec56eba67ee8bff41e8c5e1e6e34d4b2f5deb6cd5aebc4d1c80fc45c245",
-    "sizeBytes": 5917,
-    "builtAt": "2026-05-06T13:56:49.554Z"
+    "artifactName": "kubejs-1.20.1-guidance-0.2.0.mdm-resource.json",
+    "sha256": "38c698ea30bf3c437c96514f18c351278cdcf4062de1f56f4da8075241fde0f3",
+    "sizeBytes": 16454,
+    "builtAt": "2026-05-07T11:31:36.111Z"
   }
 }
