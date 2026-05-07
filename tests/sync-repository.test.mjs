@@ -15,12 +15,35 @@ test("syncRepository generates source profiles and registry before validation", 
   const validation = await validateRepository(root);
 
   assert.deepEqual(result.sourceProfiles.generatedVersions, ["1.7.10", "26.1"]);
+  assert.deepEqual(result.datapackProfiles.generatedVersions, ["1.7.10", "26.1"]);
+  assert.deepEqual(result.resourcepackProfiles.generatedVersions, ["1.7.10", "26.1"]);
   assert.deepEqual(result.registry.packageIds, [
+    "minecraft-1.7.10-vanilla-datapack-profile",
+    "minecraft-1.7.10-vanilla-resourcepack-profile",
     "minecraft-1.7.10-vanilla-source-profile",
+    "minecraft-26.1-vanilla-datapack-profile",
+    "minecraft-26.1-vanilla-resourcepack-profile",
     "minecraft-26.1-vanilla-source-profile"
   ]);
-  assert.equal(validation.packageCount, 2);
+  assert.equal(validation.packageCount, 6);
   assert.deepEqual(validation.errors, []);
+
+  const datapackProfile = JSON.parse(
+    await readFile(
+      join(root, "packages/datapack/vanilla/26.1/payload/datapack-profile.json"),
+      "utf-8"
+    )
+  );
+  const resourcepackProfile = JSON.parse(
+    await readFile(
+      join(root, "packages/resourcepack/vanilla/26.1/payload/resourcepack-profile.json"),
+      "utf-8"
+    )
+  );
+  assert.equal(datapackProfile.minecraftVersion, "26.1");
+  assert.equal(datapackProfile.packMcmeta.packFormatSource, "runtime_resolved");
+  assert.equal(resourcepackProfile.minecraftVersion, "26.1");
+  assert.equal(resourcepackProfile.packMcmeta.packFormatSource, "runtime_resolved");
 
   const registry = JSON.parse(
     await readFile(join(root, "registry/index.json"), "utf-8")
@@ -28,7 +51,11 @@ test("syncRepository generates source profiles and registry before validation", 
   assert.deepEqual(
     registry.packages.map((entry) => entry.manifestPath),
     [
+      "registry/packages/minecraft-1.7.10-vanilla-datapack-profile.json",
+      "registry/packages/minecraft-1.7.10-vanilla-resourcepack-profile.json",
       "registry/packages/minecraft-1.7.10-vanilla-source-profile.json",
+      "registry/packages/minecraft-26.1-vanilla-datapack-profile.json",
+      "registry/packages/minecraft-26.1-vanilla-resourcepack-profile.json",
       "registry/packages/minecraft-26.1-vanilla-source-profile.json"
     ]
   );
@@ -42,9 +69,7 @@ async function writeCatalog(root, versions) {
     join(root, "packages/minecraft/releases/catalog/payload/release-catalog.json"),
     `${JSON.stringify({
       schemaVersion: 1,
-      currentSeedProfiles: {
-        sources: versions
-      }
+      releases: versions.map((id) => ({ id }))
     }, null, 2)}\n`
   );
 }

@@ -1,0 +1,55 @@
+{
+  "identity": {
+    "schemaVersion": 2,
+    "packageId": "minecraft-1.9.3-vanilla-resourcepack-profile",
+    "packageVersion": "0.1.0",
+    "namespace": "minecraft",
+    "displayName": "Minecraft 1.9.3 Vanilla Resourcepack Profile",
+    "description": "Generated public resourcepack profile for Minecraft 1.9.3. It defines stable lookup roots and tells MCP to resolve exact pack metadata locally."
+  },
+  "target": {
+    "minecraftVersions": [
+      "1.9.3"
+    ],
+    "loaders": [
+      "vanilla"
+    ],
+    "mappings": [
+      "official"
+    ]
+  },
+  "artifact": {
+    "kind": "resourcepack_bundle",
+    "format": "json",
+    "schemaId": "mdm.resourcepack.profile.json",
+    "schemaVersion": 1,
+    "entrypoint": "payload/resourcepack-profile.json"
+  },
+  "capabilities": [
+    "resource_location_lookup",
+    "resourcepack_trace"
+  ],
+  "policy": {
+    "privacy": "public_release",
+    "lifecycle": [
+      "downloadable"
+    ],
+    "canCommitToRepository": true,
+    "canUploadToPublicRelease": true,
+    "requiresUserConsent": false
+  },
+  "query": {
+    "adapter": "archive_content",
+    "capabilities": [
+      "resource_location_lookup",
+      "resourcepack_trace"
+    ],
+    "defaultLimit": 8,
+    "maxLimit": 50,
+    "preferredFallbacks": []
+  },
+  "release": {
+    "channel": "resourcepack",
+    "family": "vanilla-resourcepack"
+  }
+}

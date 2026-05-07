@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "profileKind": "datapack",
+  "minecraftVersion": "1.2.5",
+  "generatedFrom": {
+    "kind": "mojang_release_catalog",
+    "metadataUrl": "https://piston-meta.mojang.com/v1/packages/5158765caf1ca14958cb6c45d52c8e09ed9b046c/1.2.5.json",
+    "sha1": "5158765caf1ca14958cb6c45d52c8e09ed9b046c",
+    "releaseTime": "2012-03-29T22:00:00+00:00"
+  },
+  "target": {
+    "namespace": "minecraft",
+    "loaders": [
+      "vanilla"
+    ],
+    "mappings": [
+      "official"
+    ]
+  },
+  "packMcmeta": {
+    "packFormatSource": "runtime_resolved",
+    "exactPackFormatBundled": false,
+    "resolution": "Read pack.mcmeta or version metadata from the locally acquired vanilla client/server jar."
+  },
+  "roots": [
+    "data/<namespace>/advancements",
+    "data/<namespace>/functions",
+    "data/<namespace>/loot_tables",
+    "data/<namespace>/predicates",
+    "data/<namespace>/recipes",
+    "data/<namespace>/structures",
+    "data/<namespace>/tags",
+    "data/<namespace>/worldgen"
+  ],
+  "traceRules": [
+    {
+      "kind": "recipe",
+      "pathPattern": "data/<namespace>/recipes/<path>.json",
+      "lookupKey": "<namespace>:<path>"
+    },
+    {
+      "kind": "tag",
+      "pathPattern": "data/<namespace>/tags/<registry>/<path>.json",
+      "lookupKey": "#<namespace>:<path>"
+    },
+    {
+      "kind": "function",
+      "pathPattern": "data/<namespace>/functions/<path>.mcfunction",
+      "lookupKey": "<namespace>:<path>"
+    }
+  ],
+  "distributionPolicy": {
+    "publicRepositoryContains": [
+      "version-scoped lookup roots",
+      "trace rules",
+      "runtime resolution policy"
+    ],
+    "publicRepositoryMustNotContain": [
+      "vanilla data files",
+      "vanilla asset files",
+      "generated archive indexes",
+      "workspace-private modpack data"
+    ],
+    "requiresUserConsentForGeneratedArtifacts": true
+  },
+  "licensing": {
+    "redistribution": "profile_metadata_only",
+    "sourceMaterial": "Mojang release metadata and curated path rules",
+    "notes": [
+      "This package does not redistribute vanilla data files, assets, or generated archive indexes."
+    ]
+  },
+  "cacheOwnership": {
+    "generatedArchiveIndexesOwner": "mcp-runtime-cache",
+    "evictionAllowed": true
+  }
+}

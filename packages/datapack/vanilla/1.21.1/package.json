@@ -5,12 +5,18 @@
     "packageVersion": "0.1.0",
     "namespace": "minecraft",
     "displayName": "Minecraft 1.21.1 Vanilla Datapack Profile",
-    "description": "Curated public datapack profile for Minecraft 1.21.1 pack format and renamed function roots."
+    "description": "Generated public datapack profile for Minecraft 1.21.1. It defines stable lookup roots and tells MCP to resolve exact pack metadata locally."
   },
   "target": {
-    "minecraftVersions": ["1.21.1"],
-    "loaders": ["vanilla"],
-    "mappings": ["official"]
+    "minecraftVersions": [
+      "1.21.1"
+    ],
+    "loaders": [
+      "vanilla"
+    ],
+    "mappings": [
+      "official"
+    ]
   },
   "artifact": {
     "kind": "datapack_bundle",
@@ -19,17 +25,25 @@
     "schemaVersion": 1,
     "entrypoint": "payload/datapack-profile.json"
   },
-  "capabilities": ["resource_location_lookup", "datapack_trace"],
+  "capabilities": [
+    "resource_location_lookup",
+    "datapack_trace"
+  ],
   "policy": {
     "privacy": "public_release",
-    "lifecycle": ["downloadable"],
+    "lifecycle": [
+      "downloadable"
+    ],
     "canCommitToRepository": true,
     "canUploadToPublicRelease": true,
     "requiresUserConsent": false
   },
   "query": {
     "adapter": "archive_content",
-    "capabilities": ["resource_location_lookup", "datapack_trace"],
+    "capabilities": [
+      "resource_location_lookup",
+      "datapack_trace"
+    ],
     "defaultLimit": 8,
     "maxLimit": 50,
     "preferredFallbacks": []

@@ -1,9 +1,8 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const CATALOG_PATH =
-  "packages/minecraft/releases/catalog/payload/release-catalog.json";
+import { readCatalogVersions } from "./release-catalog-versions.mjs";
 
 export async function syncSourceProfiles(input = {}) {
   const root = resolve(input.root ?? process.cwd());
@@ -17,20 +16,7 @@ export async function syncSourceProfiles(input = {}) {
 }
 
 async function readSourceVersions(root) {
-  const catalog = JSON.parse(await readFile(join(root, CATALOG_PATH), "utf-8"));
-  const releaseVersions = catalog.releases
-    ?.map((release) => release?.id)
-    .filter((version) => typeof version === "string" && version.length > 0);
-  if (releaseVersions?.length > 0) {
-    return releaseVersions;
-  }
-
-  const seedVersions = catalog.currentSeedProfiles?.sources;
-  if (Array.isArray(seedVersions) && seedVersions.length > 0) {
-    return seedVersions;
-  }
-
-  throw new Error("release catalog must list releases or currentSeedProfiles.sources.");
+  return readCatalogVersions(root, "sources");
 }
 
 async function writeSourceProfilePackage(root, version) {
