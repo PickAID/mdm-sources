@@ -258,7 +258,14 @@ function inferV2PackageMetadata(manifest) {
       sqlite: {
         databaseName: `${manifest.identity.packageId}.sqlite`,
         minUserVersion: manifest.artifact.schemaVersion,
-        requiredTables: ["source_files", "source_files_fts"]
+        requiredTables: [
+          "files",
+          "java_symbols",
+          "java_members",
+          "fts_files",
+          "source_chunks",
+          "fts_chunks"
+        ]
       }
     };
   }

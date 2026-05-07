@@ -33,8 +33,12 @@ test("buildLocalRelease materializes source_index_sqlite packages as source inde
   assert.equal(releaseManifest.packages[0].artifactKind, "source_index");
   assert.equal(releaseManifest.packages[0].queryAdapter, "source_index_sqlite");
   assert.deepEqual(releaseManifest.packages[0].metadata.sqlite.requiredTables, [
-    "source_files",
-    "source_files_fts"
+    "files",
+    "java_symbols",
+    "java_members",
+    "fts_files",
+    "source_chunks",
+    "fts_chunks"
   ]);
 
   const verified = await verifyReleaseInstall({ manifest: result.manifestPath });
@@ -47,13 +51,30 @@ test("buildLocalRelease materializes source_index_sqlite packages as source inde
 function assertSourceIndexSqlite(artifactPath) {
   const database = new DatabaseSync(artifactPath);
   try {
-    const row = database.prepare("SELECT class_name, source_path FROM source_files").get();
-    assert.equal(row.class_name, "net.minecraft.world.item.ItemStack");
-    assert.equal(row.source_path, "net/minecraft/world/item/ItemStack.java");
+    const row = database.prepare("SELECT path, kind, package_id FROM files").get();
+    assert.equal(row.path, "net/minecraft/world/item/ItemStack.java");
+    assert.equal(row.kind, "java");
+    assert.equal(row.package_id, "minecraft-1.20.1-source-index");
+
+    const symbol = database
+      .prepare("SELECT simple_name, qualified_name FROM java_symbols")
+      .get();
+    assert.equal(symbol.simple_name, "ItemStack");
+    assert.equal(symbol.qualified_name, "net.minecraft.world.item.ItemStack");
+
+    const member = database
+      .prepare("SELECT owner_qualified_name, member_name, member_kind FROM java_members")
+      .get();
+    assert.equal(member.owner_qualified_name, "net.minecraft.world.item.ItemStack");
+    assert.equal(member.member_name, "copy");
+    assert.equal(member.member_kind, "method");
+
     const ftsRows = database
-      .prepare("SELECT file_id FROM source_files_fts WHERE source_files_fts MATCH ?")
+      .prepare("SELECT path, chunk_id FROM fts_chunks WHERE fts_chunks MATCH ?")
       .all('"ItemStack"');
-    assert.deepEqual(ftsRows.map((entry) => entry.file_id), ["itemstack"]);
+    assert.deepEqual(ftsRows.map((entry) => entry.path), [
+      "net/minecraft/world/item/ItemStack.java"
+    ]);
   } finally {
     database.close();
   }
@@ -148,7 +169,17 @@ function sourceIndexPayload() {
         packageName: "net.minecraft.world.item",
         sourcePath: "net/minecraft/world/item/ItemStack.java",
         sha256: "0".repeat(64),
-        summary: "Item stack source metadata only; no source bytes."
+        summary: "ItemStack source metadata only; no source bytes.",
+        javaMembers: [
+          {
+            memberName: "copy",
+            memberKind: "method",
+            signature: "copy()",
+            returnType: "ItemStack",
+            startLine: 10,
+            endLine: 12
+          }
+        ]
       }
     ]
   };

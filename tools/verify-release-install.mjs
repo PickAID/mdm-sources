@@ -96,7 +96,14 @@ function requiredSqliteTables(entry) {
     return entry.metadata.sqlite.requiredTables;
   }
   if (entry.queryAdapter === "source_index_sqlite") {
-    return ["source_files", "source_files_fts"];
+    return [
+      "files",
+      "java_symbols",
+      "java_members",
+      "fts_files",
+      "source_chunks",
+      "fts_chunks"
+    ];
   }
   return ["docs_entries", "docs_entries_fts"];
 }

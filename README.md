@@ -28,6 +28,9 @@ GitHub Releases are the distribution channel for built artifacts:
 SQLite artifacts may represent docs bundles or source indexes. Source index
 artifacts use `artifactKind: "source_index"` and
 `queryAdapter: "source_index_sqlite"` in the release manifest. Public source
+index SQLite artifacts use the MCP runtime source-index schema
+(`files`, `java_symbols`, `java_members`, `source_chunks`, `fts_chunks`, and
+`fts_files`) so they can be queried by source-index adapters. Public source
 profiles still do not bundle Minecraft source or generated source trees.
 
 MCP clients resolve each package artifact as a sibling of the release manifest:
