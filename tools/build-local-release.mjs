@@ -12,6 +12,7 @@ import { fileURLToPath } from "node:url";
 
 import { writeReleaseSummary } from "./release-summary.mjs";
 import { writeSqliteDocsDatabase } from "./sqlite-docs-artifact.mjs";
+import { writeSqliteSourceIndexDatabase } from "./sqlite-source-index-artifact.mjs";
 
 export async function buildLocalRelease(input = {}) {
   const root = normalize(resolve(input.root ?? process.cwd()));
@@ -67,6 +68,8 @@ export async function buildLocalRelease(input = {}) {
       version: packageInfo.version,
       namespace: packageInfo.namespace,
       artifactType: packageInfo.artifactType,
+      ...(packageInfo.artifactKind ? { artifactKind: packageInfo.artifactKind } : {}),
+      ...(packageInfo.queryAdapter ? { queryAdapter: packageInfo.queryAdapter } : {}),
       variant: packageInfo.variant,
       required: packageInfo.required,
       format: packageInfo.format,
@@ -116,6 +119,13 @@ async function buildPackageArtifact(input) {
   ) {
     return buildSqliteDocsArtifact(input);
   }
+  if (
+    input.packageInfo.schemaVersion === 2 &&
+    input.packageInfo.format === "sqlite" &&
+    input.manifest.query?.adapter === "source_index_sqlite"
+  ) {
+    return buildSqliteSourceIndexArtifact(input);
+  }
 
   const payload = await readPayloadFiles(input.root, input.payloadRoot);
   const artifactName = `${input.packageInfo.id}-${input.packageInfo.version}.mdm-resource.json`;
@@ -157,6 +167,33 @@ async function buildSqliteDocsArtifact(input) {
   );
 }
 
+async function buildSqliteSourceIndexArtifact(input) {
+  const artifactName = `${input.packageInfo.id}-${input.packageInfo.version}.sqlite`;
+  const artifactPath = join(input.outDir, artifactName);
+  const entrypointPath = resolveInside(
+    input.root,
+    dirname(input.packageFile),
+    input.manifest.artifact.entrypoint
+  );
+  if (!entrypointPath) {
+    throw new Error(`Package ${input.packageInfo.id} source index entrypoint escapes repository.`);
+  }
+
+  const content = JSON.parse(await readFile(entrypointPath, "utf-8"));
+  await rm(artifactPath, { force: true });
+  await writeSqliteSourceIndexDatabase({
+    databasePath: artifactPath,
+    packageId: input.packageInfo.id,
+    userVersion: input.packageInfo.artifactSchemaVersion,
+    files: content.files ?? []
+  });
+  return buildArtifactResult(
+    artifactName,
+    artifactPath,
+    await readFile(artifactPath)
+  );
+}
+
 function buildArtifactResult(artifactName, artifactPath, body) {
   return {
     artifactName,
@@ -174,6 +211,8 @@ function normalizePackageManifest(manifest) {
       version: manifest.identity.packageVersion,
       namespace: manifest.identity.namespace,
       artifactType: mapV2ArtifactType(manifest.artifact.kind),
+      artifactKind: manifest.artifact.kind,
+      queryAdapter: manifest.query?.adapter,
       variant: manifest.release.channel,
       required: manifest.release.channel === "required",
       format: manifest.artifact.format,
@@ -205,11 +244,23 @@ function normalizePackageManifest(manifest) {
 
 function inferV2PackageMetadata(manifest) {
   if (
-    manifest.artifact.kind !== "docs_bundle" ||
     manifest.artifact.format !== "sqlite" ||
-    manifest.query?.adapter !== "sqlite_docs"
+    !["sqlite_docs", "source_index_sqlite"].includes(manifest.query?.adapter)
   ) {
     return undefined;
+  }
+
+  if (manifest.query.adapter === "source_index_sqlite") {
+    return {
+      storageKind: "sqlite_bundle",
+      installTier: "runtime_or_optional_dataset",
+      commitPolicy: "repository_manifest",
+      sqlite: {
+        databaseName: `${manifest.identity.packageId}.sqlite`,
+        minUserVersion: manifest.artifact.schemaVersion,
+        requiredTables: ["source_files", "source_files_fts"]
+      }
+    };
   }
 
   return {
@@ -233,6 +284,12 @@ function mapV2ArtifactType(kind) {
   }
   if (kind === "mapping_bundle") {
     return "mappings";
+  }
+  if (kind === "source_index") {
+    return "source_index";
+  }
+  if (kind === "source_tree") {
+    return "source_tree";
   }
   if (kind === "embedding_bundle") {
     return "accelerator";

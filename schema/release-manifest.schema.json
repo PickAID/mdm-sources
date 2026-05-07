@@ -29,7 +29,33 @@
           "packageId": { "type": "string", "minLength": 1 },
           "version": { "type": "string", "minLength": 1 },
           "namespace": { "type": "string", "minLength": 1 },
-          "artifactType": { "enum": ["docs", "datapack", "resourcepack", "mappings", "accelerator"] },
+          "artifactType": {
+            "enum": ["docs", "datapack", "resourcepack", "mappings", "source_index", "source_tree", "accelerator"]
+          },
+          "artifactKind": {
+            "enum": [
+              "docs_bundle",
+              "source_tree",
+              "source_index",
+              "mapping_bundle",
+              "datapack_bundle",
+              "resourcepack_bundle",
+              "probejs_snapshot",
+              "mod_archive_index",
+              "embedding_bundle"
+            ]
+          },
+          "queryAdapter": {
+            "enum": [
+              "json_docs",
+              "sqlite_docs",
+              "source_index_sqlite",
+              "source_tree",
+              "mapping_index",
+              "archive_content",
+              "embedding_index"
+            ]
+          },
           "variant": { "type": "string", "minLength": 1 },
           "required": { "type": "boolean" },
           "format": { "enum": ["json", "jsonl", "sqlite", "zip", "directory", "tar.zst"] },

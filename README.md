@@ -25,6 +25,11 @@ GitHub Releases are the distribution channel for built artifacts:
 - `mdm-release-manifest.json`: release-level artifact index used by MCP clients
 - `mdm-release-summary.json`: release provenance, package counts, distribution totals, and artifact hashes
 
+SQLite artifacts may represent docs bundles or source indexes. Source index
+artifacts use `artifactKind: "source_index"` and
+`queryAdapter: "source_index_sqlite"` in the release manifest. Public source
+profiles still do not bundle Minecraft source or generated source trees.
+
 MCP clients resolve each package artifact as a sibling of the release manifest:
 `new URL(entry.artifactName, manifestUrl)`. Local tooling uses the same rule with
 the manifest file's directory.

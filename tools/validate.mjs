@@ -174,6 +174,22 @@ async function validatePackageFileV2(repoRoot, packageFile, manifest, errors) {
 
 function validateArtifactQueryPair(repoPath, artifact, query, errors) {
   if (
+    artifact.kind === "source_index" &&
+    (artifact.format !== "sqlite" || query.adapter !== "source_index_sqlite")
+  ) {
+    errors.push(
+      `${repoPath} source_index packages must use sqlite format and source_index_sqlite adapter`
+    );
+  }
+  if (
+    query.adapter === "source_index_sqlite" &&
+    (artifact.kind !== "source_index" || artifact.format !== "sqlite")
+  ) {
+    errors.push(
+      `${repoPath} source_index_sqlite adapter requires sqlite source_index artifact`
+    );
+  }
+  if (
     artifact.kind === "docs_bundle" &&
     artifact.format === "sqlite" &&
     query.adapter !== "sqlite_docs"

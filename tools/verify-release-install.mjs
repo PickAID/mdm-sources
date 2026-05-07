@@ -32,7 +32,7 @@ export async function verifyReleaseInstall(input) {
       }
 
       if (entry.format === "sqlite") {
-        await verifySqliteArtifact(tempDir, entry, bytes);
+        await verifySqliteArtifact(tempDir, entry, bytes, requiredSqliteTables(entry));
       }
 
       verified.push({
@@ -65,7 +65,9 @@ function requirePackages(manifest) {
     artifactName: requireString(entry.artifactName, `packages[${index}].artifactName`),
     sha256: requireString(entry.sha256, `packages[${index}].sha256`),
     format: entry.format,
-    sizeBytes: entry.sizeBytes
+    sizeBytes: entry.sizeBytes,
+    queryAdapter: entry.queryAdapter,
+    metadata: entry.metadata
   }));
 }
 
@@ -89,7 +91,17 @@ function resolveArtifactRef(manifestRef, artifactName) {
   return join(dirname(filePathFromRef(manifestRef)), artifactName);
 }
 
-async function verifySqliteArtifact(tempDir, entry, bytes) {
+function requiredSqliteTables(entry) {
+  if (Array.isArray(entry.metadata?.sqlite?.requiredTables)) {
+    return entry.metadata.sqlite.requiredTables;
+  }
+  if (entry.queryAdapter === "source_index_sqlite") {
+    return ["source_files", "source_files_fts"];
+  }
+  return ["docs_entries", "docs_entries_fts"];
+}
+
+async function verifySqliteArtifact(tempDir, entry, bytes, requiredTables) {
   const artifactPath = join(tempDir, basename(entry.artifactName));
   await writeFile(artifactPath, bytes);
   const { DatabaseSync } = require("node:sqlite");
@@ -99,7 +111,7 @@ async function verifySqliteArtifact(tempDir, entry, bytes) {
       .prepare("SELECT name FROM sqlite_master WHERE type IN ('table', 'virtual table')")
       .all()
       .map((row) => row.name);
-    for (const tableName of ["docs_entries", "docs_entries_fts"]) {
+    for (const tableName of requiredTables) {
       if (!tables.includes(tableName)) {
         throw new Error(`${entry.packageId} sqlite artifact missing ${tableName}`);
       }

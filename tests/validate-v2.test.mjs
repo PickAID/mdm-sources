@@ -111,6 +111,46 @@ test("validateRepository rejects sqlite docs packages without sqlite_docs adapte
   );
 });
 
+test("validateRepository accepts sqlite source index packages", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-sources-v2-source-index-"));
+  await writeV2Fixture(root, {
+    ...validV2Package(),
+    artifact: {
+      kind: "source_index",
+      format: "sqlite",
+      schemaId: "mdm.source.index.sqlite",
+      schemaVersion: 1,
+      entrypoint: "payload/core-docs.json"
+    },
+    query: {
+      ...validV2Package().query,
+      adapter: "source_index_sqlite"
+    }
+  });
+
+  const result = await validateRepository(root);
+
+  assert.deepEqual(result.errors, []);
+});
+
+test("validateRepository rejects source_index_sqlite without sqlite source_index", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-sources-v2-source-index-mismatch-"));
+  await writeV2Fixture(root, {
+    ...validV2Package(),
+    query: {
+      ...validV2Package().query,
+      adapter: "source_index_sqlite"
+    }
+  });
+
+  const result = await validateRepository(root);
+
+  assert.match(
+    result.errors.join("\n"),
+    /source_index_sqlite adapter requires sqlite source_index artifact/
+  );
+});
+
 async function writeV2Fixture(root, manifest, options = {}) {
   const packageRoot = join(root, "packages/docs/core/required-v2");
   await mkdir(join(packageRoot, "payload"), { recursive: true });
