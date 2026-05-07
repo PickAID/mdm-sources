@@ -1,6 +1,9 @@
 {
   "minecraftVersion": "1.18.2",
-  "targetMappings": ["official", "mojmap"],
+  "targetMappings": [
+    "official",
+    "mojmap"
+  ],
   "purpose": "Describe how MCP can acquire and generate local vanilla source evidence for Minecraft 1.18.2 without distributing source code in mdm-sources.",
   "distributionPolicy": {
     "bundlesMinecraftSource": false,
@@ -52,8 +55,13 @@
     "workspaceIndependence": "Generated source artifacts must not be stored inside user workspaces unless explicitly exported by the user."
   },
   "queryHints": {
-    "capabilities": ["source_lookup", "source_chunk_search"],
-    "preferredFallbacks": ["source_index_sqlite"],
+    "capabilities": [
+      "source_lookup",
+      "source_chunk_search"
+    ],
+    "preferredFallbacks": [
+      "source_index_sqlite"
+    ],
     "agentGuidance": "Use this profile to request local source generation or to explain why no vanilla source package is currently cached. Do not treat this profile as source content."
   },
   "legalNotes": [

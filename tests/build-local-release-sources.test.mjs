@@ -61,22 +61,31 @@ test("repository sources channel contains the vanilla source acquisition profile
     writeRegistry: false
   });
 
-  assert.deepEqual(result.artifacts.map((artifact) => artifact.packageId), [
+  const expectedPackageIds = [
+    "minecraft-1.7.10-vanilla-source-profile",
+    "minecraft-1.12.2-vanilla-source-profile",
     "minecraft-1.18.2-vanilla-source-profile",
     "minecraft-1.20.1-vanilla-source-profile",
-    "minecraft-1.21.1-vanilla-source-profile"
-  ]);
+    "minecraft-1.21.1-vanilla-source-profile",
+    "minecraft-26.1-vanilla-source-profile",
+    "minecraft-26.1.2-vanilla-source-profile"
+  ].sort();
+
+  assert.deepEqual(
+    result.artifacts.map((artifact) => artifact.packageId).sort(),
+    expectedPackageIds
+  );
 
   const releaseManifest = JSON.parse(
     await readFile(join(outDir, "mdm-release-manifest.json"), "utf-8")
   );
   assert.deepEqual(
     releaseManifest.packages.map((entry) => entry.releaseChannel),
-    ["sources", "sources", "sources"]
+    releaseManifest.packages.map(() => "sources")
   );
   assert.deepEqual(
     releaseManifest.packages.map((entry) => entry.releaseFamily),
-    ["vanilla-sources", "vanilla-sources", "vanilla-sources"]
+    releaseManifest.packages.map(() => "vanilla-sources")
   );
 
   for (const entry of releaseManifest.packages) {

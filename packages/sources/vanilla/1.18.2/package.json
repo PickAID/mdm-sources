@@ -8,9 +8,16 @@
     "description": "Public source acquisition profile for Minecraft 1.18.2. It describes legal local generation and cache policy without bundling Minecraft source."
   },
   "target": {
-    "minecraftVersions": ["1.18.2"],
-    "loaders": ["vanilla"],
-    "mappings": ["official", "mojmap"]
+    "minecraftVersions": [
+      "1.18.2"
+    ],
+    "loaders": [
+      "vanilla"
+    ],
+    "mappings": [
+      "official",
+      "mojmap"
+    ]
   },
   "artifact": {
     "kind": "docs_bundle",
@@ -19,20 +26,30 @@
     "schemaVersion": 1,
     "entrypoint": "payload/source-profile.json"
   },
-  "capabilities": ["source_lookup", "source_chunk_search"],
+  "capabilities": [
+    "source_lookup",
+    "source_chunk_search"
+  ],
   "policy": {
     "privacy": "public_release",
-    "lifecycle": ["downloadable"],
+    "lifecycle": [
+      "downloadable"
+    ],
     "canCommitToRepository": true,
     "canUploadToPublicRelease": true,
     "requiresUserConsent": false
   },
   "query": {
     "adapter": "json_docs",
-    "capabilities": ["source_lookup", "source_chunk_search"],
+    "capabilities": [
+      "source_lookup",
+      "source_chunk_search"
+    ],
     "defaultLimit": 8,
     "maxLimit": 50,
-    "preferredFallbacks": ["source_index_sqlite"]
+    "preferredFallbacks": [
+      "source_index_sqlite"
+    ]
   },
   "release": {
     "channel": "sources",

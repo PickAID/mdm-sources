@@ -1,10 +1,10 @@
 {
-  "minecraftVersion": "1.21.1",
+  "minecraftVersion": "26.1.2",
   "targetMappings": [
     "official",
     "mojmap"
   ],
-  "purpose": "Describe how MCP can acquire and generate local vanilla source evidence for Minecraft 1.21.1 without distributing source code in mdm-sources.",
+  "purpose": "Describe how MCP can acquire and generate local vanilla source evidence for Minecraft 26.1.2 without distributing source code in mdm-sources.",
   "distributionPolicy": {
     "bundlesMinecraftSource": false,
     "bundlesRemappedSource": false,
@@ -28,7 +28,7 @@
     "confirmationScope": "package-version",
     "targets": [
       {
-        "packageId": "minecraft-1.21.1-source-pack-named",
+        "packageId": "minecraft-26.1.2-source-pack-named",
         "namespace": "minecraft",
         "artifactType": "source-pack",
         "variant": "named",

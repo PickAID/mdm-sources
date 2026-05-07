@@ -16,8 +16,12 @@ Package ids:
 
 ```text
 minecraft-1.18.2-vanilla-source-profile
+minecraft-1.7.10-vanilla-source-profile
+minecraft-1.12.2-vanilla-source-profile
 minecraft-1.20.1-vanilla-source-profile
 minecraft-1.21.1-vanilla-source-profile
+minecraft-26.1-vanilla-source-profile
+minecraft-26.1.2-vanilla-source-profile
 ```
 
 Release channel and family:
@@ -33,8 +37,12 @@ Artifacts:
 
 ```text
 minecraft-1.18.2-vanilla-source-profile-0.1.0.mdm-resource.json
+minecraft-1.7.10-vanilla-source-profile-0.1.0.mdm-resource.json
+minecraft-1.12.2-vanilla-source-profile-0.1.0.mdm-resource.json
 minecraft-1.20.1-vanilla-source-profile-0.1.0.mdm-resource.json
 minecraft-1.21.1-vanilla-source-profile-0.1.0.mdm-resource.json
+minecraft-26.1-vanilla-source-profile-0.1.0.mdm-resource.json
+minecraft-26.1.2-vanilla-source-profile-0.1.0.mdm-resource.json
 ```
 
 Each payload states:
@@ -54,6 +62,9 @@ Commands:
 node --test tests/build-local-release-sources.test.mjs
 node --test tests/*.test.mjs
 node tools/validate.mjs
+node tools/sync-source-profiles.mjs
+node tools/sync-registry.mjs
+node tools/sync-repository.mjs
 node tools/build-local-release.mjs --out /tmp/mdm-sources-sources-release-out --channel sources --no-registry-update
 ```
 
@@ -61,10 +72,13 @@ Results:
 
 ```text
 sources test: 2 passed
-full mdm-sources tests: 21 passed
-validate: packageCount 17, errorCount 0
-sources release artifacts: 3
-release catalog currentSeedProfiles.sources: 1.18.2, 1.20.1, 1.21.1
+full mdm-sources tests: 24 passed
+validate: packageCount 21, errorCount 0
+sources release artifacts: 7
+release catalog currentSeedProfiles.sources: 1.7.10, 1.12.2, 1.18.2, 1.20.1, 1.21.1, 26.1, 26.1.2
+sync-source-profiles: generated 7 versioned source profile packages
+sync-registry: generated registry/index.json and registry/packages/*.json from package manifests
+sync-repository: one-command source profile plus registry sync
 ```
 
 Generated manifest excerpt:
@@ -72,13 +86,31 @@ Generated manifest excerpt:
 ```json
 [
   {
+    "packageId": "minecraft-1.7.10-vanilla-source-profile",
+    "artifactType": "docs",
+    "releaseChannel": "sources",
+    "releaseFamily": "vanilla-sources",
+    "capabilities": ["source_lookup", "source_chunk_search"],
+    "format": "json",
+    "sizeBytes": 6080
+  },
+  {
+    "packageId": "minecraft-1.12.2-vanilla-source-profile",
+    "artifactType": "docs",
+    "releaseChannel": "sources",
+    "releaseFamily": "vanilla-sources",
+    "capabilities": ["source_lookup", "source_chunk_search"],
+    "format": "json",
+    "sizeBytes": 6080
+  },
+  {
     "packageId": "minecraft-1.18.2-vanilla-source-profile",
     "artifactType": "docs",
     "releaseChannel": "sources",
     "releaseFamily": "vanilla-sources",
     "capabilities": ["source_lookup", "source_chunk_search"],
     "format": "json",
-    "sizeBytes": 5917
+    "sizeBytes": 6080
   },
   {
     "packageId": "minecraft-1.20.1-vanilla-source-profile",
@@ -87,7 +119,7 @@ Generated manifest excerpt:
     "releaseFamily": "vanilla-sources",
     "capabilities": ["source_lookup", "source_chunk_search"],
     "format": "json",
-    "sizeBytes": 5917
+    "sizeBytes": 6080
   },
   {
     "packageId": "minecraft-1.21.1-vanilla-source-profile",
@@ -96,7 +128,25 @@ Generated manifest excerpt:
     "releaseFamily": "vanilla-sources",
     "capabilities": ["source_lookup", "source_chunk_search"],
     "format": "json",
-    "sizeBytes": 5917
+    "sizeBytes": 6080
+  },
+  {
+    "packageId": "minecraft-26.1-vanilla-source-profile",
+    "artifactType": "docs",
+    "releaseChannel": "sources",
+    "releaseFamily": "vanilla-sources",
+    "capabilities": ["source_lookup", "source_chunk_search"],
+    "format": "json",
+    "sizeBytes": 6054
+  },
+  {
+    "packageId": "minecraft-26.1.2-vanilla-source-profile",
+    "artifactType": "docs",
+    "releaseChannel": "sources",
+    "releaseFamily": "vanilla-sources",
+    "capabilities": ["source_lookup", "source_chunk_search"],
+    "format": "json",
+    "sizeBytes": 6080
   }
 ]
 ```

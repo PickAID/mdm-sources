@@ -1,15 +1,15 @@
 {
   "identity": {
     "schemaVersion": 2,
-    "packageId": "minecraft-1.20.1-vanilla-source-profile",
+    "packageId": "minecraft-26.1.2-vanilla-source-profile",
     "packageVersion": "0.1.0",
     "namespace": "minecraft",
-    "displayName": "Minecraft 1.20.1 Vanilla Source Profile",
-    "description": "Public source acquisition profile for Minecraft 1.20.1. It describes legal local generation and cache policy without bundling Minecraft source."
+    "displayName": "Minecraft 26.1.2 Vanilla Source Profile",
+    "description": "Public source acquisition profile for Minecraft 26.1.2. It describes legal local generation and cache policy without bundling Minecraft source."
   },
   "target": {
     "minecraftVersions": [
-      "1.20.1"
+      "26.1.2"
     ],
     "loaders": [
       "vanilla"

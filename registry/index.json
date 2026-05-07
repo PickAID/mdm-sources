@@ -2,6 +2,18 @@
   "schemaVersion": 1,
   "packages": [
     {
+      "id": "client-visual-1.20.1-guidance",
+      "manifestPath": "registry/packages/client-visual-1.20.1-guidance.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": {
+        "artifactName": "client-visual-1.20.1-guidance-0.1.0.mdm-resource.json",
+        "sha256": "3df58c8f7df970c4f5eaf45566c3173fdbc05d059fc730f3582dfd5c66118be6",
+        "sizeBytes": 7896,
+        "builtAt": "2026-05-06T13:56:49.554Z"
+      }
+    },
+    {
       "id": "core-docs-required",
       "manifestPath": "registry/packages/core-docs-required.json",
       "required": true,
@@ -45,18 +57,6 @@
       }
     },
     {
-      "id": "client-visual-1.20.1-guidance",
-      "manifestPath": "registry/packages/client-visual-1.20.1-guidance.json",
-      "required": false,
-      "format": "json",
-      "currentRelease": {
-        "artifactName": "client-visual-1.20.1-guidance-0.1.0.mdm-resource.json",
-        "sha256": "3df58c8f7df970c4f5eaf45566c3173fdbc05d059fc730f3582dfd5c66118be6",
-        "sizeBytes": 7896,
-        "builtAt": "2026-05-06T13:56:49.554Z"
-      }
-    },
-    {
       "id": "kubejs-1.20.1-guidance",
       "manifestPath": "registry/packages/kubejs-1.20.1-guidance.json",
       "required": false,
@@ -69,9 +69,9 @@
       }
     },
     {
-      "id": "minecraft-release-catalog",
-      "manifestPath": "registry/packages/minecraft-release-catalog.json",
-      "required": true,
+      "id": "minecraft-1.12.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.12.2-vanilla-source-profile.json",
+      "required": false,
       "format": "json",
       "currentRelease": null
     },
@@ -101,14 +101,24 @@
       "manifestPath": "registry/packages/minecraft-1.20.1-vanilla-datapack-profile.json",
       "required": false,
       "format": "json",
-      "currentRelease": null
+      "currentRelease": {
+        "artifactName": "minecraft-1.20.1-vanilla-datapack-profile-0.1.0.mdm-resource.json",
+        "sha256": "f8a4d059f8aaa4523d9105501a200517496ba8c25bad4b495f51adef0800f845",
+        "sizeBytes": 4035,
+        "builtAt": "2026-05-06T07:32:52.225Z"
+      }
     },
     {
       "id": "minecraft-1.20.1-vanilla-resourcepack-profile",
       "manifestPath": "registry/packages/minecraft-1.20.1-vanilla-resourcepack-profile.json",
       "required": false,
       "format": "json",
-      "currentRelease": null
+      "currentRelease": {
+        "artifactName": "minecraft-1.20.1-vanilla-resourcepack-profile-0.1.0.mdm-resource.json",
+        "sha256": "9140544d84d1e6995604c4916ee8de99d4cc34252b4ffa9c45ee8f55eacb2afd",
+        "sizeBytes": 4186,
+        "builtAt": "2026-05-06T07:32:52.225Z"
+      }
     },
     {
       "id": "minecraft-1.20.1-vanilla-source-profile",
@@ -116,6 +126,18 @@
       "required": false,
       "format": "json",
       "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.20.1-yarn-mapping-profile",
+      "manifestPath": "registry/packages/minecraft-1.20.1-yarn-mapping-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": {
+        "artifactName": "minecraft-1.20.1-yarn-mapping-profile-0.1.0.mdm-resource.json",
+        "sha256": "5cfbf175995d06a6eb504fdf8bd471d50f5218d80f6bc79088bd8c9bde2f0027",
+        "sizeBytes": 4285,
+        "builtAt": "2026-05-06T07:32:52.225Z"
+      }
     },
     {
       "id": "minecraft-1.21.1-vanilla-datapack-profile",
@@ -139,9 +161,30 @@
       "currentRelease": null
     },
     {
-      "id": "minecraft-1.20.1-yarn-mapping-profile",
-      "manifestPath": "registry/packages/minecraft-1.20.1-yarn-mapping-profile.json",
+      "id": "minecraft-1.7.10-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-1.7.10-vanilla-source-profile.json",
       "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-26.1-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-26.1-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-26.1.2-vanilla-source-profile",
+      "manifestPath": "registry/packages/minecraft-26.1.2-vanilla-source-profile.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-release-catalog",
+      "manifestPath": "registry/packages/minecraft-release-catalog.json",
+      "required": true,
       "format": "json",
       "currentRelease": null
     }

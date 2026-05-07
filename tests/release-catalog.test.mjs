@@ -22,9 +22,13 @@ test("minecraft release catalog covers all currently synced official releases", 
   assert.ok(catalog.releases.every((release) => release.metadataUrl.startsWith("https://piston-meta.mojang.com/")));
   assert.match(catalog.localGenerationPolicy.vanillaSource, /Do not commit Minecraft source/);
   assert.deepEqual(catalog.currentSeedProfiles.sources, [
+    "1.7.10",
+    "1.12.2",
     "1.18.2",
     "1.20.1",
-    "1.21.1"
+    "1.21.1",
+    "26.1",
+    "26.1.2"
   ]);
 });
 

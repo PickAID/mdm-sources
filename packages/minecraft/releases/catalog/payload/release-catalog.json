@@ -5,7 +5,7 @@
   "latest": {"release":"26.1.2","snapshot":"26.2-snapshot-6"},
   "releaseCount": 101,
   "localGenerationPolicy": {"vanillaSource":"Generate or download locally only after user consent. Do not commit Minecraft source or remapped source to public repositories.","datapackProfiles":"Use this catalog to select version metadata, then use version-specific generated vanilla data or curated profile rules locally.","resourcepackProfiles":"Use this catalog to select client assets and pack metadata locally. Public mdm-sources packages contain only curated profiles and guidance.","cacheOwnership":"Generated indexes, source trees, mappings, ProbeJS dumps, and embeddings belong to MCP local cache."},
-  "currentSeedProfiles": {"datapack":["1.18.2","1.20.1","1.21.1"],"resourcepack":["1.18.2","1.20.1","1.21.1"],"sources":["1.18.2","1.20.1","1.21.1"]},
+  "currentSeedProfiles": {"datapack":["1.18.2","1.20.1","1.21.1"],"resourcepack":["1.18.2","1.20.1","1.21.1"],"sources":["1.7.10","1.12.2","1.18.2","1.20.1","1.21.1","26.1","26.1.2"]},
   "releases": [
     {"id":"26.1.2","releaseTime":"2026-04-09T10:12:23+00:00","metadataUrl":"https://piston-meta.mojang.com/v1/packages/77e9459d6354bc55cded19e10f87364c13110b49/26.1.2.json","sha1":"77e9459d6354bc55cded19e10f87364c13110b49","complianceLevel":1},
     {"id":"26.1.1","releaseTime":"2026-04-01T09:06:36+00:00","metadataUrl":"https://piston-meta.mojang.com/v1/packages/3fd4f9ce2eba60d9e9f75e1d7c33820f7a9595bf/26.1.1.json","sha1":"3fd4f9ce2eba60d9e9f75e1d7c33820f7a9595bf","complianceLevel":1},
