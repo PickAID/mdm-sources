@@ -88,11 +88,10 @@ test("release schema verifier rejects malformed release output", async () => {
           releaseFamily: "core-docs",
           capabilities: [],
           metadata: {
-            storageKind: "sqlite_bundle",
+            storageKind: 42,
             sqlite: {
-              databaseName: "bad.sqlite",
-              minUserVersion: "3",
-              requiredTables: ["docs_entries", 42]
+              minUserVersion: 3.5,
+              requiredTables: []
             }
           },
           artifactName: "nested/bad.json",
@@ -130,11 +129,19 @@ test("release schema verifier rejects malformed release output", async () => {
   assert.match(result.errors.join("\n"), /manifest.packages\[0\].sha256 is required/);
   assert.match(
     result.errors.join("\n"),
-    /manifest.packages\[0\].metadata.sqlite.minUserVersion must be number/
+    /manifest.packages\[0\].metadata.storageKind must be string/
   );
   assert.match(
     result.errors.join("\n"),
-    /manifest.packages\[0\].metadata.sqlite.requiredTables\[1\] must be string/
+    /manifest.packages\[0\].metadata.sqlite.databaseName is required/
+  );
+  assert.match(
+    result.errors.join("\n"),
+    /manifest.packages\[0\].metadata.sqlite.minUserVersion must be integer/
+  );
+  assert.match(
+    result.errors.join("\n"),
+    /manifest.packages\[0\].metadata.sqlite.requiredTables must have at least 1 items/
   );
   assert.match(result.errors.join("\n"), /manifest.packages\[0\].artifactName must match/);
   assert.match(result.errors.join("\n"), /summary.manifest.packageCount must equal/);
