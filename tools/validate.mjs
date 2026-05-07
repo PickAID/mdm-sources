@@ -188,6 +188,12 @@ function validateArtifactQueryPair(repoPath, artifact, query, errors) {
     );
   }
   if (
+    artifact.kind === "source_index" &&
+    artifact.schemaId !== "mdm.source.index.sqlite"
+  ) {
+    errors.push(`${repoPath} source_index packages must use mdm.source.index.sqlite schemaId`);
+  }
+  if (
     query.adapter === "source_index_sqlite" &&
     (artifact.kind !== "source_index" || artifact.format !== "sqlite")
   ) {

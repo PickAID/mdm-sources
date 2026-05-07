@@ -11,6 +11,7 @@ import { verifyReleaseSchema } from "../tools/verify-release-schema.mjs";
 test("release schema files are valid JSON contracts", async () => {
   const manifestSchema = await readSchema("release-manifest.schema.json");
   const summarySchema = await readSchema("release-summary.schema.json");
+  const sourceIndexSchema = await readSchema("source-index-payload.schema.json");
 
   assert.equal(manifestSchema.title, "MDM Release Manifest");
   assert.deepEqual(manifestSchema.required, ["schemaVersion", "generatedAt", "packages"]);
@@ -20,6 +21,19 @@ test("release schema files are valid JSON contracts", async () => {
   );
   assert.equal(summarySchema.title, "MDM Release Summary");
   assert.equal(summarySchema.properties.manifest.properties.name.const, "mdm-release-manifest.json");
+  assert.equal(sourceIndexSchema.title, "MDM Source Index Payload");
+  assert.deepEqual(Object.keys(sourceIndexSchema.properties), [
+    "files",
+    "javaSymbols",
+    "javaMembers",
+    "sourceChunks"
+  ]);
+  assert.deepEqual(sourceIndexSchema.$defs.javaMember.properties.memberKind.enum, [
+    "field",
+    "constructor",
+    "method"
+  ]);
+  assert.ok(sourceIndexSchema.$defs.sourceChunk.anyOf);
 });
 
 test("generated release manifest and summary satisfy the schema-level contract", async () => {

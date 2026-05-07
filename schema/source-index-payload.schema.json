@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MDM Source Index Payload",
+  "type": "object",
+  "properties": {
+    "files": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/sourceFile" }
+    },
+    "javaSymbols": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/javaSymbol" }
+    },
+    "javaMembers": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/javaMember" }
+    },
+    "sourceChunks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/sourceChunk" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "sourceFile": {
+      "type": "object",
+      "required": [
+        "className",
+        "packageName",
+        "minecraftVersion",
+        "loader",
+        "mappings",
+        "sha256"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "minecraftVersion": { "type": "string", "minLength": 1 },
+        "loader": { "type": "string", "minLength": 1 },
+        "mappings": { "type": "string", "minLength": 1 },
+        "className": { "type": "string", "minLength": 1 },
+        "packageName": { "type": "string", "minLength": 1 },
+        "sourcePath": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string" },
+        "javaMembers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nestedJavaMember" }
+        }
+      },
+      "anyOf": [
+        { "required": ["sourcePath"] },
+        { "required": ["path"] }
+      ],
+      "additionalProperties": false
+    },
+    "javaSymbol": {
+      "type": "object",
+      "required": ["qualifiedName"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sourcePath": { "type": "string", "minLength": 1 },
+        "packageName": { "type": "string", "minLength": 1 },
+        "simpleName": { "type": "string", "minLength": 1 },
+        "qualifiedName": { "type": "string", "minLength": 1 }
+      },
+      "anyOf": [
+        { "required": ["path"] },
+        { "required": ["sourcePath"] }
+      ],
+      "additionalProperties": false
+    },
+    "javaMember": {
+      "type": "object",
+      "required": [
+        "ownerSimpleName",
+        "ownerQualifiedName",
+        "memberName",
+        "memberKind"
+      ],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sourcePath": { "type": "string", "minLength": 1 },
+        "packageName": { "type": "string", "minLength": 1 },
+        "ownerSimpleName": { "type": "string", "minLength": 1 },
+        "ownerQualifiedName": { "type": "string", "minLength": 1 },
+        "memberName": { "type": "string", "minLength": 1 },
+        "memberKind": {
+          "enum": ["field", "constructor", "method"]
+        },
+        "signature": { "type": "string", "minLength": 1 },
+        "returnType": { "type": "string", "minLength": 1 },
+        "startLine": { "type": "integer", "minimum": 1 },
+        "endLine": { "type": "integer", "minimum": 1 }
+      },
+      "anyOf": [
+        { "required": ["path"] },
+        { "required": ["sourcePath"] }
+      ],
+      "additionalProperties": false
+    },
+    "nestedJavaMember": {
+      "type": "object",
+      "required": ["memberName", "memberKind"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sourcePath": { "type": "string", "minLength": 1 },
+        "packageName": { "type": "string", "minLength": 1 },
+        "ownerSimpleName": { "type": "string", "minLength": 1 },
+        "ownerQualifiedName": { "type": "string", "minLength": 1 },
+        "memberName": { "type": "string", "minLength": 1 },
+        "memberKind": {
+          "enum": ["field", "constructor", "method"]
+        },
+        "signature": { "type": "string", "minLength": 1 },
+        "returnType": { "type": "string", "minLength": 1 },
+        "startLine": { "type": "integer", "minimum": 1 },
+        "endLine": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "sourceChunk": {
+      "type": "object",
+      "required": ["chunkId", "content"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sourcePath": { "type": "string", "minLength": 1 },
+        "chunkId": { "type": "string", "minLength": 1 },
+        "chunkType": { "type": "string", "minLength": 1 },
+        "startLine": { "type": "integer", "minimum": 1 },
+        "endLine": { "type": "integer", "minimum": 1 },
+        "tokenCount": { "type": "integer", "minimum": 1 },
+        "content": { "type": "string", "minLength": 1 }
+      },
+      "anyOf": [
+        { "required": ["path"] },
+        { "required": ["sourcePath"] }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

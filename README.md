@@ -34,6 +34,7 @@ index SQLite artifacts use the MCP runtime source-index schema
 profiles still do not bundle Minecraft source or generated source trees.
 Source-index payloads may provide compact `files` metadata plus optional
 `javaSymbols`, `javaMembers`, and `sourceChunks` arrays; release tooling
+validates them against `schema/source-index-payload.schema.json` and
 materializes those normalized records into SQLite.
 
 MCP clients resolve each package artifact as a sibling of the release manifest:
@@ -44,6 +45,7 @@ The release-level contracts are described by:
 
 - `schema/release-manifest.schema.json`
 - `schema/release-summary.schema.json`
+- `schema/source-index-payload.schema.json`
 
 Private user caches, generated ProbeJS dumps from private modpacks, large vanilla source bundles, and derived local package indexes must stay outside this repository and outside public releases.
 

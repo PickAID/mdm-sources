@@ -120,6 +120,24 @@ test("validateRepository accepts sqlite source index packages", async () => {
   assert.deepEqual(result.errors, []);
 });
 
+test("validateRepository rejects source indexes with wrong payload schema id", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-sources-v2-source-index-schema-"));
+  await writeV2Fixture(root, {
+    ...validSourceIndexPackage(),
+    artifact: {
+      ...validSourceIndexPackage().artifact,
+      schemaId: "mdm.docs.json"
+    }
+  });
+
+  const result = await validateRepository(root);
+
+  assert.match(
+    result.errors.join("\n"),
+    /source_index packages must use mdm.source.index.sqlite schemaId/
+  );
+});
+
 test("validateRepository rejects source index java members without a path", async () => {
   const root = await mkdtemp(join(tmpdir(), "mdm-sources-v2-source-index-member-path-"));
   await writeV2Fixture(root, validSourceIndexPackage(), {

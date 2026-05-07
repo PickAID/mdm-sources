@@ -19,6 +19,7 @@ function validateNode(input) {
   validateConst(schema, input);
   validateEnum(schema, input);
   validateType(schema, input);
+  validateAnyOf(schema, input);
   validateString(schema, input);
   validateNumber(schema, input);
   validateObject(schema, input);
@@ -44,6 +45,26 @@ function validateType(schema, input) {
   const allowed = Array.isArray(schema.type) ? schema.type : [schema.type];
   if (!allowed.some((type) => matchesType(input.value, type))) {
     input.errors.push(`${input.path} must be ${allowed.join(" or ")}`);
+  }
+}
+
+function validateAnyOf(schema, input) {
+  if (!Array.isArray(schema.anyOf)) {
+    return;
+  }
+  const anyMatched = schema.anyOf.some((candidate) => {
+    const errors = [];
+    validateNode({
+      schema: candidate,
+      value: input.value,
+      path: input.path,
+      rootSchema: input.rootSchema,
+      errors
+    });
+    return errors.length === 0;
+  });
+  if (!anyMatched) {
+    input.errors.push(`${input.path} must match at least one anyOf schema`);
   }
 }
 

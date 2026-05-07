@@ -1,10 +1,27 @@
 import { readFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+import { validateJsonSchemaSubset } from "./json-schema-subset.mjs";
+
+const schemaRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 
 export async function validateSourceIndexPayload(repoPath, entrypoint, errors) {
   const payload = await readJson(entrypoint, errors);
   if (!payload || !isRecord(payload)) {
     errors.push(`${repoPath} source index payload must be object`);
     return;
+  }
+  const schema = await readJson(
+    join(schemaRoot, "schema/source-index-payload.schema.json"),
+    errors
+  );
+  if (schema) {
+    errors.push(
+      ...validateJsonSchemaSubset(schema, payload, {
+        path: `${repoPath} source index payload`
+      })
+    );
   }
 
   const files = optionalArray(payload.files, `${repoPath} source files`, errors);
