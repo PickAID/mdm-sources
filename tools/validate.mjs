@@ -2,6 +2,8 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import { isAbsolute, join, normalize, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { validateSourceIndexPayload } from "./source-index-payload-validation.mjs";
+
 const REQUIRED_PACKAGE_FIELDS = [
   "schemaVersion",
   "id",
@@ -119,8 +121,9 @@ async function validatePackageFileV2(repoRoot, packageFile, manifest, errors) {
     errors.push(`${repoPath} artifact.schemaVersion must be number`);
   }
   requireNonEmptyString(artifact.entrypoint, `${repoPath} artifact.entrypoint`, errors);
+  let entrypoint;
   if (typeof artifact.entrypoint === "string") {
-    const entrypoint = resolveInside(repoRoot, packageFile, artifact.entrypoint);
+    entrypoint = resolveInside(repoRoot, packageFile, artifact.entrypoint);
     if (!entrypoint || !(await pathExists(entrypoint))) {
       errors.push(`${repoPath} artifact entrypoint is missing`);
     }
@@ -158,6 +161,9 @@ async function validatePackageFileV2(repoRoot, packageFile, manifest, errors) {
     errors
   );
   validateArtifactQueryPair(repoPath, artifact, query, errors);
+  if (entrypoint && query.adapter === "source_index_sqlite") {
+    await validateSourceIndexPayload(repoPath, entrypoint, errors);
+  }
   if (typeof query.defaultLimit !== "number" || typeof query.maxLimit !== "number") {
     errors.push(`${repoPath} query limits must be numbers`);
   } else if (query.defaultLimit > query.maxLimit) {

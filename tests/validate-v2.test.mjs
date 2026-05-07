@@ -113,24 +113,81 @@ test("validateRepository rejects sqlite docs packages without sqlite_docs adapte
 
 test("validateRepository accepts sqlite source index packages", async () => {
   const root = await mkdtemp(join(tmpdir(), "mdm-sources-v2-source-index-"));
-  await writeV2Fixture(root, {
-    ...validV2Package(),
-    artifact: {
-      kind: "source_index",
-      format: "sqlite",
-      schemaId: "mdm.source.index.sqlite",
-      schemaVersion: 1,
-      entrypoint: "payload/core-docs.json"
-    },
-    query: {
-      ...validV2Package().query,
-      adapter: "source_index_sqlite"
+  await writeV2Fixture(root, validSourceIndexPackage());
+
+  const result = await validateRepository(root);
+
+  assert.deepEqual(result.errors, []);
+});
+
+test("validateRepository rejects source index java members without a path", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-sources-v2-source-index-member-path-"));
+  await writeV2Fixture(root, validSourceIndexPackage(), {
+    payload: {
+      javaMembers: [
+        {
+          ownerSimpleName: "ItemStack",
+          ownerQualifiedName: "net.minecraft.world.item.ItemStack",
+          memberName: "copy",
+          memberKind: "method"
+        }
+      ]
     }
   });
 
   const result = await validateRepository(root);
 
-  assert.deepEqual(result.errors, []);
+  assert.match(
+    result.errors.join("\n"),
+    /source java member path must be a non-empty string/
+  );
+});
+
+test("validateRepository rejects source index java members with invalid kinds", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-sources-v2-source-index-member-kind-"));
+  await writeV2Fixture(root, validSourceIndexPackage(), {
+    payload: {
+      javaMembers: [
+        {
+          path: "net/minecraft/world/item/ItemStack.java",
+          ownerSimpleName: "ItemStack",
+          ownerQualifiedName: "net.minecraft.world.item.ItemStack",
+          memberName: "copy",
+          memberKind: "function"
+        }
+      ]
+    }
+  });
+
+  const result = await validateRepository(root);
+
+  assert.match(
+    result.errors.join("\n"),
+    /source java member memberKind must be field, constructor, or method/
+  );
+});
+
+test("validateRepository rejects source index chunks without content or chunk ids", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-sources-v2-source-index-chunk-"));
+  await writeV2Fixture(root, validSourceIndexPackage(), {
+    payload: {
+      sourceChunks: [
+        {
+          path: "net/minecraft/world/item/ItemStack.java",
+          chunkId: "durability-rules"
+        },
+        {
+          path: "net/minecraft/world/item/ItemStack.java",
+          content: "Durability metadata."
+        }
+      ]
+    }
+  });
+
+  const result = await validateRepository(root);
+
+  assert.match(result.errors.join("\n"), /source chunk content must be a non-empty string/);
+  assert.match(result.errors.join("\n"), /source chunk chunkId must be a non-empty string/);
 });
 
 test("validateRepository rejects source_index_sqlite without sqlite source_index", async () => {
@@ -156,7 +213,10 @@ async function writeV2Fixture(root, manifest, options = {}) {
   await mkdir(join(packageRoot, "payload"), { recursive: true });
   await mkdir(join(root, "registry/packages"), { recursive: true });
   if (options.writePayload !== false) {
-    await writeFile(join(packageRoot, "payload/core-docs.json"), "{}\n");
+    await writeFile(
+      join(packageRoot, "payload/core-docs.json"),
+      JSON.stringify(options.payload ?? {}, null, 2)
+    );
   }
   await writeFile(
     join(packageRoot, "package.json"),
@@ -234,6 +294,29 @@ function validV2Package() {
     release: {
       channel: "required",
       family: "core-docs"
+    }
+  };
+}
+
+function validSourceIndexPackage() {
+  return {
+    ...validV2Package(),
+    artifact: {
+      kind: "source_index",
+      format: "sqlite",
+      schemaId: "mdm.source.index.sqlite",
+      schemaVersion: 1,
+      entrypoint: "payload/core-docs.json"
+    },
+    capabilities: ["source_lookup", "source_chunk_search"],
+    query: {
+      ...validV2Package().query,
+      adapter: "source_index_sqlite",
+      capabilities: ["source_lookup", "source_chunk_search"]
+    },
+    release: {
+      channel: "sources",
+      family: "vanilla-source-index"
     }
   };
 }
