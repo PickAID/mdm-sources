@@ -8,14 +8,22 @@ test("release workflow publishes local release artifacts to GitHub Releases", as
   assert.match(workflow, /node tools\/validate\.mjs/);
   assert.match(
     workflow,
-    /node tools\/build-local-release\.mjs --out release-out --no-registry-update/
+    /node tools\/write-release-acceptance-report\.mjs --out release-out/
   );
   assert.match(workflow, /release-out\/mdm-release-manifest\.json/);
   assert.match(workflow, /release-out\/mdm-release-summary\.json/);
-  assert.match(workflow, /node tools\/verify-release-schema\.mjs release-out\/mdm-release-manifest\.json/);
-  assert.match(workflow, /node tools\/verify-release-install\.mjs release-out\/mdm-release-manifest\.json/);
-  assert.match(workflow, /node tools\/list-release-artifacts\.mjs/);
+  assert.match(workflow, /release-out\/mdm-release-acceptance-report\.json/);
+  assert.match(workflow, /release-out\/mdm-release-acceptance-report\.md/);
+  assert.match(
+    workflow,
+    /node tools\/list-release-artifacts\.mjs release-out\/mdm-release-manifest\.json > release-artifacts\.txt/
+  );
   assert.match(workflow, /gh release (create|upload)/);
   assert.doesNotMatch(workflow, /release-out\/\*/);
   assert.match(workflow, /release-artifacts\.txt/);
+  assert.doesNotMatch(publishStep(workflow), /mdm-release-acceptance-report\.(json|md)/);
 });
+
+function publishStep(workflow) {
+  return workflow.slice(workflow.indexOf("- name: Publish GitHub Release"));
+}

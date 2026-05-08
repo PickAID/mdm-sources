@@ -29,19 +29,15 @@ jobs:
       - name: Validate repository
         run: node tools/validate.mjs
 
-      - name: Build release artifacts
-        run: node tools/build-local-release.mjs --out release-out --no-registry-update
+      - name: Build and accept release artifacts
+        run: node tools/write-release-acceptance-report.mjs --out release-out
 
       - name: Verify release manifest
         run: |
           test -f release-out/mdm-release-manifest.json
           test -f release-out/mdm-release-summary.json
-
-      - name: Verify release schema
-        run: node tools/verify-release-schema.mjs release-out/mdm-release-manifest.json
-
-      - name: Verify release installability
-        run: node tools/verify-release-install.mjs release-out/mdm-release-manifest.json
+          test -f release-out/mdm-release-acceptance-report.json
+          test -f release-out/mdm-release-acceptance-report.md
 
       - name: List release artifacts
         run: node tools/list-release-artifacts.mjs release-out/mdm-release-manifest.json > release-artifacts.txt
