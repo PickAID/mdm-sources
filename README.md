@@ -85,6 +85,12 @@ Verify the release manifest and summary schema contract:
 node tools/verify-release-schema.mjs release-out/mdm-release-manifest.json
 ```
 
+Write a local release acceptance report without publishing or mutating registry metadata:
+
+```bash
+node tools/write-release-acceptance-report.mjs --out release-out
+```
+
 Run tests:
 
 ```bash
