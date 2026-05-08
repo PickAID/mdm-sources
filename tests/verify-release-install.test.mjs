@@ -112,7 +112,21 @@ test("verifyReleaseInstall rejects empty source index sqlite artifacts", async (
           format: "sqlite",
           queryAdapter: "source_index_sqlite",
           sha256: sha256(bytes),
-          sizeBytes: bytes.length
+          sizeBytes: bytes.length,
+          metadata: {
+            sqlite: {
+              databaseName: "minecraft-1.20.1-source-index.sqlite",
+              minUserVersion: 3,
+              requiredTables: [
+                "files",
+                "java_symbols",
+                "java_members",
+                "fts_files",
+                "source_chunks",
+                "fts_chunks"
+              ]
+            }
+          }
         }
       ]
     })
@@ -144,6 +158,7 @@ test("verifyReleaseInstall rejects sqlite artifacts below minUserVersion", async
           sizeBytes: bytes.length,
           metadata: {
             sqlite: {
+              databaseName: "core-docs-search-sqlite.sqlite",
               minUserVersion: 3,
               requiredTables: ["docs_entries", "docs_entries_fts"]
             }
@@ -156,6 +171,35 @@ test("verifyReleaseInstall rejects sqlite artifacts below minUserVersion", async
   await assert.rejects(
     verifyReleaseInstall({ manifest: join(root, "mdm-release-manifest.json") }),
     /sqlite user_version 1 is below required 3/
+  );
+});
+
+test("verifyReleaseInstall rejects sqlite artifacts without required sqlite metadata", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-verify-missing-sqlite-metadata-"));
+  const artifactName = "core-docs-search-sqlite-0.1.0.sqlite";
+  const artifactPath = join(root, artifactName);
+  writeDocsSqliteWithUserVersion(artifactPath, 3);
+  const bytes = await readFile(artifactPath);
+  await writeFile(
+    join(root, "mdm-release-manifest.json"),
+    JSON.stringify({
+      schemaVersion: 1,
+      packages: [
+        {
+          packageId: "core-docs-search-sqlite",
+          artifactName,
+          format: "sqlite",
+          queryAdapter: "sqlite_docs",
+          sha256: sha256(bytes),
+          sizeBytes: bytes.length
+        }
+      ]
+    })
+  );
+
+  await assert.rejects(
+    verifyReleaseInstall({ manifest: join(root, "mdm-release-manifest.json") }),
+    /metadata.sqlite is required for sqlite artifacts/
   );
 });
 
@@ -236,6 +280,7 @@ function writeEmptySourceIndexSqlite(path) {
   const database = new DatabaseSync(path);
   try {
     database.exec([
+      "PRAGMA user_version = 3;",
       "CREATE TABLE files(path TEXT PRIMARY KEY, kind TEXT, size_bytes INTEGER, sha256 TEXT, package_id TEXT);",
       "CREATE TABLE java_symbols(path TEXT, package_name TEXT, simple_name TEXT, qualified_name TEXT);",
       "CREATE TABLE java_members(path TEXT, package_name TEXT, owner_simple_name TEXT, owner_qualified_name TEXT, member_name TEXT, member_kind TEXT, signature TEXT, return_type TEXT, start_line INTEGER, end_line INTEGER);",

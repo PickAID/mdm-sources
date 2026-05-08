@@ -32,7 +32,8 @@ export async function verifyReleaseInstall(input) {
       }
 
       if (entry.format === "sqlite") {
-        await verifySqliteArtifact(tempDir, entry, bytes, requiredSqliteTables(entry));
+        const sqliteMetadata = requireSqliteMetadata(entry);
+        await verifySqliteArtifact(tempDir, entry, bytes, sqliteMetadata.requiredTables);
       }
 
       verified.push({
@@ -91,23 +92,6 @@ function resolveArtifactRef(manifestRef, artifactName) {
   return join(dirname(filePathFromRef(manifestRef)), artifactName);
 }
 
-function requiredSqliteTables(entry) {
-  if (Array.isArray(entry.metadata?.sqlite?.requiredTables)) {
-    return entry.metadata.sqlite.requiredTables;
-  }
-  if (entry.queryAdapter === "source_index_sqlite") {
-    return [
-      "files",
-      "java_symbols",
-      "java_members",
-      "fts_files",
-      "source_chunks",
-      "fts_chunks"
-    ];
-  }
-  return ["docs_entries", "docs_entries_fts"];
-}
-
 async function verifySqliteArtifact(tempDir, entry, bytes, requiredTables) {
   const artifactPath = join(tempDir, basename(entry.artifactName));
   await writeFile(artifactPath, bytes);
@@ -130,6 +114,29 @@ async function verifySqliteArtifact(tempDir, entry, bytes, requiredTables) {
   } finally {
     database.close();
   }
+}
+
+function requireSqliteMetadata(entry) {
+  const metadata = entry.metadata?.sqlite;
+  if (metadata === undefined || metadata === null || typeof metadata !== "object") {
+    throw new Error(`${entry.packageId} metadata.sqlite is required for sqlite artifacts.`);
+  }
+  requireString(metadata.databaseName, `${entry.packageId} metadata.sqlite.databaseName`);
+  if (!Number.isInteger(metadata.minUserVersion) || metadata.minUserVersion < 0) {
+    throw new Error(
+      `${entry.packageId} metadata.sqlite.minUserVersion must be a non-negative integer.`
+    );
+  }
+  if (
+    !Array.isArray(metadata.requiredTables) ||
+    metadata.requiredTables.length === 0 ||
+    metadata.requiredTables.some((tableName) => typeof tableName !== "string" || tableName.length === 0)
+  ) {
+    throw new Error(
+      `${entry.packageId} metadata.sqlite.requiredTables must be a non-empty string array.`
+    );
+  }
+  return metadata;
 }
 
 function verifySqliteUserVersion(database, entry) {
