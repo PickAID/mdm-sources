@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import { readCatalogVersions } from "./release-catalog-versions.mjs";
 
-const LOADER_SOURCE_PROFILE_TARGETS = [
+export const LOADER_SOURCE_PROFILE_TARGETS = [
   { version: "1.7.10", loader: "forge" },
   { version: "1.12.2", loader: "forge" },
   { version: "1.14.4", loader: "fabric" },

@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "profileKind": "resourcepack",
+  "minecraftVersion": "1.21.1",
+  "generatedFrom": {
+    "kind": "mojang_release_catalog",
+    "metadataUrl": "https://piston-meta.mojang.com/v1/packages/b85d0de177a976f57e6812188ec44a5c1c4cf935/1.21.1.json",
+    "sha1": "b85d0de177a976f57e6812188ec44a5c1c4cf935",
+    "releaseTime": "2024-08-08T12:24:45+00:00"
+  },
+  "target": {
+    "namespace": "minecraft",
+    "loaders": [
+      "quilt"
+    ],
+    "mappings": [
+      "official",
+      "intermediary",
+      "named",
+      "yarn"
+    ]
+  },
+  "packMcmeta": {
+    "packFormatSource": "runtime_resolved",
+    "exactPackFormatBundled": false,
+    "resolution": "Read pack.mcmeta or version metadata from the locally acquired vanilla client/server jar."
+  },
+  "roots": [
+    "assets/<namespace>/atlases",
+    "assets/<namespace>/blockstates",
+    "assets/<namespace>/font",
+    "assets/<namespace>/lang",
+    "assets/<namespace>/models",
+    "assets/<namespace>/particles",
+    "assets/<namespace>/shaders",
+    "assets/<namespace>/sounds",
+    "assets/<namespace>/textures"
+  ],
+  "traceRules": [
+    {
+      "kind": "model",
+      "pathPattern": "assets/<namespace>/models/<path>.json",
+      "lookupKey": "<namespace>:<path>"
+    },
+    {
+      "kind": "texture",
+      "pathPattern": "assets/<namespace>/textures/<path>.png",
+      "lookupKey": "<namespace>:<path>"
+    },
+    {
+      "kind": "atlas",
+      "pathPattern": "assets/<namespace>/atlases/<name>.json",
+      "lookupKey": "<namespace>:<name>"
+    }
+  ],
+  "distributionPolicy": {
+    "publicRepositoryContains": [
+      "version-scoped lookup roots",
+      "trace rules",
+      "runtime resolution policy",
+      "loader target metadata"
+    ],
+    "publicRepositoryMustNotContain": [
+      "vanilla data files",
+      "vanilla asset files",
+      "generated archive indexes",
+      "workspace-private modpack data",
+      "private loader workspace files",
+      "private modpack data"
+    ],
+    "requiresUserConsentForGeneratedArtifacts": true
+  },
+  "licensing": {
+    "redistribution": "profile_metadata_only",
+    "sourceMaterial": "Mojang release metadata and curated path rules",
+    "notes": [
+      "This package does not redistribute vanilla data files, assets, or generated archive indexes."
+    ]
+  },
+  "cacheOwnership": {
+    "generatedArchiveIndexesOwner": "mcp-runtime-cache",
+    "evictionAllowed": true
+  },
+  "loader": "quilt",
+  "localResolutionHints": {
+    "workspace": "Prefer the active mod workspace when resolving loader-provided pack overlays.",
+    "gradle": "Inspect Gradle run configurations, source sets, and generated resources directories locally.",
+    "probejs": "Use ProbeJS-generated local metadata only as runtime-private evidence.",
+    "resourcepack": "Resolve resourcepack roots from local project packs and runtime caches before falling back to generated indexes."
+  }
+}

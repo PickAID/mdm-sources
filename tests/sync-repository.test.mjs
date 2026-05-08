@@ -22,21 +22,37 @@ test("syncRepository generates source profiles and registry before validation", 
   ]);
   assert.deepEqual(result.datapackProfiles.generatedVersions, ["1.7.10", "26.1"]);
   assert.deepEqual(result.resourcepackProfiles.generatedVersions, ["1.7.10", "26.1"]);
+  assert.deepEqual(result.datapackProfiles.loaderProfiles.generatedPackageIds, [
+    "minecraft-1.7.10-forge-datapack-profile",
+    "minecraft-26.1-neoforge-datapack-profile",
+    "minecraft-26.1-fabric-datapack-profile"
+  ]);
+  assert.deepEqual(result.resourcepackProfiles.loaderProfiles.generatedPackageIds, [
+    "minecraft-1.7.10-forge-resourcepack-profile",
+    "minecraft-26.1-neoforge-resourcepack-profile",
+    "minecraft-26.1-fabric-resourcepack-profile"
+  ]);
   assert.deepEqual(result.mappingProfiles.generatedVersions, ["1.7.10", "26.1"]);
   assert.deepEqual(result.registry.packageIds, [
+    "minecraft-1.7.10-forge-datapack-profile",
+    "minecraft-1.7.10-forge-resourcepack-profile",
     "minecraft-1.7.10-forge-source-profile",
     "minecraft-1.7.10-vanilla-datapack-profile",
     "minecraft-1.7.10-vanilla-resourcepack-profile",
     "minecraft-1.7.10-vanilla-source-profile",
     "minecraft-1.7.10-yarn-mapping-profile",
+    "minecraft-26.1-fabric-datapack-profile",
+    "minecraft-26.1-fabric-resourcepack-profile",
     "minecraft-26.1-fabric-source-profile",
+    "minecraft-26.1-neoforge-datapack-profile",
+    "minecraft-26.1-neoforge-resourcepack-profile",
     "minecraft-26.1-neoforge-source-profile",
     "minecraft-26.1-vanilla-datapack-profile",
     "minecraft-26.1-vanilla-resourcepack-profile",
     "minecraft-26.1-vanilla-source-profile",
     "minecraft-26.1-yarn-mapping-profile"
   ]);
-  assert.equal(validation.packageCount, 11);
+  assert.equal(validation.packageCount, 17);
   assert.deepEqual(validation.errors, []);
 
   const datapackProfile = JSON.parse(
@@ -55,6 +71,32 @@ test("syncRepository generates source profiles and registry before validation", 
   assert.equal(datapackProfile.packMcmeta.packFormatSource, "runtime_resolved");
   assert.equal(resourcepackProfile.minecraftVersion, "26.1");
   assert.equal(resourcepackProfile.packMcmeta.packFormatSource, "runtime_resolved");
+  const loaderDatapackManifest = JSON.parse(
+    await readFile(
+      join(root, "packages/datapack/loaders/neoforge/26.1/package.json"),
+      "utf-8"
+    )
+  );
+  const loaderDatapackProfile = JSON.parse(
+    await readFile(
+      join(root, "packages/datapack/loaders/neoforge/26.1/payload/datapack-profile.json"),
+      "utf-8"
+    )
+  );
+  assert.equal(
+    loaderDatapackManifest.identity.packageId,
+    "minecraft-26.1-neoforge-datapack-profile"
+  );
+  assert.equal(loaderDatapackManifest.release.family, "loader-datapack");
+  assert.equal(loaderDatapackProfile.loader, "neoforge");
+  assert.deepEqual(loaderDatapackProfile.target.loaders, ["neoforge"]);
+  assert.match(loaderDatapackProfile.localResolutionHints.gradle, /Gradle/);
+  assert.match(loaderDatapackProfile.localResolutionHints.probejs, /ProbeJS/);
+  assert.ok(
+    loaderDatapackProfile.distributionPolicy.publicRepositoryMustNotContain.includes(
+      "private modpack data"
+    )
+  );
   const mappingProfile = JSON.parse(
     await readFile(
       join(root, "packages/mappings/vanilla/26.1-yarn-profile/payload/mapping-profile.json"),
@@ -71,12 +113,18 @@ test("syncRepository generates source profiles and registry before validation", 
   assert.deepEqual(
     registry.packages.map((entry) => entry.manifestPath),
     [
+      "registry/packages/minecraft-1.7.10-forge-datapack-profile.json",
+      "registry/packages/minecraft-1.7.10-forge-resourcepack-profile.json",
       "registry/packages/minecraft-1.7.10-forge-source-profile.json",
       "registry/packages/minecraft-1.7.10-vanilla-datapack-profile.json",
       "registry/packages/minecraft-1.7.10-vanilla-resourcepack-profile.json",
       "registry/packages/minecraft-1.7.10-vanilla-source-profile.json",
       "registry/packages/minecraft-1.7.10-yarn-mapping-profile.json",
+      "registry/packages/minecraft-26.1-fabric-datapack-profile.json",
+      "registry/packages/minecraft-26.1-fabric-resourcepack-profile.json",
       "registry/packages/minecraft-26.1-fabric-source-profile.json",
+      "registry/packages/minecraft-26.1-neoforge-datapack-profile.json",
+      "registry/packages/minecraft-26.1-neoforge-resourcepack-profile.json",
       "registry/packages/minecraft-26.1-neoforge-source-profile.json",
       "registry/packages/minecraft-26.1-vanilla-datapack-profile.json",
       "registry/packages/minecraft-26.1-vanilla-resourcepack-profile.json",
