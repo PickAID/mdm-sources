@@ -77,12 +77,16 @@ Verify that a local or remote release manifest is installable:
 
 ```bash
 node tools/verify-release-install.mjs release-out/mdm-release-manifest.json
+# or:
+node tools/verify-release-install.mjs https://github.com/PickAID/mdm-sources/releases/download/<tag>/mdm-release-manifest.json
 ```
 
-Verify the release manifest and summary schema contract:
+Verify the release manifest and summary schema contract for a local or remote release:
 
 ```bash
 node tools/verify-release-schema.mjs release-out/mdm-release-manifest.json
+# or:
+node tools/verify-release-schema.mjs https://github.com/PickAID/mdm-sources/releases/download/<tag>/mdm-release-manifest.json
 ```
 
 Write a local release acceptance report without publishing or mutating registry metadata:

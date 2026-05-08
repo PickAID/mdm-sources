@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -66,6 +67,73 @@ test("generated release manifest and summary satisfy the schema-level contract",
   const result = await verifyReleaseSchema({ manifestPath: release.manifestPath });
   assert.deepEqual(result.errors, []);
   assert.equal(result.packageCount, 1);
+});
+
+test("release schema verifier resolves HTTP summary relative to manifest URL", async () => {
+  const manifestUrl =
+    "https://example.invalid/releases/download/mdm-resources-v1/mdm-release-manifest.json";
+  const requested = [];
+  const manifest = validReleaseManifest();
+  const manifestBody = JSON.stringify(manifest);
+  const summary = validReleaseSummary(manifest, manifestBody);
+
+  const result = await verifyReleaseSchema({
+    manifestPath: manifestUrl,
+    fetcher: async (url) => {
+      requested.push(url);
+      return {
+        ok: true,
+        status: 200,
+        text: async () => (url === manifestUrl ? manifestBody : JSON.stringify(summary))
+      };
+    }
+  });
+
+  assert.deepEqual(requested, [
+    manifestUrl,
+    "https://example.invalid/releases/download/mdm-resources-v1/mdm-release-summary.json"
+  ]);
+  assert.equal(result.manifestPath, manifestUrl);
+  assert.equal(
+    result.summaryPath,
+    "https://example.invalid/releases/download/mdm-resources-v1/mdm-release-summary.json"
+  );
+  assert.equal(result.packageCount, 1);
+  assert.deepEqual(result.errors, []);
+});
+
+test("release schema verifier rejects summary manifest hash mismatches", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-schema-hash-mismatch-"));
+  const manifest = validReleaseManifest();
+  const manifestBody = JSON.stringify(manifest);
+  const summary = validReleaseSummary(manifest, manifestBody);
+  summary.manifest.sha256 = "f".repeat(64);
+
+  await writeFile(join(root, "mdm-release-manifest.json"), manifestBody);
+  await writeFile(
+    join(root, "mdm-release-summary.json"),
+    JSON.stringify(summary)
+  );
+
+  const result = await verifyReleaseSchema({
+    manifestPath: join(root, "mdm-release-manifest.json")
+  });
+
+  assert.match(result.errors.join("\n"), /summary\.manifest\.sha256 must match/);
+});
+
+test("release schema verifier reports HTTP fetch failures", async () => {
+  await assert.rejects(
+    verifyReleaseSchema({
+      manifestPath: "https://example.invalid/mdm-release-manifest.json",
+      fetcher: async () => ({
+        ok: false,
+        status: 404,
+        text: async () => "missing"
+      })
+    }),
+    /Failed to fetch/
+  );
 });
 
 test("release schema verifier rejects malformed release output", async () => {
@@ -149,6 +217,63 @@ test("release schema verifier rejects malformed release output", async () => {
 
 async function readSchema(name) {
   return JSON.parse(await readFile(join("schema", name), "utf-8"));
+}
+
+function validReleaseManifest() {
+  return {
+    schemaVersion: 1,
+    generatedAt: "2026-05-08T00:00:00.000Z",
+    packages: [
+      {
+        packageId: "core-docs-required",
+        version: "0.1.0",
+        namespace: "core",
+        artifactType: "docs",
+        variant: "required",
+        required: true,
+        format: "json",
+        releaseChannel: "required",
+        releaseFamily: "core-docs",
+        capabilities: ["docs_search"],
+        artifactName: "core-docs-required-0.1.0.mdm-resource.json",
+        sha256: "0".repeat(64),
+        sizeBytes: 3
+      }
+    ]
+  };
+}
+
+function validReleaseSummary(manifest, manifestBody = JSON.stringify(manifest)) {
+  return {
+    schemaVersion: 1,
+    generatedAt: manifest.generatedAt,
+    source: { repository: null, ref: null, revision: null },
+    manifest: {
+      name: "mdm-release-manifest.json",
+      sha256: sha256(manifestBody),
+      packageCount: manifest.packages.length
+    },
+    totals: {
+      artifactCount: manifest.packages.length,
+      sizeBytes: 3
+    },
+    distributions: {
+      releaseChannels: { required: 1 },
+      releaseFamilies: { "core-docs": 1 },
+      artifactTypes: { docs: 1 },
+      formats: { json: 1 }
+    },
+    artifacts: manifest.packages.map((entry) => ({
+      packageId: entry.packageId,
+      artifactName: entry.artifactName,
+      sha256: entry.sha256,
+      sizeBytes: entry.sizeBytes
+    }))
+  };
+}
+
+function sha256(body) {
+  return createHash("sha256").update(body).digest("hex");
 }
 
 async function writeFixtureRepository(root) {
