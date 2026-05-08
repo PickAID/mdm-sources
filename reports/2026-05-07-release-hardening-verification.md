@@ -88,3 +88,34 @@ tools/list-release-artifacts.mjs: 31 lines
 - Add provenance/signing if release consumers need tamper-evident metadata beyond
   SHA-256.
 - Expand the docs corpus and versioned datapack/resourcepack package coverage.
+
+## 2026-05-08 Resourcepack Guidance Package Check
+
+Added `resourcepack-1.20.1-guidance` as a public `docs_bundle` package. The
+payload is structured guidance only: asset path patterns, model/texture/font/
+sound/shader/UI evidence chains, relationship discovery rules, and distribution
+boundaries. It does not include vanilla assets, private modpack assets,
+generated archive indexes, copied shader source, or private workspace paths.
+
+Commands:
+
+```bash
+node tools/sync-registry.mjs
+node tools/validate.mjs
+node tools/build-local-release.mjs --out release-out --no-registry-update
+node tools/verify-release-schema.mjs release-out/mdm-release-manifest.json
+node tools/verify-release-install.mjs release-out/mdm-release-manifest.json
+node --test tests/*.test.mjs
+node tools/write-release-acceptance-report.mjs --out release-out
+```
+
+Results:
+
+```text
+node tools/validate.mjs: packageCount 466, errorCount 0
+release schema verifier: packageCount 466, errorCount 0
+release install verifier: verifiedCount 466/466, totalSizeBytes 2746327
+resourcepack guidance artifact: resourcepack-1.20.1-guidance-0.1.0.mdm-resource.json, sha256 78b30435da54905a3a80702e0e133aa8b058bbd1dae3323fa603f962e6d2e36e, sizeBytes 14250
+node --test tests/*.test.mjs: 55 passed
+local acceptance report: status passed, packageCount 466, artifactCount 468, totalSizeBytes 2746327, repositoryErrorCount 0, schemaErrorCount 0, installVerifiedCount 466
+```

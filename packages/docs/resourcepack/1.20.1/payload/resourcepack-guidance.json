@@ -1,0 +1,322 @@
+{
+  "schemaVersion": 1,
+  "minecraftVersion": "1.20.1",
+  "purpose": "Help agents turn resource pack requests into traceable asset, model, texture, shader, sound, font, language, and UI evidence instead of guessing file names or copying generic JSON.",
+  "hardRules": [
+    "Do not invent resource locations. Derive namespace and path from registry ids, source literals, generated indexes, or existing assets.",
+    "Do not assume a model, parent model, texture, atlas source, sound, font provider, shader program, or metadata file exists until the asset tree or archive proves it.",
+    "Do not merge datapack and resourcepack ownership. Recipes, loot, tags, predicates, advancements, functions, and worldgen are data resources; models, textures, sounds, particles, fonts, language, atlases, shaders, and UI textures are client resources.",
+    "Do not copy vanilla assets, private modpack assets, copied shader source, or generated archive indexes into public packages.",
+    "Do not treat animated textures, connected texture metadata, or stretchable UI metadata as universal vanilla features. Require local parser, loader, or source proof before relying on custom formats."
+  ],
+  "assetKinds": [
+    "pack.mcmeta",
+    "pack.png",
+    "assets/<namespace>/atlases/*.json",
+    "assets/<namespace>/blockstates/*.json",
+    "assets/<namespace>/font/*.json",
+    "assets/<namespace>/lang/*.json",
+    "assets/<namespace>/models/**/*.json",
+    "assets/<namespace>/particles/*.json",
+    "assets/<namespace>/shaders/core/*.json",
+    "assets/<namespace>/shaders/core/*.{vsh,fsh}",
+    "assets/<namespace>/shaders/include/*",
+    "assets/<namespace>/shaders/post/*.json",
+    "assets/<namespace>/sounds.json",
+    "assets/<namespace>/sounds/**/*.ogg",
+    "assets/<namespace>/textures/**/*.png",
+    "assets/<namespace>/textures/**/*.png.mcmeta",
+    "assets/<namespace>/textures/gui/**/*.png",
+    "assets/<namespace>/textures/particle/**/*.png"
+  ],
+  "implementationChains": [
+    {
+      "id": "block-model-trace",
+      "chain": [
+        "registry id",
+        "assets/<namespace>/blockstates/<path>.json",
+        "variant or multipart model reference",
+        "assets/<namespace>/models/<path>.json",
+        "parent model chain",
+        "textures map",
+        "atlas source or default texture atlas",
+        "texture file and optional .mcmeta"
+      ]
+    },
+    {
+      "id": "item-model-trace",
+      "chain": [
+        "item registry id",
+        "item model or generated item definition path for the active version",
+        "model parent",
+        "texture layers",
+        "custom model data or predicate ownership when present",
+        "missing model fallback risk"
+      ]
+    },
+    {
+      "id": "animated-texture-trace",
+      "chain": [
+        "texture resource location",
+        "png file",
+        "adjacent png.mcmeta",
+        "frame size and frame list",
+        "interpolation flag",
+        "atlas inclusion proof",
+        "performance and memory budget"
+      ]
+    },
+    {
+      "id": "font-language-trace",
+      "chain": [
+        "lang key or text component",
+        "assets/<namespace>/lang/<locale>.json",
+        "font id when custom",
+        "font provider list",
+        "bitmap or ttf or space provider asset",
+        "glyph width and ascent proof"
+      ]
+    },
+    {
+      "id": "sound-event-trace",
+      "chain": [
+        "sound event id or source literal",
+        "assets/<namespace>/sounds.json",
+        "sound entry name",
+        "ogg asset path",
+        "subtitle lang key",
+        "streaming or attenuation semantics"
+      ]
+    },
+    {
+      "id": "shader-resource-trace",
+      "chain": [
+        "shader consumer or post-chain owner",
+        "shader json",
+        "program vsh/fsh files",
+        "include files",
+        "uniforms and samplers",
+        "render target ownership",
+        "resource reload and fallback behavior"
+      ]
+    },
+    {
+      "id": "ui-texture-trace",
+      "chain": [
+        "screen or widget owner",
+        "texture resource location literal",
+        "assets/<namespace>/textures/gui path",
+        "texture dimensions",
+        "widget region mapping",
+        "metadata or custom parser proof for stretchable behavior",
+        "layout scaling rule"
+      ]
+    }
+  ],
+  "visualTargets": [
+    {
+      "id": "model-surface",
+      "entryEvidence": [
+        "registry id",
+        "blockstate or item model path",
+        "model parent",
+        "texture keys"
+      ],
+      "assetRelations": [
+        "blockstate -> model",
+        "model -> parent model",
+        "model -> texture",
+        "texture -> atlas source",
+        "texture -> png.mcmeta"
+      ],
+      "mustNotAssume": [
+        "parent model exists",
+        "texture path omits textures/ prefix consistently",
+        "namespace defaults to minecraft",
+        "predicate or override format matches another Minecraft version"
+      ]
+    },
+    {
+      "id": "atlas-surface",
+      "entryEvidence": [
+        "atlas json",
+        "sprite source type",
+        "directory or single file source",
+        "filter or namespace rules"
+      ],
+      "assetRelations": [
+        "atlas -> sprite sources",
+        "sprite source -> texture directory",
+        "sprite id -> model texture key",
+        "missing sprite -> missing texture fallback"
+      ],
+      "mustNotAssume": [
+        "all textures are on the block atlas",
+        "custom atlases are loaded by default",
+        "external mod sprite source types are vanilla"
+      ]
+    },
+    {
+      "id": "text-sound-surface",
+      "entryEvidence": [
+        "lang key",
+        "font id",
+        "sound id",
+        "sounds.json entry"
+      ],
+      "assetRelations": [
+        "component -> lang key",
+        "font id -> font providers",
+        "sound id -> sounds.json",
+        "sounds.json -> ogg path",
+        "subtitle -> lang key"
+      ],
+      "mustNotAssume": [
+        "custom font applies globally",
+        "subtitle key exists",
+        "sound path includes .ogg in the logical id"
+      ]
+    },
+    {
+      "id": "shader-ui-surface",
+      "entryEvidence": [
+        "screen or renderer consumer",
+        "shader json or post-chain json",
+        "GUI texture resource location",
+        "uniform or sampler owner"
+      ],
+      "assetRelations": [
+        "consumer -> shader resource",
+        "shader json -> program files",
+        "program -> uniforms and samplers",
+        "widget -> texture region",
+        "texture -> metadata only when proven"
+      ],
+      "mustNotAssume": [
+        "old rendering class names still exist",
+        "external shader code can be pasted into Minecraft",
+        "nine-slice or stretch behavior is available without parser proof"
+      ]
+    }
+  ],
+  "relationshipDiscoveryRules": [
+    {
+      "id": "resource-location-normalization",
+      "start": [
+        "registry id",
+        "ResourceLocation literal",
+        "model texture key",
+        "sound id",
+        "font id"
+      ],
+      "follow": [
+        "namespace defaulting rule",
+        "asset root selection",
+        "extension-specific path normalization",
+        "parent or referenced resource chain"
+      ],
+      "reportAsConflict": [
+        "namespace mismatch",
+        "asset exists under data instead of assets",
+        "logical id includes file extension incorrectly",
+        "referenced path exists only in another mod jar"
+      ]
+    },
+    {
+      "id": "model-parent-texture-walk",
+      "start": [
+        "blockstate json",
+        "item model json",
+        "model parent",
+        "textures map"
+      ],
+      "follow": [
+        "variant or multipart selectors",
+        "parent model recursion",
+        "texture variable substitution",
+        "atlas inclusion",
+        "png and png.mcmeta existence"
+      ],
+      "reportAsConflict": [
+        "missing parent model",
+        "missing texture key",
+        "texture variable loop",
+        "texture file not present in any candidate asset root"
+      ]
+    },
+    {
+      "id": "metadata-and-custom-format-proof",
+      "start": [
+        "png.mcmeta",
+        "custom loader metadata",
+        "connected texture metadata",
+        "UI scale metadata"
+      ],
+      "follow": [
+        "local parser source",
+        "loader documentation package",
+        "consumer API call",
+        "fallback when metadata is absent"
+      ],
+      "reportAsConflict": [
+        "metadata file exists but no consumer loads it",
+        "custom format belongs to a missing mod",
+        "metadata copied from another Minecraft version"
+      ]
+    },
+    {
+      "id": "archive-and-cache-boundary",
+      "start": [
+        "local resourcepack folder",
+        "mod jar assets",
+        "nested JarJar asset content",
+        "runtime generated cache"
+      ],
+      "follow": [
+        "workspace asset root first",
+        "installed resource pack root",
+        "mod archive assets",
+        "runtime-private generated index"
+      ],
+      "reportAsConflict": [
+        "private cache path leaked into public docs",
+        "generated index treated as committed source",
+        "mod jar asset shadowed by workspace override without priority proof"
+      ]
+    }
+  ],
+  "outputSchema": {
+    "resourcePackEvidencePacket": {
+      "provenLinks": [],
+      "candidateLinks": [],
+      "missingLinks": [],
+      "conflicts": [],
+      "nextReads": [],
+      "implementationRisk": "low|medium|high"
+    }
+  },
+  "distributionBoundaries": {
+    "publicPayloadMayContain": [
+      "path patterns",
+      "asset relationship rules",
+      "format names",
+      "evidence chain contracts",
+      "paraphrased implementation constraints"
+    ],
+    "publicPayloadMustNotContain": [
+      "vanilla asset files",
+      "modpack asset files",
+      "generated archive indexes",
+      "private workspace paths",
+      "copied shader source",
+      "screenshots or texture previews from private packs"
+    ],
+    "localOnlyMayContainWithConsent": [
+      "resolved asset paths",
+      "archive content indexes",
+      "hashes for cache invalidation",
+      "texture dimensions",
+      "source snippets within copyright limits"
+    ]
+  }
+}

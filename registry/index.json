@@ -3295,6 +3295,13 @@
       "required": true,
       "format": "json",
       "currentRelease": null
+    },
+    {
+      "id": "resourcepack-1.20.1-guidance",
+      "manifestPath": "registry/packages/resourcepack-1.20.1-guidance.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
     }
   ]
 }
