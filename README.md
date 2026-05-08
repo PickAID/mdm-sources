@@ -46,6 +46,7 @@ The release-level contracts are described by:
 - `schema/release-manifest.schema.json`
 - `schema/release-summary.schema.json`
 - `schema/source-index-payload.schema.json`
+- `docs/release-policy.md`
 
 Private user caches, generated ProbeJS dumps from private modpacks, large vanilla source bundles, and derived local package indexes must stay outside this repository and outside public releases.
 
