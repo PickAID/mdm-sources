@@ -19,9 +19,11 @@ test("release workflow publishes local release artifacts to GitHub Releases", as
     /node tools\/list-release-artifacts\.mjs release-out\/mdm-release-manifest\.json > release-artifacts\.txt/
   );
   assert.match(workflow, /node tools\/write-release-notes\.mjs --out release-out --tag "\$RELEASE_TAG"/);
-  assert.match(workflow, /gh release edit "\$RELEASE_TAG" --notes-file release-out\/mdm-release-notes\.md/);
-  assert.match(workflow, /--notes-file release-out\/mdm-release-notes\.md/);
-  assert.match(workflow, /gh release (create|upload)/);
+  assert.match(
+    workflow,
+    /node tools\/upload-github-release\.mjs --repo "\$GITHUB_REPOSITORY" --tag "\$RELEASE_TAG" --manifest release-out\/mdm-release-manifest\.json --notes release-out\/mdm-release-notes\.md --clobber/
+  );
+  assert.match(workflow, /GITHUB_TOKEN: \$\{\{ github\.token \}\}/);
   assert.match(workflow, /- name: Verify published release/);
   assert.ok(
     workflow.indexOf("- name: Verify published release") >
@@ -37,7 +39,7 @@ test("release workflow publishes local release artifacts to GitHub Releases", as
   assert.doesNotMatch(workflow, /release-out\/\*/);
   assert.match(workflow, /release-artifacts\.txt/);
   assert.doesNotMatch(publishStep(workflow), /mdm-release-acceptance-report\.(json|md)/);
-  assert.doesNotMatch(publishStep(workflow), /mdm-release-notes\.md"\]/);
+  assert.doesNotMatch(workflow, /gh release/);
 });
 
 function publishStep(workflow) {
