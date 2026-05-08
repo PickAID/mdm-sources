@@ -42,6 +42,11 @@ jobs:
       - name: List release artifacts
         run: node tools/list-release-artifacts.mjs release-out/mdm-release-manifest.json > release-artifacts.txt
 
+      - name: Write release notes
+        env:
+          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+        run: node tools/write-release-notes.mjs --out release-out --tag "$RELEASE_TAG"
+
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -49,9 +54,10 @@ jobs:
         run: |
           mapfile -t ARTIFACTS < release-artifacts.txt
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release edit "$RELEASE_TAG" --notes-file release-out/mdm-release-notes.md
             gh release upload "$RELEASE_TAG" "${ARTIFACTS[@]}" --clobber
           else
             gh release create "$RELEASE_TAG" "${ARTIFACTS[@]}" \
               --title "$RELEASE_TAG" \
-              --notes "MDM resource package release $RELEASE_TAG"
+              --notes-file release-out/mdm-release-notes.md
           fi

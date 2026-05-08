@@ -18,10 +18,14 @@ test("release workflow publishes local release artifacts to GitHub Releases", as
     workflow,
     /node tools\/list-release-artifacts\.mjs release-out\/mdm-release-manifest\.json > release-artifacts\.txt/
   );
+  assert.match(workflow, /node tools\/write-release-notes\.mjs --out release-out --tag "\$RELEASE_TAG"/);
+  assert.match(workflow, /gh release edit "\$RELEASE_TAG" --notes-file release-out\/mdm-release-notes\.md/);
+  assert.match(workflow, /--notes-file release-out\/mdm-release-notes\.md/);
   assert.match(workflow, /gh release (create|upload)/);
   assert.doesNotMatch(workflow, /release-out\/\*/);
   assert.match(workflow, /release-artifacts\.txt/);
   assert.doesNotMatch(publishStep(workflow), /mdm-release-acceptance-report\.(json|md)/);
+  assert.doesNotMatch(publishStep(workflow), /mdm-release-notes\.md"\]/);
 });
 
 function publishStep(workflow) {
