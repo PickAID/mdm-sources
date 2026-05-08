@@ -61,3 +61,21 @@ jobs:
               --title "$RELEASE_TAG" \
               --notes-file release-out/mdm-release-notes.md
           fi
+
+      - name: Verify published release
+        env:
+          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+        run: |
+          MANIFEST_URL="https://github.com/$GITHUB_REPOSITORY/releases/download/$RELEASE_TAG/mdm-release-manifest.json"
+          for attempt in 1 2 3 4; do
+            if node tools/verify-live-release.mjs "$MANIFEST_URL"; then
+              exit 0
+            fi
+            if [ "$attempt" = "4" ]; then
+              break
+            fi
+            echo "Published release verification failed on attempt $attempt; retrying..."
+            sleep 10
+          done
+          echo "Published release verification failed after 4 attempts."
+          exit 1

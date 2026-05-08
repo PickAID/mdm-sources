@@ -22,6 +22,18 @@ test("release workflow publishes local release artifacts to GitHub Releases", as
   assert.match(workflow, /gh release edit "\$RELEASE_TAG" --notes-file release-out\/mdm-release-notes\.md/);
   assert.match(workflow, /--notes-file release-out\/mdm-release-notes\.md/);
   assert.match(workflow, /gh release (create|upload)/);
+  assert.match(workflow, /- name: Verify published release/);
+  assert.ok(
+    workflow.indexOf("- name: Verify published release") >
+      workflow.indexOf("- name: Publish GitHub Release")
+  );
+  assert.match(
+    workflow,
+    /MANIFEST_URL="https:\/\/github\.com\/\$GITHUB_REPOSITORY\/releases\/download\/\$RELEASE_TAG\/mdm-release-manifest\.json"/
+  );
+  assert.match(workflow, /node tools\/verify-live-release\.mjs "\$MANIFEST_URL"/);
+  assert.match(workflow, /for attempt in 1 2 3 4/);
+  assert.match(workflow, /Published release verification failed after 4 attempts/);
   assert.doesNotMatch(workflow, /release-out\/\*/);
   assert.match(workflow, /release-artifacts\.txt/);
   assert.doesNotMatch(publishStep(workflow), /mdm-release-acceptance-report\.(json|md)/);
