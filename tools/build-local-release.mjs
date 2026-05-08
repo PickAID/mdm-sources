@@ -11,6 +11,10 @@ import { dirname, isAbsolute, join, normalize, relative, resolve } from "node:pa
 import { fileURLToPath } from "node:url";
 
 import { normalizePackageManifest } from "./release-package-metadata.mjs";
+import {
+  materializeReleaseBundles,
+  normalizeBundleChannels
+} from "./release-bundles.mjs";
 import { writeReleaseSummary } from "./release-summary.mjs";
 import { writeSqliteDocsDatabase } from "./sqlite-docs-artifact.mjs";
 import { writeSqliteSourceIndexDatabase } from "./sqlite-source-index-artifact.mjs";
@@ -20,7 +24,8 @@ export async function buildLocalRelease(input = {}) {
   const outDir = normalize(resolve(input.outDir ?? join(root, "release-out")));
   const packageFiles = await findPackageFiles(join(root, "packages"));
   const releaseChannels = normalizeReleaseChannels(input.releaseChannels);
-  const writeRegistry = input.writeRegistry !== false;
+  const bundleChannels = normalizeBundleChannels(input.bundleChannels);
+  const writeRegistry = input.writeRegistry !== false && !bundleChannels;
   const artifacts = [];
   const releasePackages = [];
   const generatedAt = input.builtAt ?? new Date().toISOString();
@@ -85,18 +90,34 @@ export async function buildLocalRelease(input = {}) {
   }
 
   const manifestPath = join(outDir, "mdm-release-manifest.json");
+  const bundledRelease = await materializeReleaseBundles({
+    outDir,
+    packages: releasePackages,
+    artifacts,
+    bundleChannels
+  });
+
   await writeFile(
     manifestPath,
-    stableJson(buildReleaseManifest(releasePackages, generatedAt))
+    stableJson(buildReleaseManifest({
+      packages: bundledRelease.packages,
+      bundles: bundledRelease.bundles,
+      generatedAt
+    }))
   );
   const summary = await writeReleaseSummary({
     outDir,
     manifestPath,
-    artifacts,
+    artifacts: bundledRelease.artifacts,
     source: input.source
   });
 
-  return { artifacts, manifestPath, summaryPath: summary.summaryPath };
+  return {
+    artifacts: bundledRelease.artifacts,
+    bundles: bundledRelease.bundles,
+    manifestPath,
+    summaryPath: summary.summaryPath
+  };
 }
 
 async function resetOutputDirectory(root, outDir) {
@@ -207,11 +228,21 @@ function buildArtifactResult(artifactName, artifactPath, body) {
   };
 }
 
-function buildReleaseManifest(packages, generatedAt) {
+function buildReleaseManifest({ packages, bundles, generatedAt }) {
   return {
     schemaVersion: 1,
     generatedAt,
-    packages
+    packages,
+    ...(bundles.length > 0 ? {
+      bundles: bundles.map((bundle) => ({
+        bundleName: bundle.bundleName,
+        releaseChannel: bundle.releaseChannel,
+        artifactName: bundle.artifactName,
+        packageCount: bundle.packageCount,
+        sha256: bundle.sha256,
+        sizeBytes: bundle.sizeBytes
+      }))
+    } : {})
   };
 }
 
@@ -349,6 +380,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     root: process.cwd(),
     outDir,
     releaseChannels: parseChannelArgs(process.argv),
+    bundleChannels: parseBundleChannelArgs(process.argv),
     writeRegistry: !process.argv.includes("--no-registry-update"),
     source: {
       repository: process.env.GITHUB_REPOSITORY,
@@ -364,6 +396,23 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   );
 
   console.log(JSON.stringify({ artifacts: stats }, null, 2));
+}
+
+function parseBundleChannelArgs(argv) {
+  const channels = [];
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if ((arg === "--bundle-channel" || arg === "--bundle-channels") && argv[index + 1]) {
+      channels.push(argv[index + 1]);
+      index += 1;
+    } else if (arg?.startsWith("--bundle-channel=")) {
+      channels.push(arg.slice("--bundle-channel=".length));
+    } else if (arg?.startsWith("--bundle-channels=")) {
+      channels.push(arg.slice("--bundle-channels=".length));
+    }
+  }
+
+  return channels.length > 0 ? channels : undefined;
 }
 
 function parseChannelArgs(argv) {

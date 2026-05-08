@@ -32,6 +32,28 @@ test("verifyReleaseInstall validates local manifest artifacts and sqlite tables"
   assert.equal(result.totalSizeBytes, release.artifacts[0].sizeBytes);
 });
 
+test("verifyReleaseInstall validates bundled sqlite package members", async () => {
+  const repoRoot = await mkdtemp(join(tmpdir(), "mdm-verify-bundled-sqlite-repo-"));
+  const outDir = await mkdtemp(join(tmpdir(), "mdm-verify-bundled-sqlite-out-"));
+
+  await writeSqliteDocsFixtureRepository(repoRoot);
+  const release = await buildLocalRelease({
+    root: repoRoot,
+    outDir,
+    builtAt: "2026-05-07T00:00:00.000Z",
+    bundleChannels: ["docs"]
+  });
+
+  const result = await verifyReleaseInstall({ manifest: release.manifestPath });
+
+  assert.equal(result.packageCount, 1);
+  assert.equal(result.verifiedCount, 1);
+  assert.equal(result.packages[0].packageId, "core-docs-search-sqlite");
+  assert.equal(result.packages[0].format, "sqlite");
+  assert.equal(result.packages[0].artifactName, "core-docs-search-sqlite-0.1.0.sqlite");
+  assert.equal(result.packages[0].bundleName, "docs.mdm-bundle");
+});
+
 test("verifyReleaseInstall resolves HTTP artifacts relative to manifestUrl", async () => {
   const manifestUrl = "https://example.invalid/releases/download/v1/mdm-release-manifest.json";
   const artifactBody = Buffer.from("{}\n");

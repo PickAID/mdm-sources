@@ -10,15 +10,22 @@ export async function listReleaseArtifacts(manifestPath) {
 
   const root = dirname(manifestPath);
   const summaryPath = join(root, "mdm-release-summary.json");
+  const artifactNames = [
+    ...manifest.packages
+      .map((entry) => entry.artifactName)
+      .filter((artifactName) => artifactName !== undefined),
+    ...(manifest.bundles ?? []).map((entry) => entry.artifactName)
+  ];
+
   return [
     manifestPath,
     ...(await fileExists(summaryPath) ? [summaryPath] : []),
-    ...manifest.packages.map((entry) => {
-      if (typeof entry.artifactName !== "string" || entry.artifactName === "") {
-        throw new Error("Release manifest package artifactName must be a string.");
+    ...artifactNames.map((artifactName) => {
+      if (typeof artifactName !== "string" || artifactName === "") {
+        throw new Error("Release manifest artifactName must be a string.");
       }
 
-      return join(root, entry.artifactName);
+      return join(root, artifactName);
     })
   ];
 }

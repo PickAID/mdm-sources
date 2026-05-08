@@ -71,7 +71,7 @@
       "type": "object",
       "required": ["channel", "family"],
       "properties": {
-        "channel": { "enum": ["required", "docs", "sources", "mappings", "datapack", "resourcepack", "accelerators"] },
+        "channel": { "enum": ["required", "docs", "sources", "mappings", "datapack", "resourcepack", "accelerators", "external-libraries"] },
         "family": { "type": "string", "minLength": 1 }
       },
       "additionalProperties": false

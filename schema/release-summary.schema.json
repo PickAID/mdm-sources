@@ -59,6 +59,7 @@
         "required": ["packageId", "artifactName", "sha256", "sizeBytes"],
         "properties": {
           "packageId": { "type": "string", "minLength": 1 },
+          "bundleName": { "type": "string", "minLength": 1 },
           "artifactName": {
             "type": "string",
             "minLength": 1,

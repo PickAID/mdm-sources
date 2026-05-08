@@ -30,7 +30,7 @@ jobs:
         run: node tools/validate.mjs
 
       - name: Build and accept release artifacts
-        run: node tools/write-release-acceptance-report.mjs --out release-out
+        run: node tools/write-release-acceptance-report.mjs --out release-out --bundle-channel datapack --bundle-channel resourcepack --bundle-channel mappings --bundle-channel sources
 
       - name: Verify release manifest
         run: |

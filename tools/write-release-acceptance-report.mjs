@@ -24,6 +24,7 @@ export async function writeReleaseAcceptanceReport(input = {}) {
     outDir,
     builtAt,
     releaseChannels: input.releaseChannels,
+    bundleChannels: input.bundleChannels,
     writeRegistry: false,
     source: input.source
   });
@@ -143,6 +144,12 @@ function parseArgs(argv) {
       input.releaseChannels = [...(input.releaseChannels ?? []), arg.slice("--channel=".length)];
     } else if (arg.startsWith("--channels=")) {
       input.releaseChannels = [...(input.releaseChannels ?? []), arg.slice("--channels=".length)];
+    } else if ((arg === "--bundle-channel" || arg === "--bundle-channels") && argv[index + 1]) {
+      input.bundleChannels = [...(input.bundleChannels ?? []), argv[++index]];
+    } else if (arg.startsWith("--bundle-channel=")) {
+      input.bundleChannels = [...(input.bundleChannels ?? []), arg.slice("--bundle-channel=".length)];
+    } else if (arg.startsWith("--bundle-channels=")) {
+      input.bundleChannels = [...(input.bundleChannels ?? []), arg.slice("--bundle-channels=".length)];
     }
   }
   return input;

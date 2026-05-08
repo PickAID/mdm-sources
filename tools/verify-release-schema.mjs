@@ -34,7 +34,9 @@ export async function verifyReleaseSchema(input) {
 function validateReleaseConsistency(manifest, summary, manifestBody) {
   const errors = [];
   const packages = Array.isArray(manifest.packages) ? manifest.packages : [];
+  const bundles = Array.isArray(manifest.bundles) ? manifest.bundles : [];
   const artifacts = Array.isArray(summary.artifacts) ? summary.artifacts : [];
+  const expectedArtifacts = expectedReleaseArtifacts(packages, bundles);
   const manifestSha256 = sha256(manifestBody);
 
   if (summary.manifest?.packageCount !== packages.length) {
@@ -43,23 +45,35 @@ function validateReleaseConsistency(manifest, summary, manifestBody) {
   if (summary.manifest?.sha256 !== manifestSha256) {
     errors.push("summary.manifest.sha256 must match manifest body");
   }
-  if (summary.totals?.artifactCount !== packages.length) {
-    errors.push("summary.totals.artifactCount must equal manifest packages length");
+  if (summary.totals?.artifactCount !== expectedArtifacts.length) {
+    errors.push("summary.totals.artifactCount must equal manifest release artifact length");
   }
-  if (artifacts.length !== packages.length) {
-    errors.push("summary.artifacts length must equal manifest packages length");
+  if (artifacts.length !== expectedArtifacts.length) {
+    errors.push("summary.artifacts length must equal manifest release artifact length");
   }
 
-  for (let index = 0; index < Math.min(packages.length, artifacts.length); index += 1) {
-    if (packages[index].artifactName !== artifacts[index].artifactName) {
+  for (let index = 0; index < Math.min(expectedArtifacts.length, artifacts.length); index += 1) {
+    if (expectedArtifacts[index].artifactName !== artifacts[index].artifactName) {
       errors.push(`summary.artifacts[${index}].artifactName must match manifest`);
     }
-    if (packages[index].sha256 !== artifacts[index].sha256) {
+    if (expectedArtifacts[index].sha256 !== artifacts[index].sha256) {
       errors.push(`summary.artifacts[${index}].sha256 must match manifest`);
     }
   }
 
   return errors;
+}
+
+function expectedReleaseArtifacts(packages, bundles) {
+  return [
+    ...packages.filter((entry) => entry.artifactName),
+    ...bundles.map((entry) => ({
+      packageId: entry.bundleName,
+      artifactName: entry.artifactName,
+      sha256: entry.sha256,
+      sizeBytes: entry.sizeBytes
+    }))
+  ];
 }
 
 async function readJson(path, input = {}) {

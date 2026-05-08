@@ -21,9 +21,12 @@
           "releaseChannel",
           "releaseFamily",
           "capabilities",
-          "artifactName",
           "sha256",
           "sizeBytes"
+        ],
+        "anyOf": [
+          { "required": ["artifactName"] },
+          { "required": ["bundleRef"] }
         ],
         "properties": {
           "packageId": { "type": "string", "minLength": 1 },
@@ -60,7 +63,7 @@
           "required": { "type": "boolean" },
           "format": { "enum": ["json", "jsonl", "sqlite", "zip", "directory", "tar.zst"] },
           "releaseChannel": {
-            "enum": ["required", "docs", "sources", "mappings", "datapack", "resourcepack", "accelerators"]
+            "enum": ["required", "docs", "sources", "mappings", "datapack", "resourcepack", "accelerators", "external-libraries"]
           },
           "releaseFamily": { "type": "string", "minLength": 1 },
           "capabilities": { "type": "array", "items": { "type": "string" } },
@@ -92,6 +95,62 @@
             "minLength": 1,
             "pattern": "^[^/\\\\]+$"
           },
+          "bundleRef": {
+            "type": "object",
+            "required": ["bundleName", "memberName", "sha256", "sizeBytes"],
+            "properties": {
+              "bundleName": { "type": "string", "minLength": 1 },
+              "memberName": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[^/\\\\]+$"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "sizeBytes": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "bundles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "bundleName",
+          "releaseChannel",
+          "artifactName",
+          "packageCount",
+          "sha256",
+          "sizeBytes"
+        ],
+        "properties": {
+          "bundleName": { "type": "string", "minLength": 1 },
+          "releaseChannel": {
+            "enum": ["required", "docs", "sources", "mappings", "datapack", "resourcepack", "accelerators", "external-libraries"]
+          },
+          "artifactName": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[^/\\\\]+$"
+          },
+          "packageCount": { "type": "integer", "minimum": 1 },
           "sha256": {
             "type": "string",
             "pattern": "^[a-f0-9]{64}$"

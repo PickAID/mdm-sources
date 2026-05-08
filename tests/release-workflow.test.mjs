@@ -8,7 +8,7 @@ test("release workflow publishes local release artifacts to GitHub Releases", as
   assert.match(workflow, /node tools\/validate\.mjs/);
   assert.match(
     workflow,
-    /node tools\/write-release-acceptance-report\.mjs --out release-out/
+    /node tools\/write-release-acceptance-report\.mjs --out release-out --bundle-channel datapack --bundle-channel resourcepack --bundle-channel mappings --bundle-channel sources/
   );
   assert.match(workflow, /release-out\/mdm-release-manifest\.json/);
   assert.match(workflow, /release-out\/mdm-release-summary\.json/);

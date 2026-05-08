@@ -39,6 +39,32 @@ test("writeReleaseAcceptanceReport builds and verifies a local release", async (
   assert.match(markdown, /Install verified packages: 1\/1/);
 });
 
+test("writeReleaseAcceptanceReport can verify bundled release artifacts", async () => {
+  const repoRoot = await mkdtemp(join(tmpdir(), "mdm-acceptance-bundle-repo-"));
+  const outDir = await mkdtemp(join(tmpdir(), "mdm-acceptance-bundle-out-"));
+  await writeFixtureRepository(repoRoot);
+
+  const result = await writeReleaseAcceptanceReport({
+    root: repoRoot,
+    outDir,
+    builtAt: "2026-05-08T00:00:00.000Z",
+    bundleChannels: ["required"]
+  });
+
+  assert.equal(result.report.status, "passed");
+  assert.equal(result.report.release.packageCount, 1);
+  assert.equal(result.report.release.packageArtifactCount, 1);
+  assert.equal(result.report.release.artifactCount, 3);
+  assert.deepEqual(
+    result.report.artifacts.map((artifact) => artifact.name),
+    [
+      "mdm-release-manifest.json",
+      "mdm-release-summary.json",
+      "required.mdm-bundle.json"
+    ]
+  );
+});
+
 async function writeFixtureRepository(root) {
   await mkdir(join(root, "packages/docs/core/required-v2/payload"), {
     recursive: true
