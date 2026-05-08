@@ -89,6 +89,12 @@ node tools/verify-release-schema.mjs release-out/mdm-release-manifest.json
 node tools/verify-release-schema.mjs https://github.com/PickAID/mdm-sources/releases/download/<tag>/mdm-release-manifest.json
 ```
 
+Run one live release acceptance command after publishing:
+
+```bash
+node tools/verify-live-release.mjs https://github.com/PickAID/mdm-sources/releases/download/<tag>/mdm-release-manifest.json
+```
+
 Write a local release acceptance report without publishing or mutating registry metadata:
 
 ```bash
