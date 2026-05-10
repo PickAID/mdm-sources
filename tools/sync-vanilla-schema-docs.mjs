@@ -6,7 +6,15 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
+import {
+  extractMcdocDefinitions,
+  extractMcdocSymbols
+} from "./mcdoc-outline.mjs";
 import { syncRegistry } from "./sync-registry.mjs";
+import {
+  buildSchemaSymbolSummary,
+  readVanillaMcdocSymbols
+} from "./vanilla-mcdoc-symbols.mjs";
 
 const execFileAsync = promisify(execFile);
 const VANILLA_MCDOC_REPO = "https://github.com/SpyglassMC/vanilla-mcdoc.git";
@@ -26,9 +34,17 @@ const PACKAGE_CONFIGS = {
     capabilities: ["schema_reference", "mcdoc_reference", "resourcepack_trace"]
   }
 };
-const MAX_MCDOC_FILES = 80;
-const MAX_MCDOC_PREVIEW_CHARS = 1600;
-const MAX_MISODE_PREVIEW_CHARS = 1600;
+const MAX_MCDOC_FILES = 90;
+const MAX_MISODE_FILES = 32;
+const MAX_MCDOC_PREVIEW_CHARS = 360;
+const MAX_MISODE_PREVIEW_CHARS = 420;
+const MAX_MCDOC_DEFINITIONS = 4;
+const MAX_MCDOC_FIELDS_PER_DEFINITION = 5;
+const MAX_SCHEMA_SYMBOL_TYPE_PATHS = 8;
+const MAX_SCHEMA_SYMBOL_DISPATCHERS = 8;
+const MAX_SCHEMA_SYMBOL_SAMPLE_TYPES = 2;
+const MAX_SCHEMA_SYMBOL_UNION_MEMBERS = 4;
+const MAX_SCHEMA_SYMBOL_ATTRIBUTES = 4;
 const MAX_PAYLOAD_BYTES = 512 * 1024;
 const MAX_PAYLOAD_LINES = 1;
 const MAX_PAYLOAD_ENTRIES = 220;
@@ -44,11 +60,14 @@ export async function syncVanillaSchemaDocs(input = {}) {
       ? resolve(input.misodeRoot)
       : await cloneRepo(tempRoot, "misode", MISODE_REPO, input.misodeRef);
     const configs = selectPackageConfigs(input.kind);
+    const vanillaSymbols = await readVanillaMcdocSymbols(input, vanillaRoot);
     const packageRoot = join(root, PACKAGE_ROOT);
     const payloadPath = join(packageRoot, "payload", PAYLOAD_NAME);
 
     await mkdir(dirname(payloadPath), { recursive: true });
-    const payloadText = stableJson(await buildPayload({ vanillaRoot, misodeRoot, configs }));
+    const payloadText = stableJson(
+      await buildPayload({ vanillaRoot, misodeRoot, configs, vanillaSymbols })
+    );
     assertPayloadBudget(payloadText);
     await writeFile(payloadPath, payloadText);
     await writeFile(
@@ -77,11 +96,12 @@ async function buildPayload(input) {
       .filter((file) => config.mcdocPattern.test(toPosix(relative(input.vanillaRoot, file))))
       .slice(0, MAX_MCDOC_FILES);
     const misodeFiles = await collectMisodeReferenceFiles(input.misodeRoot, config);
+    const symbolLimits = schemaSymbolLimits();
 
     return [
-      buildOverviewEntry(selectedMcdoc, misodeFiles, config),
+      buildOverviewEntry(selectedMcdoc, misodeFiles, config, input.vanillaSymbols),
       ...(await Promise.all(selectedMcdoc.map((file) =>
-        buildMcdocEntry(input.vanillaRoot, file, config)
+        buildMcdocEntry(input.vanillaRoot, file, config, input.vanillaSymbols, symbolLimits)
       ))),
       ...(await Promise.all(misodeFiles.map((file) =>
         buildMisodeEntry(input.misodeRoot, file, config)
@@ -115,7 +135,7 @@ async function buildPayload(input) {
   };
 }
 
-function buildOverviewEntry(mcdocFiles, misodeFiles, config) {
+function buildOverviewEntry(mcdocFiles, misodeFiles, config, vanillaSymbols) {
   return {
     id: `${PACKAGE_ID}-${domainSlug(config)}-overview`,
     kind: "format-reference",
@@ -137,14 +157,27 @@ function buildOverviewEntry(mcdocFiles, misodeFiles, config) {
     sourceFiles: {
       vanillaMcdocCount: mcdocFiles.length,
       misodeReferenceCount: misodeFiles.length
+    },
+    schemaSymbols: {
+      ref: vanillaSymbols?.ref,
+      typeCount: Object.keys(vanillaSymbols?.mcdoc ?? {}).length,
+      dispatcherCount: Object.keys(vanillaSymbols?.["mcdoc/dispatcher"] ?? {}).length
     }
   };
 }
 
-async function buildMcdocEntry(root, file, config) {
+async function buildMcdocEntry(root, file, config, vanillaSymbols, symbolLimits) {
   const repoPath = toPosix(relative(root, file));
   const content = await readFile(file, "utf-8");
   const topic = basename(file, ".mcdoc").replaceAll("_", " ");
+  const symbols = extractMcdocSymbols(content);
+  const schemaSymbol = buildSchemaSymbolSummary(
+    vanillaSymbols,
+    repoPath,
+    symbols,
+    config,
+    symbolLimits
+  );
 
   return {
     id: `${PACKAGE_ID}-${domainSlug(config)}-mcdoc-${repoPath.replaceAll("/", "-").replace(/\.mcdoc$/u, "")}`,
@@ -159,9 +192,13 @@ async function buildMcdocEntry(root, file, config) {
       config.domain,
       topic,
       repoPath,
-      ...extractMcdocSymbols(content).slice(0, 12)
+      ...symbols.slice(0, 12),
+      ...(schemaSymbol?.dispatchers.map((dispatcher) => dispatcher.name) ?? [])
     ],
-    codeSymbols: extractMcdocSymbols(content).slice(0, 24),
+    codeSymbols: symbols.slice(0, 24),
+    schemaDefinitionOutlines: extractMcdocDefinitions(content, outlineLimits())
+      .slice(0, MAX_MCDOC_DEFINITIONS),
+    schemaSymbol,
     upstreamPath: repoPath,
     contentHash: sha256(content),
     preview: content.slice(0, MAX_MCDOC_PREVIEW_CHARS)
@@ -208,7 +245,7 @@ async function collectMisodeReferenceFiles(root, config) {
     return shared || preview;
   });
 
-  return useful.slice(0, 80);
+  return useful.slice(0, MAX_MISODE_FILES);
 }
 
 async function collectFiles(root, ...extensions) {
@@ -254,12 +291,21 @@ async function gitOutput(cwd, args) {
   return stdout.trim();
 }
 
-function extractMcdocSymbols(content) {
-  const symbols = new Set();
-  for (const match of content.matchAll(/\b(?:struct|enum|type|dispatch|module)\s+([A-Za-z0-9_.$:-]+)/gu)) {
-    symbols.add(match[1]);
-  }
-  return [...symbols];
+function schemaSymbolLimits() {
+  return {
+    maxTypePaths: MAX_SCHEMA_SYMBOL_TYPE_PATHS,
+    maxDispatchers: MAX_SCHEMA_SYMBOL_DISPATCHERS,
+    maxSampleTypes: MAX_SCHEMA_SYMBOL_SAMPLE_TYPES,
+    maxUnionMembers: MAX_SCHEMA_SYMBOL_UNION_MEMBERS,
+    maxAttributes: MAX_SCHEMA_SYMBOL_ATTRIBUTES,
+    maxFieldsPerDefinition: MAX_MCDOC_FIELDS_PER_DEFINITION
+  };
+}
+
+function outlineLimits() {
+  return {
+    maxFieldsPerDefinition: MAX_MCDOC_FIELDS_PER_DEFINITION
+  };
 }
 
 function extractTypeScriptSymbols(content) {

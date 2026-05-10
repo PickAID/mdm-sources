@@ -21,7 +21,8 @@ test("syncVanillaSchemaDocs generates one compact vanilla-schema-docs package", 
   const result = await syncVanillaSchemaDocs({
     root,
     vanillaMcdocRoot,
-    misodeRoot
+    misodeRoot,
+    vanillaMcdocSymbols: buildVanillaMcdocSymbolsFixture()
   });
   const validation = await validateRepository(root);
 
@@ -61,6 +62,73 @@ test("syncVanillaSchemaDocs generates one compact vanilla-schema-docs package", 
   assert.equal(payload.entries.some((entry) => entry.title === "undefined sources"), false);
   assert.equal(payload.entries.some((entry) => entry.path === "vanilla-mcdoc:java/data/recipe.mcdoc" && entry.preview), true);
   assert.equal(payload.entries.some((entry) => entry.path === "vanilla-mcdoc:java/assets/model.mcdoc" && entry.preview), true);
+  assert.deepEqual(
+    payload.entries
+      .find((entry) => entry.path === "vanilla-mcdoc:java/data/recipe.mcdoc")
+      ?.schemaDefinitionOutlines,
+    [
+      {
+        kind: "dispatch",
+        name: "minecraft:resource[recipe]",
+        line: 1,
+        attributes: [],
+        target: "minecraft:resource[recipe]",
+        body: "struct Recipe {",
+        fields: [
+          {
+            kind: "field",
+            name: "type",
+            optional: false,
+            type: "string",
+            line: 2
+          }
+        ]
+      }
+    ]
+  );
+  assert.deepEqual(
+    payload.entries
+      .find((entry) => entry.path === "vanilla-mcdoc:java/assets/model.mcdoc")
+      ?.schemaSymbol,
+    {
+      source: "vanilla-mcdoc-generated-symbols",
+      ref: "fixture-symbols-ref",
+      modulePath: "::java::assets::model",
+      typePaths: ["::java::assets::model::Model"],
+      dispatchers: [
+        {
+          name: "minecraft:resource",
+          key: "model",
+          type: {
+            kind: "reference",
+            path: "::java::assets::model::Model"
+          },
+          domain: "resource-pack"
+        }
+      ],
+      sampleTypes: {
+        "::java::assets::model::Model": {
+          kind: "struct",
+          fields: [
+            {
+              kind: "pair",
+              key: "parent",
+              optional: true,
+              type: {
+                kind: "string",
+                attributes: [
+                  {
+                    name: "id",
+                    value: "model"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  );
   assert.equal(payload.entries.some((entry) => String(entry.path).startsWith("misode:") && entry.preview && entry.contentHash), true);
   assert.deepEqual(registry.packages.map((entry) => entry.id), ["vanilla-schema-docs"]);
 });
@@ -107,6 +175,75 @@ async function writeUpstreamFixtures({ vanillaMcdocRoot, misodeRoot }) {
 
   await commitFixtureRepo(vanillaMcdocRoot);
   await commitFixtureRepo(misodeRoot);
+}
+
+function buildVanillaMcdocSymbolsFixture() {
+  return {
+    ref: "fixture-symbols-ref",
+    mcdoc: {
+      "::java::data::recipe::Recipe": {
+        kind: "struct",
+        fields: [
+          {
+            kind: "pair",
+            key: "type",
+            type: {
+              kind: "string",
+              attributes: [
+                {
+                  name: "id",
+                  value: {
+                    kind: "literal",
+                    value: {
+                      kind: "string",
+                      value: "recipe_serializer"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "::java::assets::model::Model": {
+        kind: "struct",
+        fields: [
+          {
+            kind: "pair",
+            key: "parent",
+            optional: true,
+            type: {
+              kind: "string",
+              attributes: [
+                {
+                  name: "id",
+                  value: {
+                    kind: "literal",
+                    value: {
+                      kind: "string",
+                      value: "model"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "mcdoc/dispatcher": {
+      "minecraft:resource": {
+        recipe: {
+          kind: "reference",
+          path: "::java::data::recipe::Recipe"
+        },
+        model: {
+          kind: "reference",
+          path: "::java::assets::model::Model"
+        }
+      }
+    }
+  };
 }
 
 async function commitFixtureRepo(root) {
