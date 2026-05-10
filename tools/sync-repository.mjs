@@ -2,6 +2,7 @@ import { fileURLToPath } from "node:url";
 
 import { syncRegistry } from "./sync-registry.mjs";
 import { syncMappingProfiles } from "./sync-mapping-profiles.mjs";
+import { syncMisodeGeneratorCatalog } from "./misode-generator-catalog.mjs";
 import { syncSourceProfiles } from "./sync-source-profiles.mjs";
 import { syncVanillaDataProfiles } from "./sync-vanilla-data-profiles.mjs";
 
@@ -10,6 +11,10 @@ export async function syncRepository(input = {}) {
   const { datapackProfiles, resourcepackProfiles } =
     await syncVanillaDataProfiles(input);
   const mappingProfiles = await syncMappingProfiles(input);
+  const misodeGeneratorCatalog = await syncMisodeGeneratorCatalog({
+    ...input,
+    updateRegistry: false
+  });
   const registry = await syncRegistry(input);
 
   return {
@@ -17,6 +22,7 @@ export async function syncRepository(input = {}) {
     datapackProfiles,
     resourcepackProfiles,
     mappingProfiles,
+    misodeGeneratorCatalog,
     registry
   };
 }
@@ -26,6 +32,12 @@ function parseArgs(argv) {
   for (let index = 0; index < argv.length; index += 1) {
     if (argv[index] === "--root") {
       result.root = argv[index + 1];
+      index += 1;
+    } else if (argv[index] === "--misode-root") {
+      result.misodeRoot = argv[index + 1];
+      index += 1;
+    } else if (argv[index] === "--misode-ref") {
+      result.misodeRef = argv[index + 1];
       index += 1;
     }
   }

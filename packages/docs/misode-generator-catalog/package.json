@@ -1,0 +1,63 @@
+{
+  "identity": {
+    "schemaVersion": 2,
+    "packageId": "misode-generator-catalog",
+    "packageVersion": "0.1.0",
+    "namespace": "minecraft",
+    "displayName": "Misode Generator Catalog",
+    "description": "Generated public catalog of misode generator ids, version bounds, path rules, and wiki references for vanilla datapack and resource-pack formats."
+  },
+  "target": {
+    "minecraftVersions": [],
+    "loaders": [
+      "vanilla",
+      "forge",
+      "neoforge",
+      "fabric",
+      "quilt"
+    ]
+  },
+  "artifact": {
+    "kind": "docs_bundle",
+    "format": "json",
+    "schemaId": "mdm.misode.generator-catalog.json",
+    "schemaVersion": 1,
+    "entrypoint": "payload/generator-catalog.json"
+  },
+  "capabilities": [
+    "docs_search",
+    "docs_direct_read",
+    "schema_reference",
+    "datapack_trace",
+    "resourcepack_trace"
+  ],
+  "policy": {
+    "privacy": "public_release",
+    "lifecycle": [
+      "downloadable",
+      "auto_generated"
+    ],
+    "canCommitToRepository": true,
+    "canUploadToPublicRelease": true,
+    "requiresUserConsent": false
+  },
+  "query": {
+    "adapter": "json_docs",
+    "capabilities": [
+      "docs_search",
+      "docs_direct_read",
+      "schema_reference",
+      "datapack_trace",
+      "resourcepack_trace"
+    ],
+    "defaultLimit": 8,
+    "maxLimit": 50,
+    "preferredFallbacks": [
+      "vanilla-schema-docs"
+    ]
+  },
+  "release": {
+    "channel": "docs",
+    "family": "misode-generator-catalog"
+  }
+}

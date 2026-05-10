@@ -3297,6 +3297,13 @@
       "currentRelease": null
     },
     {
+      "id": "misode-generator-catalog",
+      "manifestPath": "registry/packages/misode-generator-catalog.json",
+      "required": false,
+      "format": "json",
+      "currentRelease": null
+    },
+    {
       "id": "resourcepack-1.20.1-guidance",
       "manifestPath": "registry/packages/resourcepack-1.20.1-guidance.json",
       "required": false,
