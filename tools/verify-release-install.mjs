@@ -188,6 +188,9 @@ async function verifySqliteArtifact(tempDir, entry, bytes, requiredTables) {
       }
     }
     verifySqliteUserVersion(database, entry);
+    if (entry.queryAdapter === "sqlite_docs") {
+      verifyDocsSqliteContent(database, entry);
+    }
     if (entry.queryAdapter === "source_index_sqlite") {
       verifySourceIndexSqliteContent(database, entry);
     }
@@ -238,6 +241,16 @@ function verifySourceIndexSqliteContent(database, entry) {
   const ftsChunkCount = countRows(database, "fts_chunks");
   if (fileCount === 0 || chunkCount === 0 || ftsChunkCount === 0) {
     throw new Error(`${entry.packageId} source index sqlite must contain indexed files and chunks`);
+  }
+}
+
+function verifyDocsSqliteContent(database, entry) {
+  const columns = database
+    .prepare("PRAGMA table_info(docs_entries)")
+    .all()
+    .map((row) => row.name);
+  if (!columns.includes("metadata")) {
+    throw new Error(`${entry.packageId} sqlite docs entries must include metadata column`);
   }
 }
 

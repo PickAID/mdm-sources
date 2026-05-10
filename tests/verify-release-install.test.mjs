@@ -225,6 +225,42 @@ test("verifyReleaseInstall rejects sqlite artifacts without required sqlite meta
   );
 });
 
+test("verifyReleaseInstall rejects sqlite docs artifacts without entry metadata column", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-verify-docs-metadata-column-"));
+  const artifactName = "core-docs-search-sqlite-0.1.0.sqlite";
+  const artifactPath = join(root, artifactName);
+  writeLegacyDocsSqliteWithoutMetadataColumn(artifactPath);
+  const bytes = await readFile(artifactPath);
+  await writeFile(
+    join(root, "mdm-release-manifest.json"),
+    JSON.stringify({
+      schemaVersion: 1,
+      packages: [
+        {
+          packageId: "core-docs-search-sqlite",
+          artifactName,
+          format: "sqlite",
+          queryAdapter: "sqlite_docs",
+          sha256: sha256(bytes),
+          sizeBytes: bytes.length,
+          metadata: {
+            sqlite: {
+              databaseName: "core-docs-search-sqlite.sqlite",
+              minUserVersion: 3,
+              requiredTables: ["docs_entries", "docs_entries_fts"]
+            }
+          }
+        }
+      ]
+    })
+  );
+
+  await assert.rejects(
+    verifyReleaseInstall({ manifest: join(root, "mdm-release-manifest.json") }),
+    /sqlite docs entries must include metadata column/
+  );
+});
+
 async function writeSqliteDocsFixtureRepository(root) {
   await mkdir(join(root, "packages/docs/core/search-sqlite/payload"), {
     recursive: true
@@ -320,6 +356,21 @@ function writeDocsSqliteWithUserVersion(path, userVersion) {
   try {
     database.exec([
       `PRAGMA user_version = ${userVersion};`,
+      "CREATE TABLE docs_entries (entry_id TEXT PRIMARY KEY, package_id TEXT NOT NULL, kind TEXT NOT NULL, title TEXT NOT NULL, path TEXT NOT NULL, headings TEXT NOT NULL, summary TEXT NOT NULL, search_terms TEXT NOT NULL, script_scopes TEXT NOT NULL, addon_names TEXT NOT NULL, event_names TEXT NOT NULL, code_symbols TEXT NOT NULL, metadata TEXT);",
+      "CREATE VIRTUAL TABLE docs_entries_fts USING fts5(entry_id UNINDEXED, title, path, summary, search_terms, script_scopes, addon_names, event_names, code_symbols);",
+      "INSERT INTO docs_entries(entry_id, package_id, kind, title, path, headings, summary, search_terms, script_scopes, addon_names, event_names, code_symbols, metadata) VALUES ('entry', 'core-docs-search-sqlite', 'concept', 'Entry', 'payload.json#entry', '[]', 'Summary', '[\"tag\"]', '[]', '[]', '[]', '[]', NULL);",
+      "INSERT INTO docs_entries_fts(entry_id, title, path, summary, search_terms, script_scopes, addon_names, event_names, code_symbols) VALUES ('entry', 'Entry', 'payload.json#entry', 'Summary', 'tag', '', '', '', '');"
+    ].join(" "));
+  } finally {
+    database.close();
+  }
+}
+
+function writeLegacyDocsSqliteWithoutMetadataColumn(path) {
+  const database = new DatabaseSync(path);
+  try {
+    database.exec([
+      "PRAGMA user_version = 3;",
       "CREATE TABLE docs_entries(id TEXT PRIMARY KEY, title TEXT, summary TEXT, content TEXT, tags TEXT, source_path TEXT, priority INTEGER);",
       "CREATE VIRTUAL TABLE docs_entries_fts USING fts5(id UNINDEXED, title, summary, content, tags);",
       "INSERT INTO docs_entries(id, title, summary, content, tags, source_path, priority) VALUES ('entry', 'Entry', 'Summary', 'Content', 'tag', 'payload.json', 1);",
