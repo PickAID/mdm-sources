@@ -11,8 +11,8 @@ export function writeSqliteDocsDatabase(input) {
     const insertEntry = database.prepare([
       "INSERT INTO docs_entries",
       "(entry_id, package_id, kind, title, path, headings, summary, search_terms,",
-      "script_scopes, addon_names, event_names, code_symbols)",
-      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+      "script_scopes, addon_names, event_names, code_symbols, metadata)",
+      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     ].join(" "));
     const insertFts = database.prepare([
       "INSERT INTO docs_entries_fts",
@@ -49,7 +49,8 @@ function schemaSql(userVersion) {
     "script_scopes TEXT NOT NULL,",
     "addon_names TEXT NOT NULL,",
     "event_names TEXT NOT NULL,",
-    "code_symbols TEXT NOT NULL",
+    "code_symbols TEXT NOT NULL,",
+    "metadata TEXT",
     ")",
     ";",
     "CREATE VIRTUAL TABLE docs_entries_fts USING fts5(",
@@ -77,7 +78,8 @@ function insertDocsEntry(input) {
     JSON.stringify(input.entry.scriptScopes),
     JSON.stringify(input.entry.addonNames),
     JSON.stringify(input.entry.eventNames),
-    JSON.stringify(input.entry.codeSymbols)
+    JSON.stringify(input.entry.codeSymbols),
+    input.entry.metadata ? JSON.stringify(input.entry.metadata) : null
   );
   input.insertFts.run(
     input.entry.id,
@@ -104,8 +106,20 @@ function normalizeDocsEntry(entry) {
     scriptScopes: stringArray(entry.scriptScopes),
     addonNames: stringArray(entry.addonNames),
     eventNames: stringArray(entry.eventNames),
-    codeSymbols: stringArray(entry.codeSymbols)
+    codeSymbols: stringArray(entry.codeSymbols),
+    metadata: optionalObject(entry.metadata)
   };
+}
+
+function optionalObject(value) {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    throw new Error("docs sqlite entry metadata must be an object.");
+  }
+
+  return value;
 }
 
 function stringArray(value) {

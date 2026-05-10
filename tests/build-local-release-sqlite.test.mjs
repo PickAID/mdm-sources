@@ -62,7 +62,7 @@ function assertSqliteArtifact(artifactPath) {
 
     const row = database
       .prepare(
-        "SELECT entry_id, package_id, title, search_terms, code_symbols FROM docs_entries"
+        "SELECT entry_id, package_id, title, search_terms, code_symbols, metadata FROM docs_entries"
       )
       .get();
     assert.equal(row.entry_id, "kubejs-native-events");
@@ -70,6 +70,14 @@ function assertSqliteArtifact(artifactPath) {
     assert.equal(row.title, "KubeJS Native Event Routing");
     assert.deepEqual(JSON.parse(row.search_terms), ["KubeJS", "NativeEvents"]);
     assert.deepEqual(JSON.parse(row.code_symbols), ["NativeEvents", "ForgeEvents"]);
+    assert.deepEqual(JSON.parse(row.metadata), {
+      schemaSymbol: {
+        identifier: "dev.latvian.mods.kubejs.event.EventHandler",
+        kind: "class"
+      },
+      upstreamPath: "probe/generated/kubejs/events.d.ts",
+      contentHash: "sha256:test"
+    });
 
     const ftsRows = database
       .prepare("SELECT entry_id FROM docs_entries_fts WHERE docs_entries_fts MATCH ?")
@@ -189,7 +197,15 @@ function sqliteDocsPayload() {
         scriptScopes: ["server_scripts"],
         addonNames: ["KubeJS"],
         eventNames: ["NativeEvents"],
-        codeSymbols: ["NativeEvents", "ForgeEvents"]
+        codeSymbols: ["NativeEvents", "ForgeEvents"],
+        metadata: {
+          schemaSymbol: {
+            identifier: "dev.latvian.mods.kubejs.event.EventHandler",
+            kind: "class"
+          },
+          upstreamPath: "probe/generated/kubejs/events.d.ts",
+          contentHash: "sha256:test"
+        }
       }
     ]
   };
