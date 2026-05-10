@@ -1,0 +1,44 @@
+name: Update Explanation Docs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 * * 1"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Generate vanilla schema explanation docs
+        run: node tools/sync-vanilla-schema-docs.mjs
+
+      - name: Validate repository
+        run: node tools/validate.mjs
+
+      - name: Build release artifacts without registry mutation
+        run: node tools/build-local-release.mjs --out release-out --no-registry-update --channel docs
+
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: update vanilla schema explanation docs"
+          title: "chore: update vanilla schema explanation docs"
+          body: |
+            Automated refresh from:
+            - https://github.com/SpyglassMC/vanilla-mcdoc
+            - https://github.com/misode/misode.github.io
+
+            The generated `vanilla-schema-docs` package covers datapack and resource-pack schema explanation docs.
+          branch: automation/update-vanilla-schema-docs

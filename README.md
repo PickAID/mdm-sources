@@ -107,3 +107,35 @@ Run tests:
 ```bash
 node --test tests/*.test.mjs
 ```
+
+## Vanilla Schema Explanation Docs
+
+Datapack and resource-pack explanation docs are generated from upstream public
+sources instead of being hand-maintained:
+
+- `https://github.com/SpyglassMC/vanilla-mcdoc`
+- `https://github.com/misode/misode.github.io`
+
+Generate or refresh them locally:
+
+```bash
+node tools/sync-vanilla-schema-docs.mjs
+```
+
+Use local upstream checkouts when iterating:
+
+```bash
+node tools/sync-vanilla-schema-docs.mjs \
+  --vanillaMcdocRoot /path/to/vanilla-mcdoc \
+  --misodeRoot /path/to/misode.github.io
+```
+
+The generated package is:
+
+- `vanilla-schema-docs`
+
+The scheduled `Update Explanation Docs` workflow refreshes this package from
+upstream and opens a pull request after validation and a local docs release
+build. The payload records upstream commit provenance, compact mcdoc schema
+previews, content hashes, and misode generator/interpreter source references;
+it does not vendor full upstream repositories.
