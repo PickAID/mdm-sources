@@ -133,9 +133,12 @@ node tools/sync-vanilla-schema-docs.mjs \
 The generated package is:
 
 - `vanilla-schema-docs`
+- `misode-generator-catalog`
 
 The scheduled `Update Explanation Docs` workflow refreshes this package from
 upstream and opens a pull request after validation and a local docs release
-build. The payload records upstream commit provenance, compact mcdoc schema
-previews, content hashes, and misode generator/interpreter source references;
-it does not vendor full upstream repositories.
+build. It refreshes both the vanilla schema evidence package and the misode
+generator catalog. The payload records upstream commit provenance, compact
+mcdoc schema previews, content hashes, generator path/version metadata, and
+misode generator/interpreter source references; it does not vendor full
+upstream repositories.

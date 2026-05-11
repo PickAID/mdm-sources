@@ -24,6 +24,9 @@ jobs:
       - name: Generate vanilla schema explanation docs
         run: node tools/sync-vanilla-schema-docs.mjs
 
+      - name: Generate misode generator catalog
+        run: node tools/misode-generator-catalog.mjs
+
       - name: Validate repository
         run: node tools/validate.mjs
 
@@ -33,12 +36,13 @@ jobs:
       - name: Open pull request
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: "chore: update vanilla schema explanation docs"
-          title: "chore: update vanilla schema explanation docs"
+          commit-message: "chore: update vanilla schema docs and misode catalog"
+          title: "chore: update vanilla schema docs and misode catalog"
           body: |
             Automated refresh from:
             - https://github.com/SpyglassMC/vanilla-mcdoc
             - https://github.com/misode/misode.github.io
 
             The generated `vanilla-schema-docs` package covers datapack and resource-pack schema explanation docs.
+            The generated `misode-generator-catalog` package covers generator ids, version ranges, and path rules from misode config.
           branch: automation/update-vanilla-schema-docs
