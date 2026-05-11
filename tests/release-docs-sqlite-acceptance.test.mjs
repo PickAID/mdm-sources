@@ -26,6 +26,14 @@ test("docs channel release builds installable sqlite docs with metadata column",
   });
   assert.ok(sqliteArtifact, "core docs sqlite artifact must be built");
   assert.ok(hasColumn(sqliteArtifact.artifactPath, "docs_entries", "metadata"));
+  assertDocsSqliteArtifact(release, "vanilla-schema-docs-0.1.0.sqlite", {
+    query: "recipe",
+    metadataKey: "schemaSymbol"
+  });
+  assertDocsSqliteArtifact(release, "misode-generator-catalog-0.1.0.sqlite", {
+    query: "recipe",
+    metadataKey: "generator"
+  });
 
   const install = await verifyReleaseInstall({ manifest: release.manifestPath });
   assert.ok(
@@ -35,6 +43,18 @@ test("docs channel release builds installable sqlite docs with metadata column",
     })
   );
 });
+
+function assertDocsSqliteArtifact(release, artifactName, input) {
+  const artifact = release.artifacts.find((candidate) => {
+    return candidate.artifactName === artifactName;
+  });
+  assert.ok(artifact, `${artifactName} must be built`);
+  assert.ok(hasColumn(artifact.artifactPath, "docs_entries", "metadata"));
+  assert.ok(
+    findMetadataBySearchTerm(artifact.artifactPath, input.query, input.metadataKey),
+    `${artifactName} must preserve ${input.metadataKey} metadata`
+  );
+}
 
 test("docs channel bundle keeps sqlite docs metadata column installable", async () => {
   const outDir = await mkdtemp(join(tmpdir(), "mdm-docs-sqlite-bundle-"));
@@ -65,6 +85,22 @@ function hasColumn(databasePath, tableName, columnName) {
       .prepare(`PRAGMA table_info(${tableName})`)
       .all()
       .some((row) => row.name === columnName);
+  } finally {
+    database.close();
+  }
+}
+
+function findMetadataBySearchTerm(databasePath, query, metadataKey) {
+  const database = new DatabaseSync(databasePath, { readOnly: true });
+  try {
+    return database
+      .prepare(
+        "SELECT metadata FROM docs_entries WHERE search_terms LIKE ? AND metadata IS NOT NULL"
+      )
+      .all(`%${query}%`)
+      .some((row) => {
+        return Object.hasOwn(JSON.parse(row.metadata), metadataKey);
+      });
   } finally {
     database.close();
   }

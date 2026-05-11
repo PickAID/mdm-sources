@@ -55,6 +55,48 @@ test("writeSqliteDocsDatabase stores optional entry metadata without requiring i
   }
 });
 
+test("writeSqliteDocsDatabase promotes top-level schema evidence into metadata", async () => {
+  const root = await mkdtemp(join(tmpdir(), "mdm-sqlite-docs-schema-evidence-"));
+  const databasePath = join(root, "docs.sqlite");
+
+  writeSqliteDocsDatabase({
+    databasePath,
+    packageId: "vanilla-schema-docs",
+    userVersion: 3,
+    entries: [
+      {
+        id: "recipe-schema",
+        title: "Recipe Schema",
+        summary: "Entry with top-level schema evidence.",
+        schemaSymbol: { identifier: "java/data/recipe", kind: "struct" },
+        schemaDefinitionOutlines: [{ kind: "dispatch", name: "minecraft:resource[recipe]" }],
+        upstreamPath: "java/data/recipe.mcdoc",
+        contentHash: "sha256:test",
+        metadata: { explicit: true }
+      }
+    ]
+  });
+
+  const database = new DatabaseSync(databasePath);
+  try {
+    const row = database
+      .prepare("SELECT metadata FROM docs_entries WHERE entry_id = ?")
+      .get("recipe-schema");
+
+    assert.deepEqual(JSON.parse(row.metadata), {
+      explicit: true,
+      schemaDefinitionOutlines: [
+        { kind: "dispatch", name: "minecraft:resource[recipe]" }
+      ],
+      schemaSymbol: { identifier: "java/data/recipe", kind: "struct" },
+      upstreamPath: "java/data/recipe.mcdoc",
+      contentHash: "sha256:test"
+    });
+  } finally {
+    database.close();
+  }
+});
+
 test("writeSqliteDocsDatabase rejects non-object entry metadata", async () => {
   const root = await mkdtemp(join(tmpdir(), "mdm-sqlite-docs-bad-metadata-"));
   const databasePath = join(root, "docs.sqlite");

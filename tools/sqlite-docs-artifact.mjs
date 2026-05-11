@@ -107,8 +107,26 @@ function normalizeDocsEntry(entry) {
     addonNames: stringArray(entry.addonNames),
     eventNames: stringArray(entry.eventNames),
     codeSymbols: stringArray(entry.codeSymbols),
-    metadata: optionalObject(entry.metadata)
+    metadata: docsEntryMetadata(entry)
   };
+}
+
+function docsEntryMetadata(entry) {
+  const metadata = optionalObject(entry.metadata);
+  const merged = { ...(metadata ?? {}) };
+  for (const [key, value] of Object.entries({
+    schemaDefinitionOutlines: entry.schemaDefinitionOutlines,
+    schemaDefinitions: entry.schemaDefinitions,
+    schemaSymbol: entry.schemaSymbol,
+    upstreamPath: entry.upstreamPath,
+    contentHash: entry.contentHash
+  })) {
+    if (value !== undefined) {
+      merged[key] = value;
+    }
+  }
+
+  return Object.keys(merged).length > 0 ? merged : undefined;
 }
 
 function optionalObject(value) {

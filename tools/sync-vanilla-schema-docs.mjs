@@ -343,9 +343,9 @@ function buildPackageManifest(configs) {
     },
     artifact: {
       kind: "docs_bundle",
-      format: "json",
-      schemaId: "mdm.explanation-docs.json",
-      schemaVersion: 1,
+      format: "sqlite",
+      schemaId: "mdm.docs.sqlite",
+      schemaVersion: 3,
       entrypoint: `payload/${PAYLOAD_NAME}`
     },
     capabilities: [
@@ -361,7 +361,7 @@ function buildPackageManifest(configs) {
       requiresUserConsent: false
     },
     query: {
-      adapter: "json_docs",
+      adapter: "sqlite_docs",
       capabilities: [
         "docs_search",
         "docs_direct_read",

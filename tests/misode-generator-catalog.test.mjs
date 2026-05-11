@@ -36,7 +36,8 @@ test("syncMisodeGeneratorCatalog writes searchable path and version rules", asyn
     }
   ]);
   assert.equal(packageJson.identity.packageId, "misode-generator-catalog");
-  assert.equal(packageJson.query.adapter, "json_docs");
+  assert.equal(packageJson.artifact.format, "sqlite");
+  assert.equal(packageJson.query.adapter, "sqlite_docs");
   assert.deepEqual(validation.errors, []);
   assert.equal(payload.catalog.generatorCount, 4);
   assert.deepEqual(generator(payload, "recipe").pathRule, {

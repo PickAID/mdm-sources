@@ -46,7 +46,8 @@ test("syncVanillaSchemaDocs generates one compact vanilla-schema-docs package", 
   const registry = JSON.parse(await readFile(join(root, "registry/index.json"), "utf-8"));
 
   assert.equal(packageJson.identity.packageId, "vanilla-schema-docs");
-  assert.equal(packageJson.query.adapter, "json_docs");
+  assert.equal(packageJson.artifact.format, "sqlite");
+  assert.equal(packageJson.query.adapter, "sqlite_docs");
   assert.deepEqual(packageJson.capabilities, [
     "docs_search",
     "docs_direct_read",

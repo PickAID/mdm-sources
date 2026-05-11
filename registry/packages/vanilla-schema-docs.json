@@ -2,10 +2,5 @@
   "schemaVersion": 1,
   "id": "vanilla-schema-docs",
   "sourcePath": "packages/docs/vanilla-schema-docs/package.json",
-  "currentRelease": {
-    "artifactName": "vanilla-schema-docs-0.1.0.mdm-resource.json",
-    "sha256": "5b12e10ee5f91ddf0a2e900179a4de636175ee37ae9e48fc0f77a4c43fe573c7",
-    "sizeBytes": 385404,
-    "builtAt": "2026-05-10T20:45:41.937Z"
-  }
+  "currentRelease": null
 }

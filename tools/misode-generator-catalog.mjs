@@ -233,9 +233,9 @@ function buildPackageManifest() {
     },
     artifact: {
       kind: "docs_bundle",
-      format: "json",
-      schemaId: "mdm.misode.generator-catalog.json",
-      schemaVersion: 1,
+      format: "sqlite",
+      schemaId: "mdm.docs.sqlite",
+      schemaVersion: 3,
       entrypoint: `payload/${PAYLOAD_NAME}`
     },
     capabilities: [
@@ -253,7 +253,7 @@ function buildPackageManifest() {
       requiresUserConsent: false
     },
     query: {
-      adapter: "json_docs",
+      adapter: "sqlite_docs",
       capabilities: [
         "docs_search",
         "docs_direct_read",
