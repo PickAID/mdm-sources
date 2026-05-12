@@ -3185,6 +3185,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-26.1-version-changes",
+      "manifestPath": "registry/packages/minecraft-26.1-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-26.1-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-26.1-yarn-mapping-profile.json",
       "required": false,

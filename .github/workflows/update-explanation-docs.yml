@@ -27,6 +27,9 @@ jobs:
       - name: Generate misode generator catalog
         run: node tools/misode-generator-catalog.mjs
 
+      - name: Generate version change docs
+        run: node tools/sync-version-change-docs.mjs
+
       - name: Validate repository
         run: node tools/validate.mjs
 
@@ -36,13 +39,16 @@ jobs:
       - name: Open pull request
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: "chore: update vanilla schema docs and misode catalog"
-          title: "chore: update vanilla schema docs and misode catalog"
+          commit-message: "chore: update generated docs packages"
+          title: "chore: update generated docs packages"
           body: |
             Automated refresh from:
             - https://github.com/SpyglassMC/vanilla-mcdoc
             - https://github.com/misode/misode.github.io
+            - https://github.com/neoforged/.github/tree/main/primers
+            - https://github.com/misode/technical-changes
 
             The generated `vanilla-schema-docs` package covers datapack and resource-pack schema explanation docs.
             The generated `misode-generator-catalog` package covers generator ids, version ranges, and path rules from misode config.
+            The generated `minecraft-version-changes` packages cover version migration evidence from NeoForged primers and misode technical changelogs.
           branch: automation/update-vanilla-schema-docs
