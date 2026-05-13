@@ -7,7 +7,10 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
+
+concurrency:
+  group: update-generated-docs
+  cancel-in-progress: false
 
 jobs:
   update:
@@ -34,21 +37,18 @@ jobs:
         run: node tools/validate.mjs
 
       - name: Build release artifacts without registry mutation
+        # Covers vanilla-schema-docs, misode-generator-catalog, and minecraft-version-changes.
         run: node tools/build-local-release.mjs --out release-out --no-registry-update --channel docs
 
-      - name: Open pull request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          commit-message: "chore: update generated docs packages"
-          title: "chore: update generated docs packages"
-          body: |
-            Automated refresh from:
-            - https://github.com/SpyglassMC/vanilla-mcdoc
-            - https://github.com/misode/misode.github.io
-            - https://github.com/neoforged/.github/tree/main/primers
-            - https://github.com/misode/technical-changes
+      - name: Commit generated docs updates
+        run: |
+          if git diff --quiet; then
+            echo "No generated docs changes."
+            exit 0
+          fi
 
-            The generated `vanilla-schema-docs` package covers datapack and resource-pack schema explanation docs.
-            The generated `misode-generator-catalog` package covers generator ids, version ranges, and path rules from misode config.
-            The generated `minecraft-version-changes` packages cover version migration evidence from NeoForged primers and misode technical changelogs.
-          branch: automation/update-vanilla-schema-docs
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/docs registry
+          git commit -m "chore: update generated docs packages"
+          git push
