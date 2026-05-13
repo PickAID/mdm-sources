@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-test("update explanation docs workflow refreshes schema docs, misode catalog, and version changes", async () => {
+test("update explanation docs workflow refreshes generated docs packages", async () => {
   const workflow = await readFile(
     ".github/workflows/update-explanation-docs.yml",
     "utf-8"
@@ -15,6 +15,7 @@ test("update explanation docs workflow refreshes schema docs, misode catalog, an
   assert.match(workflow, /node tools\/sync-vanilla-schema-docs\.mjs/);
   assert.match(workflow, /node tools\/misode-generator-catalog\.mjs/);
   assert.match(workflow, /node tools\/sync-version-change-docs\.mjs/);
+  assert.match(workflow, /node tools\/sync-loader-docs\.mjs/);
   assert.match(workflow, /node tools\/validate\.mjs/);
   assert.match(
     workflow,
@@ -29,6 +30,7 @@ test("update explanation docs workflow refreshes schema docs, misode catalog, an
   assert.match(workflow, /vanilla-schema-docs/);
   assert.match(workflow, /misode-generator-catalog/);
   assert.match(workflow, /minecraft-version-changes/);
+  assert.match(workflow, /minecraft-loader-docs/);
   assert.ok(
     workflow.indexOf("node tools/misode-generator-catalog.mjs") >
       workflow.indexOf("node tools/sync-vanilla-schema-docs.mjs")
@@ -36,5 +38,9 @@ test("update explanation docs workflow refreshes schema docs, misode catalog, an
   assert.ok(
     workflow.indexOf("node tools/sync-version-change-docs.mjs") >
       workflow.indexOf("node tools/misode-generator-catalog.mjs")
+  );
+  assert.ok(
+    workflow.indexOf("node tools/sync-loader-docs.mjs") >
+      workflow.indexOf("node tools/sync-version-change-docs.mjs")
   );
 });

@@ -33,11 +33,14 @@ jobs:
       - name: Generate version change docs
         run: node tools/sync-version-change-docs.mjs
 
+      - name: Generate loader documentation
+        run: node tools/sync-loader-docs.mjs
+
       - name: Validate repository
         run: node tools/validate.mjs
 
       - name: Build release artifacts without registry mutation
-        # Covers vanilla-schema-docs, misode-generator-catalog, and minecraft-version-changes.
+        # Covers vanilla-schema-docs, misode-generator-catalog, minecraft-version-changes, and minecraft-loader-docs.
         run: node tools/build-local-release.mjs --out release-out --no-registry-update --channel docs
 
       - name: Commit generated docs updates

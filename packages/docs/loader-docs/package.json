@@ -1,0 +1,60 @@
+{
+  "identity": {
+    "schemaVersion": 2,
+    "packageId": "minecraft-loader-docs",
+    "packageVersion": "0.1.0",
+    "namespace": "minecraft",
+    "displayName": "Minecraft Loader Documentation",
+    "description": "Generated public loader documentation index from NeoForged docs/news, Forge docs, and selected ChampionAsh5357 migration primers."
+  },
+  "target": {
+    "minecraftVersions": [],
+    "loaders": [
+      "forge",
+      "neoforge"
+    ]
+  },
+  "artifact": {
+    "kind": "docs_bundle",
+    "format": "sqlite",
+    "schemaId": "mdm.docs.sqlite",
+    "schemaVersion": 3,
+    "entrypoint": "payload/loader-docs.json"
+  },
+  "capabilities": [
+    "docs_search",
+    "docs_direct_read",
+    "datapack_trace",
+    "resourcepack_trace"
+  ],
+  "policy": {
+    "privacy": "public_release",
+    "lifecycle": [
+      "downloadable",
+      "auto_generated",
+      "refreshable"
+    ],
+    "canCommitToRepository": true,
+    "canUploadToPublicRelease": true,
+    "requiresUserConsent": false
+  },
+  "query": {
+    "adapter": "sqlite_docs",
+    "capabilities": [
+      "docs_search",
+      "docs_direct_read",
+      "datapack_trace",
+      "resourcepack_trace"
+    ],
+    "defaultLimit": 8,
+    "maxLimit": 50,
+    "preferredFallbacks": [
+      "minecraft-version-changes",
+      "vanilla-schema-docs"
+    ]
+  },
+  "release": {
+    "channel": "docs",
+    "family": "minecraft-loader-docs"
+  }
+}
