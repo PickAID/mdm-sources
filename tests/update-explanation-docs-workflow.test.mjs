@@ -16,6 +16,7 @@ test("update explanation docs workflow refreshes generated docs packages", async
   assert.match(workflow, /node tools\/misode-generator-catalog\.mjs/);
   assert.match(workflow, /node tools\/sync-version-change-docs\.mjs/);
   assert.match(workflow, /node tools\/sync-loader-docs\.mjs/);
+  assert.match(workflow, /node tools\/sync-shader-dev-docs\.mjs/);
   assert.match(workflow, /node tools\/validate\.mjs/);
   assert.match(
     workflow,
@@ -31,6 +32,7 @@ test("update explanation docs workflow refreshes generated docs packages", async
   assert.match(workflow, /misode-generator-catalog/);
   assert.match(workflow, /minecraft-version-changes/);
   assert.match(workflow, /minecraft-loader-docs/);
+  assert.match(workflow, /shader-dev-docs/);
   assert.ok(
     workflow.indexOf("node tools/misode-generator-catalog.mjs") >
       workflow.indexOf("node tools/sync-vanilla-schema-docs.mjs")
@@ -42,5 +44,9 @@ test("update explanation docs workflow refreshes generated docs packages", async
   assert.ok(
     workflow.indexOf("node tools/sync-loader-docs.mjs") >
       workflow.indexOf("node tools/sync-version-change-docs.mjs")
+  );
+  assert.ok(
+    workflow.indexOf("node tools/sync-shader-dev-docs.mjs") >
+      workflow.indexOf("node tools/sync-loader-docs.mjs")
   );
 });

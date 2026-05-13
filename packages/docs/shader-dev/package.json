@@ -1,0 +1,57 @@
+{
+  "identity": {
+    "schemaVersion": 2,
+    "packageId": "shader-dev-docs",
+    "packageVersion": "0.1.0",
+    "namespace": "shader",
+    "displayName": "Shader Development Documentation",
+    "description": "Generated public shader-dev docs index from MiniMax-AI shader-dev skill techniques and references."
+  },
+  "target": {
+    "minecraftVersions": [],
+    "loaders": []
+  },
+  "artifact": {
+    "kind": "docs_bundle",
+    "format": "sqlite",
+    "schemaId": "mdm.docs.sqlite",
+    "schemaVersion": 3,
+    "entrypoint": "payload/shader-dev-docs.json"
+  },
+  "capabilities": [
+    "docs_search",
+    "docs_direct_read",
+    "shader_reference",
+    "glsl_reference"
+  ],
+  "policy": {
+    "privacy": "public_release",
+    "lifecycle": [
+      "downloadable",
+      "auto_generated",
+      "refreshable"
+    ],
+    "canCommitToRepository": true,
+    "canUploadToPublicRelease": true,
+    "requiresUserConsent": false
+  },
+  "query": {
+    "adapter": "sqlite_docs",
+    "capabilities": [
+      "docs_search",
+      "docs_direct_read",
+      "shader_reference",
+      "glsl_reference"
+    ],
+    "defaultLimit": 8,
+    "maxLimit": 50,
+    "preferredFallbacks": [
+      "minecraft-loader-docs",
+      "vanilla-schema-docs"
+    ]
+  },
+  "release": {
+    "channel": "docs",
+    "family": "shader-dev-docs"
+  }
+}
