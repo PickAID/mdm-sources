@@ -503,6 +503,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.14-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.14-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.14-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.14-yarn-mapping-profile.json",
       "required": false,
@@ -664,6 +671,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.15-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.15-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.15-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.15-yarn-mapping-profile.json",
       "required": false,
@@ -748,6 +762,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.16-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.16-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.16-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.16-yarn-mapping-profile.json",
       "required": false,
@@ -801,6 +822,13 @@
       "manifestPath": "registry/packages/minecraft-1.16.2-vanilla-source-profile.json",
       "required": false,
       "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.16.2-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.16.2-version-changes.json",
+      "required": false,
+      "format": "sqlite",
       "currentRelease": null
     },
     {
@@ -930,6 +958,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.16.5-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.16.5-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.16.5-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.16.5-yarn-mapping-profile.json",
       "required": false,
@@ -955,6 +990,13 @@
       "manifestPath": "registry/packages/minecraft-1.17-vanilla-source-profile.json",
       "required": false,
       "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.17-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.17-version-changes.json",
+      "required": false,
+      "format": "sqlite",
       "currentRelease": null
     },
     {
@@ -1011,6 +1053,13 @@
       "manifestPath": "registry/packages/minecraft-1.18-vanilla-source-profile.json",
       "required": false,
       "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.18-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.18-version-changes.json",
+      "required": false,
+      "format": "sqlite",
       "currentRelease": null
     },
     {
@@ -1133,6 +1182,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.18.2-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.18.2-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.18.2-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.18.2-yarn-mapping-profile.json",
       "required": false,
@@ -1161,6 +1217,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.19-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.19-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.19-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.19-yarn-mapping-profile.json",
       "required": false,
@@ -1186,6 +1249,13 @@
       "manifestPath": "registry/packages/minecraft-1.19.1-vanilla-source-profile.json",
       "required": false,
       "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.19.1-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.19.1-version-changes.json",
+      "required": false,
+      "format": "sqlite",
       "currentRelease": null
     },
     {
@@ -1245,6 +1315,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.19.3-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.19.3-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.19.3-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.19.3-yarn-mapping-profile.json",
       "required": false,
@@ -1270,6 +1347,13 @@
       "manifestPath": "registry/packages/minecraft-1.19.4-vanilla-source-profile.json",
       "required": false,
       "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.19.4-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.19.4-version-changes.json",
+      "required": false,
+      "format": "sqlite",
       "currentRelease": null
     },
     {
@@ -1441,6 +1525,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.20-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.20-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.20-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.20-yarn-mapping-profile.json",
       "required": false,
@@ -1575,6 +1666,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.20.2-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.20.2-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.20.2-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.20.2-yarn-mapping-profile.json",
       "required": false,
@@ -1600,6 +1698,13 @@
       "manifestPath": "registry/packages/minecraft-1.20.3-vanilla-source-profile.json",
       "required": false,
       "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.20.3-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.20.3-version-changes.json",
+      "required": false,
+      "format": "sqlite",
       "currentRelease": null
     },
     {
@@ -1659,6 +1764,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.20.5-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.20.5-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.20.5-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.20.5-yarn-mapping-profile.json",
       "required": false,
@@ -1687,6 +1799,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.20.6-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.20.6-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.20.6-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.20.6-yarn-mapping-profile.json",
       "required": false,
@@ -1712,6 +1831,13 @@
       "manifestPath": "registry/packages/minecraft-1.21-vanilla-source-profile.json",
       "required": false,
       "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.21-version-changes.json",
+      "required": false,
+      "format": "sqlite",
       "currentRelease": null
     },
     {
@@ -1806,6 +1932,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.21.1-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.21.1-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.21.1-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.21.1-yarn-mapping-profile.json",
       "required": false,
@@ -1831,6 +1964,13 @@
       "manifestPath": "registry/packages/minecraft-1.21.10-vanilla-source-profile.json",
       "required": false,
       "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.10-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.21.10-version-changes.json",
+      "required": false,
+      "format": "sqlite",
       "currentRelease": null
     },
     {
@@ -1862,6 +2002,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.21.11-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.21.11-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.21.11-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.21.11-yarn-mapping-profile.json",
       "required": false,
@@ -1887,6 +2034,13 @@
       "manifestPath": "registry/packages/minecraft-1.21.2-vanilla-source-profile.json",
       "required": false,
       "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.2-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.21.2-version-changes.json",
+      "required": false,
+      "format": "sqlite",
       "currentRelease": null
     },
     {
@@ -1946,6 +2100,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.21.4-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.21.4-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.21.4-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.21.4-yarn-mapping-profile.json",
       "required": false,
@@ -1971,6 +2132,13 @@
       "manifestPath": "registry/packages/minecraft-1.21.5-vanilla-source-profile.json",
       "required": false,
       "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.5-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.21.5-version-changes.json",
+      "required": false,
+      "format": "sqlite",
       "currentRelease": null
     },
     {
@@ -2002,6 +2170,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.21.6-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.21.6-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.21.6-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.21.6-yarn-mapping-profile.json",
       "required": false,
@@ -2027,6 +2202,13 @@
       "manifestPath": "registry/packages/minecraft-1.21.7-vanilla-source-profile.json",
       "required": false,
       "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.7-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.21.7-version-changes.json",
+      "required": false,
+      "format": "sqlite",
       "currentRelease": null
     },
     {
@@ -2058,6 +2240,13 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-1.21.8-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.21.8-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-1.21.8-yarn-mapping-profile",
       "manifestPath": "registry/packages/minecraft-1.21.8-yarn-mapping-profile.json",
       "required": false,
@@ -2083,6 +2272,13 @@
       "manifestPath": "registry/packages/minecraft-1.21.9-vanilla-source-profile.json",
       "required": false,
       "format": "json",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-1.21.9-version-changes",
+      "manifestPath": "registry/packages/minecraft-1.21.9-version-changes.json",
+      "required": false,
+      "format": "sqlite",
       "currentRelease": null
     },
     {
@@ -3297,8 +3493,22 @@
       "currentRelease": null
     },
     {
+      "id": "minecraft-26.2-version-changes",
+      "manifestPath": "registry/packages/minecraft-26.2-version-changes.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
       "id": "minecraft-loader-docs",
       "manifestPath": "registry/packages/minecraft-loader-docs.json",
+      "required": false,
+      "format": "sqlite",
+      "currentRelease": null
+    },
+    {
+      "id": "minecraft-rd-132328-version-changes",
+      "manifestPath": "registry/packages/minecraft-rd-132328-version-changes.json",
       "required": false,
       "format": "sqlite",
       "currentRelease": null

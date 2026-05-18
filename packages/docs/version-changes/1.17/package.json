@@ -1,0 +1,65 @@
+{
+  "identity": {
+    "schemaVersion": 2,
+    "packageId": "minecraft-1.17-version-changes",
+    "packageVersion": "0.1.0",
+    "namespace": "minecraft",
+    "displayName": "Minecraft 1.17 Version Changes",
+    "description": "Generated public version-change docs from NeoForged primers and misode technical changes."
+  },
+  "target": {
+    "minecraftVersions": [
+      "1.17"
+    ],
+    "loaders": [
+      "vanilla",
+      "forge",
+      "neoforge",
+      "fabric",
+      "quilt"
+    ]
+  },
+  "artifact": {
+    "kind": "docs_bundle",
+    "format": "sqlite",
+    "schemaId": "mdm.docs.sqlite",
+    "schemaVersion": 3,
+    "entrypoint": "payload/version-changes.json"
+  },
+  "capabilities": [
+    "docs_search",
+    "docs_direct_read",
+    "datapack_trace",
+    "resourcepack_trace"
+  ],
+  "policy": {
+    "privacy": "public_release",
+    "lifecycle": [
+      "downloadable",
+      "auto_generated",
+      "refreshable"
+    ],
+    "canCommitToRepository": true,
+    "canUploadToPublicRelease": true,
+    "requiresUserConsent": false
+  },
+  "query": {
+    "adapter": "sqlite_docs",
+    "capabilities": [
+      "docs_search",
+      "docs_direct_read",
+      "datapack_trace",
+      "resourcepack_trace"
+    ],
+    "defaultLimit": 8,
+    "maxLimit": 50,
+    "preferredFallbacks": [
+      "vanilla-schema-docs",
+      "misode-generator-catalog"
+    ]
+  },
+  "release": {
+    "channel": "docs",
+    "family": "minecraft-version-changes"
+  }
+}
